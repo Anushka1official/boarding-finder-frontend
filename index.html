@@ -968,16 +968,16 @@
           <div style="background:#FEF3C7;color:#92400E;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-bottom:16px;">📅 Future vacancy: July 2026 · 3 more slots</div>
           <div style="border-top:1px solid var(--gray-100);padding-top:16px;">
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Monthly rent</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Monthly rent</span><span id="panel-monthly-rent" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Security deposit</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Security deposit</span><span id="panel-security-deposit" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:14px;color:var(--gray-600);">
-              <span>Advance payment</span><span style="font-weight:600;color:var(--gray-800);">LKR 5,000</span>
+              <span>Advance payment</span><span id="panel-advance-payment" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--gray-900);border-top:1px solid var(--gray-200);padding-top:12px;">
-              <span>Pay to Book</span><span style="color:var(--brand)">LKR 5,000</span>
+              <span>Pay to Book</span><span id="panel-pay-to-book" style="color:var(--brand)">—</span>
             </div>
           </div>
           <div class="panel-btns">
@@ -1644,7 +1644,7 @@
 //  SMART BOARDING FINDER — Complete Connected Script
 // ═══════════════════════════════════════════════════
 
-const API = 'https://boarding-finder-backend-production.up.railway.app/api';
+const API = 'http://localhost:3000/api';
 
 // ── State ────────────────────────────────────────
 let allListings    = [];
@@ -2024,6 +2024,17 @@ async function openDetail(id) {
         <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">${l.available?'Available':'Unavailable'}</div>
       </div>`;
   }
+
+  // Booking panel price breakdown (dynamic per listing)
+  const ADVANCE = 5000;
+  const panelMonthly  = document.getElementById('panel-monthly-rent');
+  const panelDeposit  = document.getElementById('panel-security-deposit');
+  const panelAdvance  = document.getElementById('panel-advance-payment');
+  const panelPayNow   = document.getElementById('panel-pay-to-book');
+  if (panelMonthly) panelMonthly.textContent = `LKR ${Number(l.price).toLocaleString()}`;
+  if (panelDeposit) panelDeposit.textContent = `LKR ${Number(l.price).toLocaleString()}`;
+  if (panelAdvance) panelAdvance.textContent = `LKR ${Number(ADVANCE).toLocaleString()}`;
+  if (panelPayNow)  panelPayNow.textContent  = `LKR ${Number(ADVANCE).toLocaleString()}`;
 
   // Booking panel price + availability
   const priceBig = document.querySelector('#page-detail .price-big');

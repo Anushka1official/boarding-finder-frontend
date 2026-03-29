@@ -436,33 +436,33 @@
       <div class="search-grid">
         <div class="field">
           <label>💰 Max Monthly Price</label>
-          <select>
-            <option>Under LKR 15,000</option>
-            <option>LKR 15,000 – 25,000</option>
-            <option>LKR 25,000 – 40,000</option>
-            <option>Any Price</option>
+          <select id="home-price">
+            <option value="15000">Under LKR 15,000</option>
+            <option value="25000">LKR 15,000 – 25,000</option>
+            <option value="40000">LKR 25,000 – 40,000</option>
+            <option value="">Any Price</option>
           </select>
         </div>
         <div class="field">
           <label>🛏 Room Type</label>
-          <select>
-            <option>Any Type</option>
-            <option>Single Room</option>
-            <option>Shared Room</option>
-            <option>Studio</option>
+          <select id="home-room">
+            <option value="">Any Type</option>
+            <option value="Single Room">Single Room</option>
+            <option value="Shared Room">Shared Room</option>
+            <option value="Studio">Studio</option>
           </select>
         </div>
-        <button class="btn btn-primary btn-lg" onclick="showPage('results')" style="white-space:nowrap">
+        <button class="btn btn-primary btn-lg" onclick="doHomeSearch()" style="white-space:nowrap">
           🔍 Search
         </button>
       </div>
     </div>
     <div class="divider-or">or browse by</div>
     <div class="quick-features">
-      <div class="quick-feat"><span class="icon">⚡</span> Available Now</div>
-      <div class="quick-feat"><span class="icon">📅</span> Future Vacancies</div>
-      <div class="quick-feat"><span class="icon">👥</span> Best for Groups</div>
-      <div class="quick-feat"><span class="icon">✅</span> Verified Only</div>
+      <div class="quick-feat" onclick="quickFilter('available')" style="cursor:pointer"><span class="icon">⚡</span> Available Now</div>
+      <div class="quick-feat" onclick="quickFilter('future')" style="cursor:pointer"><span class="icon">📅</span> Future Vacancies</div>
+      <div class="quick-feat" onclick="quickFilter('groups')" style="cursor:pointer"><span class="icon">👥</span> Best for Groups</div>
+      <div class="quick-feat" onclick="quickFilter('verified')" style="cursor:pointer"><span class="icon">✅</span> Verified Only</div>
     </div>
   </section>
 
@@ -496,7 +496,7 @@
       </div>
       <a class="see-all" onclick="showPage('results')">View all →</a>
     </div>
-    <div class="cards-grid">
+    <div class="cards-grid" id="home-listings-grid">
       <!-- Card 1 -->
       <div class="boarding-card" onclick="showPage('detail')">
         <div class="card-img" style="background:linear-gradient(135deg,#BFDBFE,#93C5FD);">
@@ -605,13 +605,14 @@
   <div style="background:white;border-bottom:1px solid var(--gray-200);padding:16px 24px;">
     <div style="max-width:1200px;margin:0 auto;">
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-        <select style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
-          <option>Any Price</option><option>Under LKR 15,000</option><option>LKR 15–25k</option>
+        <input id="search-city" type="text" placeholder="City or area..." style="flex:1;min-width:140px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+        <select id="search-price" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+          <option value="">Any Price</option><option value="15000">Under LKR 15,000</option><option value="25000">LKR 15–25k</option><option value="40000">LKR 25–40k</option>
         </select>
-        <select style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
-          <option>Any Room</option><option>Single</option><option>Shared</option>
+        <select id="search-room" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+          <option value="">Any Room</option><option value="Single Room">Single</option><option value="Shared Room">Shared</option><option value="Studio">Studio</option>
         </select>
-        <button class="btn btn-primary">🔍 Search</button>
+        <button class="btn btn-primary" onclick="applyFilters()">🔍 Search</button>
       </div>
     </div>
   </div>
@@ -622,8 +623,8 @@
       <h3>🎛 Filters</h3>
       <div class="filter-group">
         <h4>Price Range (Monthly)</h4>
-        <div class="range-row"><span>LKR 5,000</span><strong id="price-display">LKR 30,000</strong></div>
-        <input type="range" min="5000" max="60000" value="30000" oninput="document.getElementById('price-display').textContent='LKR '+parseInt(this.value).toLocaleString()">
+        <div class="range-row"><span>LKR 5,000</span><strong id="price-display">Any Price</strong></div>
+        <input type="range" id="filter-price" min="5000" max="60000" value="60000" oninput="document.getElementById('price-display').textContent='LKR '+parseInt(this.value).toLocaleString();applyFilters()">
       </div>
       <div class="filter-group">
         <h4>Distance to University</h4>
@@ -633,11 +634,11 @@
       <div class="filter-group">
         <h4>Room Type</h4>
         <div class="radio-list">
-          <label class="radio-item"><input type="radio" name="room" checked> Any Type</label>
-          <label class="radio-item"><input type="radio" name="room"> Single Room</label>
-          <label class="radio-item"><input type="radio" name="room"> Shared Room (2 pax)</label>
-          <label class="radio-item"><input type="radio" name="room"> Shared Room (3+ pax)</label>
-          <label class="radio-item"><input type="radio" name="room"> Studio / Annex</label>
+          <label class="radio-item"><input type="radio" name="room" value="" checked onchange="applyFilters()"> Any Type</label>
+          <label class="radio-item"><input type="radio" name="room" value="Single Room" onchange="applyFilters()"> Single Room</label>
+          <label class="radio-item"><input type="radio" name="room" value="Shared Room" onchange="applyFilters()"> Shared Room (2 pax)</label>
+          <label class="radio-item"><input type="radio" name="room" value="Shared Room" onchange="applyFilters()"> Shared Room (3+ pax)</label>
+          <label class="radio-item"><input type="radio" name="room" value="Studio" onchange="applyFilters()"> Studio / Annex</label>
         </div>
       </div>
       <div class="filter-group">
@@ -651,24 +652,24 @@
       </div>
       <div class="filter-group">
         <h4>Facilities</h4>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox" checked> 📶 WiFi</label>
-          <label class="check-item"><input type="checkbox"> 🍳 Cooking Allowed</label>
-          <label class="check-item"><input type="checkbox"> 🚗 Parking</label>
-          <label class="check-item"><input type="checkbox"> 🧺 Laundry</label>
-          <label class="check-item"><input type="checkbox"> ❄️ Air Conditioning</label>
-          <label class="check-item"><input type="checkbox"> 🛡 24h Security</label>
-          <label class="check-item"><input type="checkbox"> 🍽 Meals Included</label>
-          <label class="check-item"><input type="checkbox"> 📺 TV Room</label>
+        <div class="check-list" id="facilities-filter">
+          <label class="check-item"><input type="checkbox" value="WiFi" onchange="applyFilters()"> 📶 WiFi</label>
+          <label class="check-item"><input type="checkbox" value="Kitchen" onchange="applyFilters()"> 🍳 Cooking Allowed</label>
+          <label class="check-item"><input type="checkbox" value="Parking" onchange="applyFilters()"> 🚗 Parking</label>
+          <label class="check-item"><input type="checkbox" value="Laundry" onchange="applyFilters()"> 🧺 Laundry</label>
+          <label class="check-item"><input type="checkbox" value="AC" onchange="applyFilters()"> ❄️ Air Conditioning</label>
+          <label class="check-item"><input type="checkbox" value="Security" onchange="applyFilters()"> 🛡 24h Security</label>
+          <label class="check-item"><input type="checkbox" value="Meals" onchange="applyFilters()"> 🍽 Meals Included</label>
+          <label class="check-item"><input type="checkbox" value="TV Room" onchange="applyFilters()"> 📺 TV Room</label>
         </div>
       </div>
       <div class="filter-group">
         <h4>Availability Slots</h4>
         <div class="radio-list">
-          <label class="radio-item"><input type="radio" name="avail" checked> Any</label>
-          <label class="radio-item"><input type="radio" name="avail"> Available Now</label>
-          <label class="radio-item"><input type="radio" name="avail"> Future (next 3 months)</label>
-          <label class="radio-item"><input type="radio" name="avail"> 3+ Slots (Groups)</label>
+          <label class="radio-item"><input type="radio" name="avail" value="" checked onchange="applyFilters()"> Any</label>
+          <label class="radio-item"><input type="radio" name="avail" value="now" onchange="applyFilters()"> Available Now</label>
+          <label class="radio-item"><input type="radio" name="avail" value="future" onchange="applyFilters()"> Future (next 3 months)</label>
+          <label class="radio-item"><input type="radio" name="avail" value="groups" onchange="applyFilters()"> 3+ Slots (Groups)</label>
         </div>
       </div>
       <div class="filter-group">
@@ -677,23 +678,21 @@
           <label class="check-item"><input type="checkbox"> ✅ Verified Owner Only</label>
         </div>
       </div>
-      <button class="btn btn-outline" style="width:100%;margin-top:8px;justify-content:center;">Reset Filters</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:8px;justify-content:center;" onclick="resetFilters()">Reset Filters</button>
     </aside>
 
     <!-- Results -->
     <main class="results-main">
       <div class="results-toolbar">
-        <div class="results-count"><strong>24 boardings</strong> found near University of Moratuwa</div>
-        <select class="sort-select">
-          <option>Sort: Best Match</option>
-          <option>Price: Low to High</option>
-          <option>Price: High to Low</option>
-          <option>Distance: Nearest</option>
-          <option>Rating: Highest</option>
+        <div class="results-count" id="results-count"><strong>Loading...</strong></div>
+        <select class="sort-select" id="sort-select" onchange="applyFilters()">
+          <option value="newest">Sort: Newest</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
         </select>
       </div>
-      <div class="results-list">
-        <!-- Result 1 -->
+      <div class="results-list" id="results-list">
+        <!-- dynamically populated -->
         <div class="result-card" onclick="showPage('detail')">
           <div class="result-img" style="background:linear-gradient(135deg,#BFDBFE,#93C5FD);">
             <div class="result-img-placeholder">🏘️</div>
@@ -860,14 +859,14 @@
               <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified Owner</span>
               <span class="badge badge-group" style="font-size:12px;padding:5px 12px">👥 Best for Groups</span>
             </div>
-            <div class="detail-title">Sunset View Boarding House</div>
+            <div class="detail-title" id="detail-title">Sunset View Boarding House</div>
             <div class="detail-meta">
-              <span>📍 Galle Road, Moratuwa </span>
-              <span>🚶 1.5 km · 10 min walk to UoM</span>
-              <span><span class="rating-stars">★★★★★</span> 4.8 (32 reviews)</span>
+              <span id="detail-city">📍 Galle Road, Moratuwa</span>
+              <span id="detail-dist">🚶 1.5 km · 10 min walk to UoM</span>
+              <span id="detail-rating"><span class="rating-stars">★★★★★</span> 4.8 (32 reviews)</span>
             </div>
           </div>
-          <button class="btn btn-ghost" style="gap:6px">♡ Save</button>
+          <button class="btn btn-ghost" id="detail-save-btn" onclick="toggleSave()" style="gap:6px">♡ Save</button>
         </div>
         <p style="color:var(--gray-600);font-size:15px;line-height:1.7;margin-bottom:20px;">A comfortable and secure boarding facility designed specifically for university students. Located just minutes from the University of Moratuwa, offering clean rooms, reliable WiFi, and a supportive community environment. All rooms are furnished and bills included.</p>
 
@@ -942,6 +941,21 @@
             </div>
             <p class="review-text">"Good value for money. Location is perfect, walking distance from campus. Kitchen facilities could be a bit better."</p>
           </div>
+          <div id="detail-reviews-extra" style="display:none;"></div>
+          <!-- Write a review -->
+          <div style="margin-top:20px;background:var(--brand-light);border:1.5px dashed var(--brand-mid);border-radius:var(--radius-lg);padding:20px;" id="detail-review-form">
+            <p style="color:var(--brand);font-weight:600;font-size:15px;margin-bottom:12px;">✍️ Write a Review</p>
+            <div style="display:flex;gap:6px;margin-bottom:10px;" id="detail-stars">
+              <span onclick="setRating(1)" data-val="1" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+              <span onclick="setRating(2)" data-val="2" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+              <span onclick="setRating(3)" data-val="3" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+              <span onclick="setRating(4)" data-val="4" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+              <span onclick="setRating(5)" data-val="5" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+            </div>
+            <textarea id="detail-review-comment" placeholder="Share your experience..." style="width:100%;padding:10px 14px;border:1.5px solid var(--brand-mid);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;resize:vertical;min-height:80px;background:white;box-sizing:border-box;"></textarea>
+            <div id="detail-review-msg" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+            <button onclick="submitDetailReview()" class="btn btn-primary" style="margin-top:10px;">Submit Review</button>
+          </div>
         </div>
       </div>
 
@@ -967,8 +981,8 @@
             </div>
           </div>
           <div class="panel-btns">
-            <button class="btn btn-primary btn-lg" style="justify-content:center" onclick="showPage('booking')">🏠 Book Now</button>
-            <button class="btn btn-outline btn-lg" style="justify-content:center" onclick="showPage('booking')">📅 Reserve for Future</button>
+            <button class="btn btn-primary btn-lg" id="book-now-btn" style="justify-content:center" onclick="goToBooking()">🏠 Book Now</button>
+            <button class="btn btn-outline btn-lg" style="justify-content:center" onclick="goToBooking()">📅 Reserve for Future</button>
           </div>
           <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--gray-400);">🔒 Secure payment · Free cancellation within 24h</div>
           <div style="border-top:1px solid var(--gray-100);margin-top:16px;padding-top:14px;">
@@ -1019,16 +1033,16 @@
         <div class="booking-form-section">
           <h3>👤 Personal Details</h3>
           <div class="form-row">
-            <div class="field"><label>First Name</label><input type="text" placeholder="Kasun"></div>
-            <div class="field"><label>Last Name</label><input type="text" placeholder="Perera"></div>
+            <div class="field"><label>First Name</label><input id="bk-fname" type="text" placeholder="Kasun"></div>
+            <div class="field"><label>Last Name</label><input id="bk-lname" type="text" placeholder="Perera"></div>
           </div>
           <div class="form-row">
-            <div class="field"><label>Email</label><input type="email" placeholder="kasun@students.ac.lk"></div>
-            <div class="field"><label>Phone</label><input type="tel" placeholder="+94 77 123 4567"></div>
+            <div class="field"><label>Email</label><input id="bk-email" type="email" placeholder="kasun@students.ac.lk"></div>
+            <div class="field"><label>Phone</label><input id="bk-phone" type="tel" placeholder="+94 77 123 4567"></div>
           </div>
           <div class="form-row">
-            <div class="field"><label>University</label><input type="text" placeholder="University of Moratuwa"></div>
-            <div class="field"><label>Student ID</label><input type="text" placeholder="CS/2022/001"></div>
+            <div class="field"><label>University</label><input id="bk-uni" type="text" placeholder="University of Moratuwa"></div>
+            <div class="field"><label>Student ID</label><input id="bk-sid" type="text" placeholder="CS/2022/001"></div>
           </div>
         </div>
 
@@ -1036,9 +1050,9 @@
         <div class="booking-form-section">
           <h3>📅 Move-in Details</h3>
           <div class="form-row">
-            <div class="field"><label>Move-in Date</label><input type="date" value="2026-04-01"></div>
+            <div class="field"><label>Move-in Date</label><input id="bk-date" type="date"></div>
             <div class="field"><label>Duration</label>
-              <select>
+              <select id="bk-duration">
                 <option>3 months</option><option>6 months</option><option selected>12 months</option>
               </select>
             </div>
@@ -1081,15 +1095,15 @@
         <div class="booking-summary">
           <h3>📋 Order Summary</h3>
           <div style="background:var(--gray-50);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;">
-            <div style="font-weight:600;font-size:14px;">Sunset View Boarding House</div>
-            <div style="font-size:13px;color:var(--gray-500);">Single Room · 12 months</div>
+            <div style="font-weight:600;font-size:14px;" id="bk-sum-title">—</div>
+            <div style="font-size:13px;color:var(--gray-500);" id="bk-sum-room">—</div>
           </div>
           <div class="summary-item"><span>Advance payment</span><span>LKR 5,000</span></div>
-          <div class="summary-item"><span>Security deposit</span><span>LKR 18,000</span></div>
-          <div class="summary-item"><span>First month rent</span><span>LKR 18,000</span></div>
+          <div class="summary-item"><span>Security deposit</span><span id="bk-sum-deposit">LKR —</span></div>
+          <div class="summary-item"><span>First month rent</span><span id="bk-sum-rent">LKR —</span></div>
           <div class="summary-item" style="color:var(--success);"><span>🎉 First-time discount</span><span>- LKR 1,000</span></div>
-          <div class="summary-total"><span>Total Due Now</span><span style="color:var(--brand);">LKR 40,000</span></div>
-          <button class="btn btn-success btn-lg" style="width:100%;justify-content:center;margin-top:20px;font-size:15px;">
+          <div class="summary-total"><span>Total Due Now</span><span id="bk-sum-total" style="color:var(--brand);">LKR —</span></div>
+          <button class="btn btn-success btn-lg" onclick="submitBooking()" style="width:100%;justify-content:center;margin-top:20px;font-size:15px;">
             🔒 Pay Advance & Reserve
           </button>
           <div style="text-align:center;font-size:12px;color:var(--gray-400);margin-top:10px;">
@@ -1117,12 +1131,12 @@
   <div class="dashboard-wrap">
     <div class="dashboard-header">
       <div>
-        <div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">Welcome back, Nalini 👋</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;" id="dash-welcome">Welcome back 👋</div>
         <h1>Owner Dashboard</h1>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <span class="badge badge-verified" style="font-size:13px;padding:6px 14px;">✅ Verified Owner</span>
-        <button class="btn btn-primary">+ Add New Listing</button>
+        <button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>
       </div>
     </div>
 
@@ -1130,23 +1144,23 @@
     <div class="dashboard-grid">
       <div class="dash-stat">
         <div class="stat-icon">🏠</div>
-        <div class="stat-val">3</div>
-        <div class="stat-desc">Active Listings</div>
+        <div class="stat-val" id="dash-stat-listings">—</div>
+        <div class="stat-desc">My Listings</div>
       </div>
       <div class="dash-stat">
         <div class="stat-icon">📅</div>
-        <div class="stat-val">12</div>
-        <div class="stat-desc">Current Bookings</div>
+        <div class="stat-val" id="dash-stat-bookings">—</div>
+        <div class="stat-desc">My Bookings</div>
       </div>
       <div class="dash-stat">
         <div class="stat-icon">⏳</div>
-        <div class="stat-val">5</div>
-        <div class="stat-desc">Upcoming Reservations</div>
+        <div class="stat-val" id="dash-stat-pending">—</div>
+        <div class="stat-desc">Pending</div>
       </div>
       <div class="dash-stat">
-        <div class="stat-icon">💰</div>
-        <div class="stat-val" style="font-size:20px;">LKR 216k</div>
-        <div class="stat-desc">Monthly Revenue</div>
+        <div class="stat-icon">👤</div>
+        <div class="stat-val" id="dash-stat-role" style="font-size:18px;">—</div>
+        <div class="stat-desc">Account Type</div>
       </div>
     </div>
 
@@ -1312,14 +1326,14 @@
       <a onclick="showPage('detail')">Sunset View Boarding</a><span class="sep">›</span>
       <span>Reviews</span>
     </div>
-    <h1>Student Reviews</h1>
-    <p style="color:var(--gray-500);margin-bottom:24px;">Sunset View Boarding House · Molpe Road, Moratuwa</p>
+    <h1 id="reviews-title">Student Reviews</h1>
+    <p id="reviews-sub" style="color:var(--gray-500);margin-bottom:24px;">Sunset View Boarding House · Molpe Road, Moratuwa</p>
     <!-- Overall rating -->
     <div class="overall-rating">
       <div class="rating-big">
-        <div class="num">4.8</div>
-        <div class="stars">★★★★★</div>
-        <div class="count">32 reviews</div>
+        <div class="num" id="reviews-avg-num">4.8</div>
+        <div class="stars" id="reviews-avg-stars">★★★★★</div>
+        <div class="count" id="reviews-total-count">32 reviews</div>
       </div>
       <div class="rating-bars">
         <div class="rating-bar-row">
@@ -1368,7 +1382,7 @@
     </div>
 
     <!-- Reviews list -->
-    <div class="reviews-list">
+    <div class="reviews-list" id="reviews-dynamic-list">
       <div class="review-card-full">
         <div class="review-header">
           <div class="reviewer-avatar">AP</div>
@@ -1415,12 +1429,58 @@
       </div>
     </div>
     <div style="text-align:center;margin-top:24px;">
-      <button class="btn btn-outline">Load More Reviews</button>
+      <button class="btn btn-outline" onclick="loadMoreReviews()">Load More Reviews</button>
     </div>
   </div>
   <footer style="margin-top:40px;background:var(--gray-900);color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
     <strong style="color:white">Smart Boarding Finder</strong> · © 2026
   </footer>
+</div>
+
+
+<!-- ════════════ ADD LISTING PAGE ════════════ -->
+<div class="page" id="page-add-listing">
+  <div style="max-width:640px;margin:0 auto;padding:32px 24px;">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">Home</a><span class="sep">›</span>
+      <a onclick="showPage('dashboard')">Dashboard</a><span class="sep">›</span>
+      <span>Add Listing</span>
+    </div>
+    <h1 style="font-family:'Fraunces',serif;font-size:28px;font-weight:600;margin-bottom:24px;">Add New Listing</h1>
+    <div id="al-auth-warning" style="display:none;background:#FEF3C7;border:1px solid var(--warning);border-radius:var(--radius-md);padding:16px;margin-bottom:20px;font-size:14px;color:#92400E;">
+      ⚠️ You must be signed in as an <strong>owner</strong> to add listings. <a onclick="showPage('login')" style="color:var(--brand);cursor:pointer;font-weight:600;">Sign in →</a>
+    </div>
+    <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-xl);padding:28px;box-shadow:var(--shadow-md);">
+      <div class="form-group"><label>Property Name</label><input id="al-title" type="text" placeholder="e.g. Sunset View Boarding House"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>City / Area</label><input id="al-city" type="text" placeholder="e.g. Katubedda, Moratuwa"></div>
+        <div class="form-group"><label>Room Type</label>
+          <select id="al-roomtype">
+            <option value="Single Room">Single Room</option>
+            <option value="Shared Room">Shared Room</option>
+            <option value="Studio">Studio / Annex</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>Monthly Price (LKR)</label><input id="al-price" type="number" placeholder="18000"></div>
+        <div class="form-group"><label>Availability</label>
+          <select id="al-available">
+            <option value="true">✅ Available Now</option>
+            <option value="false">🕐 Coming Soon</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="al-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking, Laundry, Security"></div>
+      <div class="form-group"><label>Description</label><textarea id="al-description" placeholder="Describe your property for students..."></textarea></div>
+      <div id="al-msg" style="display:none;padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;font-weight:600;"></div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="submitListing()" class="btn btn-primary btn-lg" style="flex:1;justify-content:center;">🏠 Submit Listing</button>
+        <button onclick="showPage('dashboard')" class="btn btn-ghost btn-lg">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <footer style="margin-top:60px;background:var(--gray-900);color:var(--gray-400);text-align:center;padding:24px;font-size:13px;"><strong style="color:white">Smart Boarding Finder</strong> · © 2026</footer>
 </div>
 
 <!-- ════════════ LOGIN PAGE ════════════ -->
@@ -1449,14 +1509,14 @@
             <label>Email Address</label>
             <div class="input-icon-wrap">
               <span class="input-icon">✉️</span>
-              <input type="email" placeholder="you@example.com" style="padding-left:40px;">
+              <input id="login-email" type="email" placeholder="you@example.com" style="padding-left:40px;">
             </div>
           </div>
           <div class="auth-field">
             <label>Password</label>
             <div class="input-icon-wrap">
               <span class="input-icon">🔒</span>
-              <input type="password" placeholder="Enter your password" style="padding-left:40px;">
+              <input id="login-password" type="password" placeholder="Enter your password" style="padding-left:40px;">
             </div>
           </div>
           <div class="forgot-link"><a>Forgot password?</a></div>
@@ -1470,7 +1530,7 @@
             </div>
           </div>
           <label class="auth-check"><input type="checkbox" checked> Keep me signed in for 30 days</label>
-          <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="showPage('home')">Sign In →</button>
+          <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="loginUser()">Sign In →</button>
           <div class="auth-footer">Don't have an account? <a onclick="showPage('signup')">Create one for free</a></div>
           <div class="auth-footer" style="margin-top:8px;"><a onclick="showPage('home')">← Back to Home</a></div>
         </div>
@@ -1507,22 +1567,22 @@
           </div>
           <div class="auth-divider">or create account with email</div>
           <div class="auth-row">
-            <div class="auth-field" style="margin-bottom:0;"><label>First Name</label><input type="text" placeholder="Kasun"></div>
-            <div class="auth-field" style="margin-bottom:0;"><label>Last Name</label><input type="text" placeholder="Perera"></div>
+            <div class="auth-field" style="margin-bottom:0;"><label>First Name</label><input id="signup-fname" type="text" placeholder="Kasun"></div>
+            <div class="auth-field" style="margin-bottom:0;"><label>Last Name</label><input id="signup-lname" type="text" placeholder="Perera"></div>
           </div>
           <div style="margin-bottom:18px;"></div>
           <div class="auth-field">
             <label>Email Address</label>
             <div class="input-icon-wrap">
               <span class="input-icon">✉️</span>
-              <input type="email" placeholder="kasun@students.ac.lk" style="padding-left:40px;">
+              <input id="signup-email" type="email" placeholder="kasun@students.ac.lk" style="padding-left:40px;">
             </div>
           </div>
           <div class="auth-field">
             <label>Mobile Number</label>
             <div class="input-icon-wrap">
               <span class="input-icon">📱</span>
-              <input type="tel" placeholder="+94 77 123 4567" style="padding-left:40px;">
+              <input id="signup-phone" type="tel" placeholder="+94 77 123 4567" style="padding-left:40px;">
             </div>
           </div>
           <div id="signup-student-fields">
@@ -1552,7 +1612,7 @@
             <label>Password</label>
             <div class="input-icon-wrap">
               <span class="input-icon">🔒</span>
-              <input type="password" placeholder="Create a strong password" style="padding-left:40px;">
+              <input id="signup-password" type="password" placeholder="Create a strong password" style="padding-left:40px;">
             </div>
             <div class="password-hint">Min. 8 characters with a number and special character</div>
           </div>
@@ -1565,7 +1625,7 @@
           </div>
           <label class="auth-check"><input type="checkbox"> I agree to the <a style="color:var(--brand);font-weight:600;">Terms of Service</a> and <a style="color:var(--brand);font-weight:600;">Privacy Policy</a></label>
           <label class="auth-check"><input type="checkbox" checked> Send me updates about new listings and availability alerts</label>
-          <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="showPage('home')">🚀 Create Account</button>
+          <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="signupUser()">🚀 Create Account</button>
           <div class="auth-footer">Already have an account? <a onclick="showPage('login')">Sign in here</a></div>
           <div class="auth-footer" style="margin-top:8px;"><a onclick="showPage('home')">← Back to Home</a></div>
         </div>
@@ -1580,921 +1640,842 @@
 </div>
 
 <script>
-  // ════════════════════════════════════════════
-  //  SMART BOARDING FINDER — UoM  |  Full Logic
-  // ════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  SMART BOARDING FINDER — Complete Connected Script
+// ═══════════════════════════════════════════════════
 
-  const API = 'https://boarding-finder-backend-production.up.railway.app/api';
+const API = 'http://localhost:3000/api';
 
-  // ── State ──
-  let currentListing   = null;   // listing object currently being viewed
-  let allListings      = [];     // cached listings for filter/sort
-  let selectedRoomType = 'Single';
-  let reviewRating     = 0;
-  let currentSignupRole = 'student';
+// ── State ────────────────────────────────────────
+let allListings    = [];
+let currentListing = null;
+let currentRating  = 0;
+let reviewsOffset  = 0;
+let savedIds       = new Set(JSON.parse(localStorage.getItem('saved') || '[]'));
+let signupRole     = 'student';
 
-  // ── TOAST ──
-  function toast(msg, type = '') {
-    // Reuse existing toast if present, else create one
-    let t = document.getElementById('_toast');
-    if (!t) {
-      t = document.createElement('div');
-      t.id = '_toast';
-      t.style.cssText = 'position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;transform:translateY(100px);transition:transform .3s;pointer-events:none;color:white;max-width:340px;line-height:1.4;';
-      document.body.appendChild(t);
+// ── Toast notification ───────────────────────────
+function showToast(msg, type = '') {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:500;z-index:9999;transform:translateY(100px);transition:transform .3s;pointer-events:none;max-width:320px;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = type==='success'?'#10B981':type==='error'?'#EF4444':type==='warning'?'#F59E0B':'#1F2937';
+  t.style.color = type==='warning'?'#1F2937':'white';
+  t.style.transform = 'translateY(0)';
+  setTimeout(() => t.style.transform = 'translateY(100px)', 3500);
+}
+
+function showMsg(el, text, type) {
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.background = type==='success'?'#D1FAE5':type==='error'?'#FEE2E2':'#EFF6FF';
+  el.style.color = type==='success'?'#065F46':type==='error'?'#DC2626':'#1D4ED8';
+  el.textContent = text;
+}
+
+// ── Page navigation ──────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (!pg) { console.error('Page not found: page-' + id); return; }
+  pg.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const navMap = { home:'nav-home', results:'nav-results', dashboard:'nav-dashboard',
+    detail:'nav-results', booking:'nav-results', reviews:'nav-results',
+    'add-listing':'nav-dashboard', login:null, signup:null };
+  const el = document.getElementById(navMap[id]);
+  if (el) el.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+  if (id === 'results')   { applyFilters(); }
+  if (id === 'dashboard') { loadDashboard(); }
+  if (id === 'reviews' && currentListing) { loadReviewsPage(); }
+}
+
+function selectRoom(el) {
+  document.querySelectorAll('.room-type-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectPayment(el) {
+  document.querySelectorAll('.payment-option').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function switchLoginRole(role) {
+  document.getElementById('login-tab-student').classList.toggle('active', role==='student');
+  document.getElementById('login-tab-owner').classList.toggle('active', role==='owner');
+  document.getElementById('login-owner-extra').style.display = role==='owner'?'block':'none';
+}
+function switchSignupRole(role) {
+  signupRole = role;
+  document.getElementById('signup-tab-student').classList.toggle('active', role==='student');
+  document.getElementById('signup-tab-owner').classList.toggle('active', role==='owner');
+  document.getElementById('signup-student-fields').style.display = role==='student'?'block':'none';
+  document.getElementById('signup-owner-fields').style.display   = role==='owner'?'block':'none';
+}
+
+// ── Update nav after login/logout ────────────────
+function updateNav() {
+  const name = localStorage.getItem('userName');
+  const role = localStorage.getItem('userRole');
+  const navEnd = document.querySelector('.nav-end');
+  if (!navEnd) return;
+  if (name) {
+    navEnd.innerHTML = `
+      <span style="font-size:13px;color:var(--gray-600);font-weight:500;">👤 ${name}</span>
+      ${role==='landlord' ? '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>' : '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">My Bookings</button>'}
+      <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
+  } else {
+    navEnd.innerHTML = `
+      <button class="btn btn-ghost" onclick="goToAddListing()">List Property</button>
+      <button class="btn btn-ghost" onclick="showPage('login')">Sign In</button>
+      <button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>`;
+  }
+}
+
+// ── Auth ──────────────────────────────────────────
+const getToken    = () => localStorage.getItem('token');
+const getUserRole = () => localStorage.getItem('userRole');
+const isLoggedIn  = () => !!getToken();
+
+async function signupUser() {
+  const fname    = document.getElementById('signup-fname')?.value.trim();
+  const lname    = document.getElementById('signup-lname')?.value.trim();
+  const email    = document.getElementById('signup-email')?.value.trim();
+  const password = document.getElementById('signup-password')?.value;
+  if (!fname || !email || !password) { showToast('Please fill all required fields', 'error'); return; }
+  if (password.length < 6)           { showToast('Password must be at least 6 characters', 'error'); return; }
+  try {
+    const res  = await fetch(`${API}/auth/signup`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name:`${fname} ${lname}`, email, password, role: signupRole==='owner'?'landlord':'student' })
+    });
+    const data = await res.json();
+    if (data.message) {
+      showToast('Account created! Please sign in.', 'success');
+      document.getElementById('login-email').value = email;
+      showPage('login');
+    } else { showToast(data.error || 'Signup failed', 'error'); }
+  } catch { showToast('Connection error — is the server running?', 'error'); }
+}
+
+async function loginUser() {
+  const email    = document.getElementById('login-email')?.value.trim();
+  const password = document.getElementById('login-password')?.value;
+  if (!email || !password) { showToast('Please enter email and password', 'error'); return; }
+  try {
+    const res  = await fetch(`${API}/auth/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem('token',    data.token);
+      localStorage.setItem('userName', data.name);
+      localStorage.setItem('userRole', data.role);
+      localStorage.setItem('userId',   data.userId || '');
+      updateNav();
+      showToast(`Welcome back, ${data.name}! 👋`, 'success');
+      setTimeout(() => { showPage('home'); loadHomeListings(); }, 800);
+    } else { showToast(data.error || 'Login failed — check your credentials', 'error'); }
+  } catch { showToast('Connection error — is the server running?', 'error'); }
+}
+
+function logoutUser() {
+  ['token','userName','userRole','userId'].forEach(k => localStorage.removeItem(k));
+  allListings = [];
+  updateNav();
+  showToast('Signed out successfully', 'success');
+  showPage('home');
+  loadHomeListings();
+}
+
+// ── Fetch listings from backend ───────────────────
+async function fetchListings() {
+  try {
+    const res = await fetch(`${API}/listings`);
+    allListings = await res.json();
+    if (!Array.isArray(allListings)) allListings = [];
+  } catch { allListings = []; }
+}
+
+// ── Home page listings ───────────────────────────
+async function loadHomeListings() {
+  if (!allListings.length) await fetchListings();
+  const grid = document.getElementById('home-listings-grid');
+  if (!grid) return;
+  const available = allListings.filter(l => l.available).slice(0, 6);
+  if (!available.length) {
+    grid.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:40px;grid-column:1/-1;">No listings yet. Be the first to add one!</p>';
+    return;
+  }
+  grid.innerHTML = available.map(l => homeCardHTML(l)).join('');
+}
+
+const GRADS = [
+  'linear-gradient(135deg,#BFDBFE,#93C5FD)',
+  'linear-gradient(135deg,#A7F3D0,#6EE7B7)',
+  'linear-gradient(135deg,#FED7AA,#FCA5A5)',
+  'linear-gradient(135deg,#E9D5FF,#C4B5FD)',
+  'linear-gradient(135deg,#FEF3C7,#FDE68A)'
+];
+const ICONS = ['🏘️','🏠','🏡','🏢','🏗️'];
+
+function gradFor(id) { const n = parseInt(id.slice(-4), 16) % GRADS.length; return GRADS[isNaN(n)?0:n]; }
+function iconFor(id) { const n = parseInt(id.slice(-4), 16) % ICONS.length; return ICONS[isNaN(n)?0:n]; }
+
+function homeCardHTML(l) {
+  const saved = savedIds.has(l._id);
+  return `
+  <div class="boarding-card" onclick="openDetail('${l._id}')" style="cursor:pointer;">
+    <div class="card-img" style="background:${gradFor(l._id)};">
+      <div class="card-img-placeholder">${iconFor(l._id)}</div>
+      <div class="card-badges">
+        <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
+      </div>
+      <button class="fav-btn ${saved?'active':''}" onclick="event.stopPropagation();toggleSave('${l._id}',this)">${saved?'♥':'♡'}</button>
+    </div>
+    <div class="card-body">
+      <div class="card-title">${l.title}</div>
+      <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}</div>
+      <div class="card-meta">
+        <div class="card-price">LKR ${Number(l.price).toLocaleString()}<span>/mo</span></div>
+        ${l.available?'<div class="card-dist" style="background:#D1FAE5;color:#065F46;">✓ Now</div>':'<div class="card-dist">🕐 Soon</div>'}
+      </div>
+      <div class="card-tags">${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
+    </div>
+  </div>`;
+}
+
+function resultCardHTML(l) {
+  const saved = savedIds.has(l._id);
+  return `
+  <div class="result-card" onclick="openDetail('${l._id}')" style="cursor:pointer;">
+    <div class="result-img" style="background:${gradFor(l._id)};">
+      <div class="result-img-placeholder">${iconFor(l._id)}</div>
+    </div>
+    <div class="result-body">
+      <div>
+        <div class="result-header">
+          <div>
+            <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+              <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
+              ${l.roomType?`<span class="badge badge-verified">🛏 ${l.roomType}</span>`:''}
+            </div>
+            <div class="result-title">${l.title}</div>
+          </div>
+          <div class="result-price">LKR ${Number(l.price).toLocaleString()}<br><small>/month</small></div>
+        </div>
+        <div class="result-loc">📍 ${l.city}${l.description?' · '+l.description.slice(0,60)+'...':''}</div>
+        <div class="result-tags">${(l.amenities||[]).slice(0,5).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
+      </div>
+      <div class="result-footer">
+        <div style="font-size:13px;color:var(--gray-400);">${l.available?'✅ Available Now':'🕐 Coming Soon'}</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();toggleSave('${l._id}',this)" id="save-res-${l._id}">${saved?'♥ Saved':'♡ Save'}</button>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openDetail('${l._id}')">View Details</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Save / favourite ─────────────────────────────
+function toggleSave(id, btn) {
+  if (savedIds.has(id)) {
+    savedIds.delete(id);
+    if (btn) { btn.textContent = btn.classList.contains('fav-btn')?'♡':'♡ Save'; btn.classList.remove('active'); }
+  } else {
+    savedIds.add(id);
+    if (btn) { btn.textContent = btn.classList.contains('fav-btn')?'♥':'♥ Saved'; btn.classList.add('active'); }
+  }
+  localStorage.setItem('saved', JSON.stringify([...savedIds]));
+  const detailBtn = document.getElementById('detail-save-btn');
+  if (detailBtn && currentListing && currentListing._id === id) {
+    detailBtn.textContent = savedIds.has(id) ? '♥ Saved' : '♡ Save';
+  }
+}
+function toggleSave_detailBtn() {
+  if (!currentListing) return;
+  const btn = document.getElementById('detail-save-btn');
+  toggleSave(currentListing._id, btn);
+}
+
+// ── Home search ──────────────────────────────────
+function doHomeSearch() {
+  const price = document.getElementById('home-price')?.value || '';
+  const room  = document.getElementById('home-room')?.value  || '';
+  if (price) { const el = document.getElementById('search-price'); if (el) el.value = price; }
+  if (room)  { const el = document.getElementById('search-room');  if (el) el.value = room; }
+  showPage('results');
+}
+
+function quickFilter(type) {
+  resetFilters(true);
+  if (type==='available') { const r = document.querySelector('input[name="avail"][value="now"]'); if (r) r.checked=true; }
+  if (type==='future')    { const r = document.querySelector('input[name="avail"][value="future"]'); if (r) r.checked=true; }
+  showPage('results');
+}
+
+// ── Filter + search ──────────────────────────────
+function resetFilters(silent) {
+  const sc = document.getElementById('search-city');   if (sc) sc.value = '';
+  const sp = document.getElementById('search-price');  if (sp) sp.value = '';
+  const sr = document.getElementById('search-room');   if (sr) sr.value = '';
+  const fp = document.getElementById('filter-price');  if (fp) { fp.value = 60000; document.getElementById('price-display').textContent = 'Any Price'; }
+  document.querySelectorAll('input[name="avail"]').forEach(r => r.checked = r.value === '');
+  document.querySelectorAll('input[name="room"]').forEach(r  => r.checked = r.value === '');
+  document.querySelectorAll('#facilities-filter input').forEach(c => c.checked = false);
+  if (!silent) applyFilters();
+}
+
+async function applyFilters() {
+  if (!allListings.length) await fetchListings();
+
+  const city     = (document.getElementById('search-city')?.value  || '').trim().toLowerCase();
+  const priceCap = parseInt(document.getElementById('filter-price')?.value) || 60000;
+  const topPrice = document.getElementById('search-price')?.value ? parseInt(document.getElementById('search-price').value) : 60000;
+  const maxPrice = Math.min(priceCap, topPrice || 60000);
+  const roomSel  = document.querySelector('input[name="room"]:checked')?.value  || document.getElementById('search-room')?.value || '';
+  const availSel = document.querySelector('input[name="avail"]:checked')?.value || '';
+  const amenReq  = [...document.querySelectorAll('#facilities-filter input:checked')].map(c => c.value.toLowerCase());
+  const sort     = document.getElementById('sort-select')?.value || 'newest';
+
+  let filtered = allListings.filter(l => {
+    if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
+    if (l.price > maxPrice) return false;
+    if (roomSel && l.roomType && l.roomType !== roomSel) return false;
+    if (availSel === 'now'    && !l.available)  return false;
+    if (availSel === 'future' &&  l.available)  return false;
+    if (amenReq.length) {
+      const lAm = (l.amenities||[]).map(a => a.toLowerCase());
+      if (!amenReq.every(req => lAm.some(a => a.includes(req)))) return false;
     }
-    t.textContent = msg;
-    t.style.background = type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#1F2937';
-    t.style.transform = 'translateY(0)';
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => { t.style.transform = 'translateY(100px)'; }, 3500);
+    return true;
+  });
+
+  if (sort === 'price-asc')  filtered.sort((a,b) => a.price - b.price);
+  if (sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+  if (sort === 'newest')     filtered.sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+
+  const list  = document.getElementById('results-list');
+  const count = document.getElementById('results-count');
+  if (count) count.innerHTML = `<strong>${filtered.length} boarding${filtered.length!==1?'s':''}</strong> found near UoM`;
+  if (list)  list.innerHTML  = filtered.length
+    ? filtered.map(l => resultCardHTML(l)).join('')
+    : '<div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--gray-400);">😕 No listings match your filters. <a onclick="resetFilters()" style="color:var(--brand);cursor:pointer;font-weight:600;">Reset filters</a></div>';
+}
+
+// ── Open listing detail ───────────────────────────
+async function openDetail(id) {
+  try {
+    const res = await fetch(`${API}/listings/${id}`);
+    currentListing = await res.json();
+  } catch { showToast('Could not load listing details', 'error'); return; }
+
+  const l = currentListing;
+
+  // Title + breadcrumb
+  const titleEl = document.getElementById('detail-title');
+  if (titleEl) titleEl.textContent = l.title;
+  document.querySelectorAll('.breadcrumb span:last-child').forEach(s => { if (s.closest('#page-detail')) s.textContent = l.title; });
+
+  // Meta
+  const cityEl   = document.getElementById('detail-city');
+  const distEl   = document.getElementById('detail-dist');
+  const ratingEl = document.getElementById('detail-rating');
+  if (cityEl)   cityEl.innerHTML   = `📍 ${l.city}`;
+  if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'} · LKR ${Number(l.price).toLocaleString()}/mo`;
+  if (ratingEl) ratingEl.innerHTML = `<span class="rating-stars">★★★★☆</span> Loading reviews...`;
+
+  // Description paragraph
+  const descEl = document.querySelector('#page-detail .detail-content > p');
+  if (descEl) descEl.textContent = l.description || 'A comfortable boarding place near campus with great facilities.';
+
+  // Badges
+  const badgesDiv = document.querySelector('#page-detail .detail-content .badge:first-of-type')?.parentElement;
+  if (badgesDiv) {
+    badgesDiv.innerHTML = `
+      <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
+      <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified</span>`;
   }
 
-  // ── PAGE NAVIGATION ──
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-    const navMap = { home:'nav-home', results:'nav-results', dashboard:'nav-dashboard', detail:'nav-results', booking:'nav-results', reviews:'nav-results', login:null, signup:null };
-    const navId = navMap[id];
-    if (navId) document.getElementById(navId).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Trigger data loads when navigating to certain pages
-    if (id === 'results' && allListings.length === 0) loadListings();
-    if (id === 'dashboard') {
-      const role = localStorage.getItem('userRole');
-      if (!localStorage.getItem('token')) { showPage('login'); return; }
-      if (role !== 'landlord') { toast('Only property owners can access the Owner Dashboard.', 'error'); showPage('home'); return; }
-      loadDashboard();
-    }
+  // Amenities
+  const facGrid = document.querySelector('#page-detail .facilities-grid');
+  if (facGrid && l.amenities?.length) {
+    const emojiMap = { WiFi:'📶', Kitchen:'🍳', Parking:'🚗', Laundry:'🧺', Security:'🛡️', AC:'❄️', Meals:'🍽', 'TV Room':'📺', Garden:'🌿' };
+    facGrid.innerHTML = l.amenities.map(a => {
+      const icon = emojiMap[a] || '✨';
+      return `<div class="facility-chip"><span class="facility-icon">${icon}</span> ${a}</div>`;
+    }).join('');
   }
 
-  // ── ROOM SELECTION (detail page) ──
-  function selectRoom(el) {
-    document.querySelectorAll('.room-type-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedRoomType = el.querySelector('.type-name')?.textContent?.includes('Shared') ? 'Shared'
-                     : el.querySelector('.type-name')?.textContent?.includes('Studio')  ? 'Studio'
-                     : 'Single';
-    // Update booking panel price live
-    if (currentListing) {
-      const p = currentListing.price;
-      const rp = selectedRoomType === 'Shared' ? Math.round(p * 0.65) : selectedRoomType === 'Studio' ? Math.round(p * 1.4) : p;
-      const panelPrice = document.querySelector('.price-big');
-      if (panelPrice) panelPrice.textContent = 'LKR ' + rp.toLocaleString();
-    }
+  // Room type card
+  const roomGrid = document.querySelector('#page-detail .room-types-grid');
+  if (roomGrid) {
+    roomGrid.innerHTML = `
+      <div class="room-type-card selected" onclick="selectRoom(this)">
+        <div class="type-icon">🛏️</div>
+        <div class="type-name">${l.roomType||'Room'}</div>
+        <div class="type-price">LKR ${Number(l.price).toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">${l.available?'Available':'Unavailable'}</div>
+      </div>`;
   }
 
-  // ── PAYMENT SELECTION ──
-  function selectPayment(el) {
-    document.querySelectorAll('.payment-option').forEach(p => p.classList.remove('selected'));
-    el.classList.add('selected');
-  }
-
-  // ── AUTH ROLE TABS ──
-  function switchLoginRole(role) {
-    document.getElementById('login-tab-student').classList.toggle('active', role === 'student');
-    document.getElementById('login-tab-owner').classList.toggle('active', role === 'owner');
-    document.getElementById('login-owner-extra').style.display = role === 'owner' ? 'block' : 'none';
-  }
-
-  function switchSignupRole(role) {
-    currentSignupRole = role;
-    document.getElementById('signup-tab-student').classList.toggle('active', role === 'student');
-    document.getElementById('signup-tab-owner').classList.toggle('active', role === 'owner');
-    document.getElementById('signup-student-fields').style.display = role === 'student' ? 'block' : 'none';
-    document.getElementById('signup-owner-fields').style.display   = role === 'owner'   ? 'block' : 'none';
-  }
-
-  // ── NAV UI: update buttons after login/logout ──
-  function updateNavForUser() {
-    const name = localStorage.getItem('userName');
-    const role = localStorage.getItem('userRole');
-    const navEnd = document.getElementById('nav-end') || document.querySelector('.nav-end');
-    if (!navEnd) return;
-    if (name) {
-      navEnd.innerHTML = `
-        <span style="font-size:13px;color:var(--gray-600);font-weight:500;">👤 ${name}</span>
-        ${role === 'landlord'
-          ? '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>'
-          : '<button class="btn btn-ghost" onclick="openMyBookings()">My Bookings</button>'}
-        <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>
-      `;
+  // Booking panel price + availability
+  const priceBig = document.querySelector('#page-detail .price-big');
+  const priceSub = document.querySelector('#page-detail .price-sub');
+  const availBadge = document.querySelector('#page-detail .avail-badge');
+  if (priceBig) priceBig.textContent = `LKR ${Number(l.price).toLocaleString()}`;
+  if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'} · Bills may vary`;
+  if (availBadge) {
+    if (l.available) {
+      availBadge.style.background = '#D1FAE5'; availBadge.style.color = '#065F46';
+      availBadge.innerHTML = '<span class="dot"></span> Available Now';
     } else {
-      navEnd.innerHTML = `
-        <button class="btn btn-ghost" onclick="showPage(\'dashboard\')">List Property</button>
-        <button class="btn btn-ghost" onclick="showPage(\'login\')">Sign In</button>
-        <button class="btn btn-primary" onclick="showPage(\'signup\')">Sign Up</button>
-      `;
+      availBadge.style.background = '#FEF3C7'; availBadge.style.color = '#92400E';
+      availBadge.innerHTML = '🕐 Currently Unavailable';
     }
   }
 
-  // ── SIGN UP ──
-  async function doSignup() {
-    // Collect fields from sign-up page
-    const inputs    = document.querySelectorAll('#page-signup input[type=text], #page-signup input[type=email], #page-signup input[type=tel]');
-    const firstName = inputs[0]?.value.trim();
-    const lastName  = inputs[1]?.value.trim();
-    const emailEl   = document.querySelector('#page-signup input[type=email]');
-    const passwordEl= document.querySelectorAll('#page-signup input[type=password]')[0];
-    const confirmEl = document.querySelectorAll('#page-signup input[type=password]')[1];
-
-    const name = (firstName + ' ' + lastName).trim();
-    const email = emailEl?.value.trim();
-    const password = passwordEl?.value;
-    const confirm  = confirmEl?.value;
-    const role = currentSignupRole === 'owner' ? 'landlord' : 'student';
-
-    if (!name || !email || !password) { toast('Please fill in your name, email and password.', 'error'); return; }
-    if (password !== confirm)          { toast('Passwords do not match.', 'error'); return; }
-    if (password.length < 6)           { toast('Password must be at least 6 characters.', 'error'); return; }
-
-    try {
-      const res  = await fetch(`${API}/auth/signup`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, email, password, role }) });
-      const data = await res.json();
-      if (data.message) { toast('Account created! Please sign in. 🎉', 'success'); showPage('login'); }
-      else toast(data.error || 'Signup failed. Please try again.', 'error');
-    } catch(e) { toast('Connection error. Please check your internet.', 'error'); }
+  // Book Now button state
+  const bookBtn = document.getElementById('book-now-btn');
+  if (bookBtn) {
+    bookBtn.disabled    = !l.available;
+    bookBtn.textContent = l.available ? '🏠 Book Now' : '🚫 Not Available';
+    bookBtn.style.opacity = l.available ? '1' : '0.5';
+    bookBtn.style.cursor  = l.available ? 'pointer' : 'not-allowed';
   }
 
-  // ── SIGN IN ──
-  async function doLogin() {
-    const emailEl    = document.querySelector('#page-login input[type=email]');
-    const passwordEl = document.querySelector('#page-login input[type=password]');
-    const email    = emailEl?.value.trim();
-    const password = passwordEl?.value;
-    if (!email || !password) { toast('Please enter your email and password.', 'error'); return; }
-    try {
-      const res  = await fetch(`${API}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password }) });
-      const data = await res.json();
-      if (data.token) {
-        localStorage.setItem('token',    data.token);
-        localStorage.setItem('userName', data.name);
-        localStorage.setItem('userId',   data.userId || '');
-        localStorage.setItem('userRole', data.role);
-        updateNavForUser();
-        toast(`Welcome back, ${data.name}! 👋`, 'success');
-        // Redirect: landlords go to dashboard, students go home
-        if (data.role === 'landlord') { showPage('dashboard'); loadDashboard(); }
-        else showPage('home');
-      } else toast(data.error || 'Sign in failed. Please check your details.', 'error');
-    } catch(e) { toast('Connection error. Please check your internet.', 'error'); }
+  // Owner details
+  const ownerDiv = document.querySelector('#page-detail .booking-panel > div:last-child > div:last-child');
+  if (ownerDiv) {
+    ownerDiv.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">🏠</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;">Property Owner</div>
+          <div style="font-size:12px;color:var(--success);">✅ Verified Owner</div>
+        </div>
+      </div>`;
   }
 
-  // ── LOGOUT ──
-  function logoutUser() {
-    localStorage.clear();
-    currentListing = null;
-    allListings    = [];
-    updateNavForUser();
-    showPage('home');
-    loadListings();
-    toast('Signed out successfully.');
-  }
+  // Save button state
+  const saveBtn = document.getElementById('detail-save-btn');
+  if (saveBtn) saveBtn.textContent = savedIds.has(l._id) ? '♥ Saved' : '♡ Save';
 
-  // ── MY BOOKINGS (Student popup) ──
-  async function openMyBookings() {
-    if (!localStorage.getItem('token')) { showPage('login'); return; }
-    const token = localStorage.getItem('token');
-    try {
-      const res      = await fetch(`${API}/bookings/my`, { headers:{ 'Authorization': `Bearer ${token}` } });
-      const bookings = await res.json();
-      // Build and inject modal
-      let html = `
-        <div id="_mybk_overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;">
-          <div style="background:white;border-radius:20px;padding:32px;width:100%;max-width:580px;max-height:82vh;overflow-y:auto;position:relative;">
-            <button onclick="document.getElementById('_mybk_overlay').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray-400);">✕</button>
-            <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:4px;">My Bookings</h2>
-            <p style="font-size:14px;color:var(--gray-500);margin-bottom:20px;">Your boarding reservations</p>`;
-      if (!bookings.length) {
-        html += `<div style="text-align:center;padding:40px 0;color:var(--gray-400);font-size:14px;">No bookings yet. <a onclick="document.getElementById('_mybk_overlay').remove();showPage('results');" style="color:var(--brand);cursor:pointer;font-weight:600;">Browse listings →</a></div>`;
-      } else {
-        html += bookings.map(b => {
-          const listing = b.listing || {};
-          const sClass  = b.status === 'confirmed' ? '#D1FAE5;color:#065F46' : b.status === 'cancelled' ? '#FEE2E2;color:#991B1B' : '#FEF3C7;color:#92400E';
-          return `
-            <div style="border:1px solid var(--gray-200);border-radius:14px;padding:16px;margin-bottom:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-                <div>
-                  <div style="font-weight:700;font-size:15px;">${listing.title || 'Boarding Place'}</div>
-                  <div style="font-size:13px;color:var(--gray-500);">📍 ${listing.city || '—'} · ${b.roomType || 'Room'}</div>
-                  <div style="font-size:13px;color:var(--gray-600);margin-top:4px;">📅 Move-in: ${b.moveInDate ? new Date(b.moveInDate).toLocaleDateString() : '—'}</div>
-                  ${listing.price ? `<div style="font-size:13px;color:var(--brand);font-weight:700;margin-top:2px;">LKR ${listing.price.toLocaleString()}/mo</div>` : ''}
-                </div>
-                <span style="background:${sClass};padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;white-space:nowrap;">${b.status || 'pending'}</span>
-              </div>
-            </div>`;
-        }).join('');
+  // Update booking summary
+  const sumTitle = document.getElementById('bk-sum-title');
+  const sumRoom  = document.getElementById('bk-sum-room');
+  const sumDep   = document.getElementById('bk-sum-deposit');
+  const sumRent  = document.getElementById('bk-sum-rent');
+  const sumTotal = document.getElementById('bk-sum-total');
+  if (sumTitle) sumTitle.textContent = l.title;
+  if (sumRoom)  sumRoom.textContent  = `${l.roomType||'Room'} · 12 months`;
+  if (sumDep)   sumDep.textContent   = `LKR ${Number(l.price).toLocaleString()}`;
+  if (sumRent)  sumRent.textContent  = `LKR ${Number(l.price).toLocaleString()}`;
+  if (sumTotal) sumTotal.textContent = `LKR ${(5000 + l.price + l.price - 1000).toLocaleString()}`;
+
+  // Load reviews preview
+  await loadReviewsPreview();
+  reviewsOffset = 0;
+  showPage('detail');
+}
+
+// ── Reviews preview (on detail page) ─────────────
+async function loadReviewsPreview() {
+  if (!currentListing) return;
+  try {
+    const res     = await fetch(`${API}/reviews/${currentListing._id}`);
+    const reviews = await res.json();
+
+    // Update rating in detail meta
+    if (reviews.length) {
+      const avg = (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1);
+      const rEl = document.getElementById('detail-rating');
+      if (rEl) rEl.innerHTML = `<span class="rating-stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</span> ${avg} (${reviews.length} reviews)`;
+
+      // Inject real reviews into the 2 preview cards
+      const extra = document.getElementById('detail-reviews-extra');
+      if (extra && reviews.length > 0) {
+        extra.style.display = 'block';
+        extra.innerHTML = reviews.slice(0,3).map(r => reviewCardHTML(r)).join('');
       }
-      html += `</div></div>`;
-      document.body.insertAdjacentHTML('beforeend', html);
-    } catch(e) { toast('Could not load bookings. Please try again.', 'error'); }
-  }
-
-  // ── FETCH LISTINGS ──
-  async function fetchListings(params = {}) {
-    const qs  = new URLSearchParams(params).toString();
-    const res = await fetch(`${API}/listings${qs ? '?' + qs : ''}`);
-    return await res.json();
-  }
-
-  async function loadListings(params = {}) {
-    try {
-      allListings = await fetchListings(params);
-      renderFeaturedCards(allListings.slice(0, 3));
-      renderResultCards(allListings);
-    } catch(e) {
-      const el = document.getElementById('results-list') || document.querySelector('.results-list');
-      if (el) el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-400);">Could not load listings. Please check your connection.</div>';
     }
-  }
 
-  // ── RENDER FEATURED CARDS (Home page) ──
-  // We keep your 3 static UoM cards visible as skeleton/fallback,
-  // but replace the cards-grid innerHTML with live data when available.
-  function renderFeaturedCards(listings) {
-    const grid = document.querySelector('#page-home .cards-grid');
-    if (!grid || !listings.length) return;
-    grid.innerHTML = listings.map(l => buildCard(l)).join('');
-  }
+    // Update see-all link
+    const seeAll = document.querySelector('#page-detail .see-all');
+    if (seeAll) seeAll.textContent = `All ${reviews.length} reviews →`;
+  } catch {}
+}
 
-  // ── RENDER RESULT CARDS (Search page) ──
-  function renderResultCards(listings) {
-    const list    = document.querySelector('#page-results .results-list');
-    const countEl = document.querySelector('#page-results .results-count');
-    if (!list) return;
-    if (!listings.length) {
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-400);">No listings match your search.</div>';
-      if (countEl) countEl.innerHTML = '<strong>0 boardings</strong> found near University of Moratuwa';
+function reviewCardHTML(r) {
+  const name = r.student?.name || 'Anonymous';
+  const init = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  const date = new Date(r.createdAt).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+  const stars = '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
+  return `
+  <div class="review-card" style="margin-top:14px;">
+    <div class="review-header">
+      <div class="reviewer-avatar">${init}</div>
+      <div class="reviewer-info"><div class="name">${name}</div><div class="date">${date}</div></div>
+      <div class="review-stars">${stars}</div>
+    </div>
+    <p class="review-text">"${r.comment||''}"</p>
+  </div>`;
+}
+
+function reviewCardFullHTML(r) {
+  const name = r.student?.name || 'Anonymous';
+  const init = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  const date = new Date(r.createdAt).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const stars= '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
+  return `
+  <div class="review-card-full">
+    <div class="review-header">
+      <div class="reviewer-avatar">${init}</div>
+      <div class="reviewer-info"><div class="name">${name}</div><div class="date">${date}</div></div>
+      <div class="review-stars" style="font-size:16px;">${stars}</div>
+    </div>
+    <p class="review-text" style="margin-bottom:10px;">"${r.comment||''}"</p>
+  </div>`;
+}
+
+// ── Star rating ──────────────────────────────────
+function setRating(val) {
+  currentRating = val;
+  document.querySelectorAll('#detail-stars span').forEach(s => {
+    s.style.color = parseInt(s.dataset.val) <= val ? '#F59E0B' : '#D1D5DB';
+  });
+}
+
+// ── Submit review from detail page ───────────────
+async function submitDetailReview() {
+  if (!isLoggedIn()) { showToast('Please sign in to write a review', 'warning'); showPage('login'); return; }
+  if (!currentListing) return;
+  if (!currentRating)  { showToast('Please select a star rating', 'error'); return; }
+  const comment = document.getElementById('detail-review-comment')?.value.trim();
+  const msg     = document.getElementById('detail-review-msg');
+  if (!comment) return showMsg(msg, '⚠️ Please write a comment.', 'error');
+  try {
+    const res  = await fetch(`${API}/reviews`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
+      body: JSON.stringify({ listing: currentListing._id, rating: currentRating, comment })
+    });
+    const data = await res.json();
+    if (data.review) {
+      showMsg(msg, '✅ Review submitted! Thank you 🙏', 'success');
+      document.getElementById('detail-review-comment').value = '';
+      setRating(0);
+      await loadReviewsPreview();
+    } else { showMsg(msg, '❌ '+(data.error||'Could not submit review'), 'error'); }
+  } catch { showMsg(document.getElementById('detail-review-msg'), '❌ Connection error', 'error'); }
+}
+
+// ── Reviews page ──────────────────────────────────
+async function loadReviewsPage() {
+  if (!currentListing) return;
+  const titleEl = document.getElementById('reviews-title');
+  const subEl   = document.getElementById('reviews-sub');
+  if (titleEl) titleEl.textContent = `Reviews — ${currentListing.title}`;
+  if (subEl)   subEl.textContent   = `${currentListing.title} · ${currentListing.city}`;
+
+  try {
+    const res     = await fetch(`${API}/reviews/${currentListing._id}`);
+    const reviews = await res.json();
+    reviewsOffset = 0;
+
+    const numEl   = document.getElementById('reviews-avg-num');
+    const starsEl = document.getElementById('reviews-avg-stars');
+    const cntEl   = document.getElementById('reviews-total-count');
+    const list    = document.getElementById('reviews-dynamic-list');
+
+    if (!reviews.length) {
+      if (numEl) numEl.textContent   = '—';
+      if (starsEl) starsEl.textContent='☆☆☆☆☆';
+      if (cntEl) cntEl.textContent   = '0 reviews';
+      if (list) list.innerHTML       = '<p style="color:var(--gray-400);text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
       return;
     }
-    if (countEl) countEl.innerHTML = `<strong>${listings.length} boarding${listings.length !== 1 ? 's' : ''}</strong> found near University of Moratuwa`;
-    list.innerHTML = listings.map(l => buildResultCard(l)).join('');
-  }
 
-  const COLORS = ['linear-gradient(135deg,#BFDBFE,#93C5FD)','linear-gradient(135deg,#A7F3D0,#6EE7B7)','linear-gradient(135deg,#FED7AA,#FCA5A5)','linear-gradient(135deg,#E9D5FF,#C4B5FD)'];
-  const ICONS  = ['🏘️','🏠','🏡','🏢'];
-  function cardIdx(id) { return Math.abs((id || '0').charCodeAt(0)) % 4; }
+    const avg = reviews.reduce((s,r)=>s+r.rating,0) / reviews.length;
+    if (numEl)   numEl.textContent   = avg.toFixed(1);
+    if (starsEl) starsEl.textContent = '★'.repeat(Math.round(avg))+'☆'.repeat(5-Math.round(avg));
+    if (cntEl)   cntEl.textContent   = `${reviews.length} reviews`;
 
-  function buildCard(l) {
-    const i = cardIdx(l._id);
-    const avail = l.available;
-    return `
-      <div class="boarding-card" onclick="openDetail('${l._id}')">
-        <div class="card-img" style="background:${COLORS[i]};">
-          <div class="card-img-placeholder">${ICONS[i]}</div>
-          <div class="card-badges">
-            <span class="badge ${avail ? 'badge-available' : 'badge-soon'}">${avail ? '✓ Available Now' : '📅 Fully Booked'}</span>
-          </div>
-          <button class="fav-btn" onclick="event.stopPropagation();this.classList.toggle('active')">♡</button>
-        </div>
-        <div class="card-body">
-          <div class="card-title">${l.title}</div>
-          <div class="card-location">📍 ${l.city}</div>
-          <div class="card-meta">
-            <div class="card-price">LKR ${l.price.toLocaleString()}<span>/mo</span></div>
-          </div>
-          <div class="card-tags">${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
-        </div>
-      </div>`;
-  }
-
-  function buildResultCard(l) {
-    const i = cardIdx(l._id);
-    const avail = l.available;
-    return `
-      <div class="result-card" onclick="openDetail('${l._id}')">
-        <div class="result-img" style="background:${COLORS[i]};">
-          <div class="result-img-placeholder">${ICONS[i]}</div>
-        </div>
-        <div class="result-body">
-          <div>
-            <div class="result-header">
-              <div>
-                <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
-                  <span class="badge ${avail ? 'badge-available' : 'badge-soon'}">${avail ? '✓ Available Now' : '📅 Fully Booked'}</span>
-                </div>
-                <div class="result-title">${l.title}</div>
-              </div>
-              <div class="result-price">LKR ${l.price.toLocaleString()}<br><small>/month</small></div>
-            </div>
-            <div class="result-loc">📍 ${l.city}</div>
-            <div class="result-tags">${(l.amenities||[]).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
-          </div>
-          <div class="result-footer">
-            <div style="font-size:13px;color:var(--gray-400);">✅ Verified listing</div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
-              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openDetail('${l._id}')">${avail ? 'View & Book' : 'View Details'}</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  // ── DETAIL PAGE ──
-  async function openDetail(id) {
-    showPage('detail');
-    try {
-      const res = await fetch(`${API}/listings/${id}`);
-      const l   = await res.json();
-      currentListing   = l;
-      selectedRoomType = 'Single';
-
-      // Reset room card selection
-      const roomCards = document.querySelectorAll('#page-detail .room-type-card');
-      roomCards.forEach((c,i) => c.classList.toggle('selected', i===0));
-
-      // Update breadcrumb title
-      const bc = document.querySelector('#page-detail .breadcrumb span:last-child');
-      if (bc) bc.textContent = l.title;
-
-      // Title, meta, description
-      const titleEl = document.querySelector('#page-detail .detail-title');
-      if (titleEl) titleEl.textContent = l.title;
-
-      const metaEl = document.querySelector('#page-detail .detail-meta');
-      if (metaEl) metaEl.innerHTML = `<span>📍 ${l.city}</span>`;
-
-      const descEl = document.querySelector('#page-detail .detail-content > p');
-      if (descEl) descEl.textContent = l.description || 'A comfortable and secure boarding facility designed for university students near UoM.';
-
-      // Badges
-      const badgesEl = document.querySelector('#page-detail .detail-content > div > div > div:first-child');
-      if (badgesEl) {
-        badgesEl.innerHTML = `
-          <span class="badge ${l.available ? 'badge-available' : 'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available ? '✓ Available Now' : '📅 Fully Booked'}</span>
-          <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified Owner</span>`;
-      }
-
-      // Room type prices
-      const p = l.price;
-      const roomCards2 = document.querySelectorAll('#page-detail .room-type-card');
-      if (roomCards2[0]) roomCards2[0].querySelector('.type-price').textContent = `LKR ${p.toLocaleString()}`;
-      if (roomCards2[1]) roomCards2[1].querySelector('.type-price').textContent = `LKR ${Math.round(p*0.65).toLocaleString()}`;
-      if (roomCards2[2]) roomCards2[2].querySelector('.type-price').textContent = `LKR ${Math.round(p*1.4).toLocaleString()}`;
-
-      // Facilities grid
-      const facGrid = document.querySelector('#page-detail .facilities-grid');
-      const facMap  = { WiFi:'📶', Kitchen:'🍳', Parking:'🚗', Laundry:'🧺', Security:'🛡️', AC:'❄️', Meals:'🍽', 'TV Room':'📺' };
-      if (facGrid) {
-        facGrid.innerHTML = (l.amenities||[]).map(a =>
-          `<div class="facility-chip"><span class="facility-icon">${facMap[a]||'✅'}</span> ${a}</div>`
-        ).join('') || '<p style="color:var(--gray-400);font-size:13px;">No facilities listed.</p>';
-      }
-
-      // Booking panel: price, availability
-      const priceBig = document.querySelector('#page-detail .price-big');
-      if (priceBig) priceBig.textContent = `LKR ${p.toLocaleString()}`;
-
-      const priceSub = document.querySelector('#page-detail .price-sub');
-      if (priceSub) priceSub.textContent = `per month · Single Room · Bills included`;
-
-      const availBadge = document.querySelector('#page-detail .avail-badge');
-      if (availBadge) {
-        availBadge.style.background = l.available ? '#D1FAE5' : '#FEE2E2';
-        availBadge.style.color      = l.available ? '#065F46' : '#991B1B';
-        availBadge.innerHTML = l.available
-          ? `<span class="dot"></span> Available Now`
-          : `<span style="display:inline-block;width:7px;height:7px;background:#EF4444;border-radius:50%;"></span> Fully Booked`;
-      }
-
-      // Disable Book Now if not available
-      const bookBtns = document.querySelectorAll('#page-detail .panel-btns button');
-      bookBtns.forEach(btn => {
-        btn.disabled             = !l.available;
-        btn.style.opacity        = l.available ? '1' : '0.45';
-        btn.style.cursor         = l.available ? 'pointer' : 'not-allowed';
-        btn.title                = l.available ? '' : 'This property is fully booked';
-      });
-
-      // Owner
-      const ownerName = document.querySelector('#page-detail .booking-panel div[style*="font-weight:600;font-size:14px"]');
-      if (ownerName) ownerName.textContent = 'Property Owner';
-
-      // Load reviews
-      await loadDetailReviews(id);
-
-    } catch(e) { toast('Could not load listing. Please try again.', 'error'); }
-  }
-
-  async function loadDetailReviews(listingId) {
-    const el = document.querySelector('#page-detail .reviews-section');
-    if (!el) return;
-    try {
-      const res     = await fetch(`${API}/reviews/${listingId}`);
-      const reviews = await res.json();
-      const container = el.querySelector('.review-card')?.parentElement || el;
-      // Remove old review cards but keep the header
-      el.querySelectorAll('.review-card').forEach(c => c.remove());
-      if (!reviews.length) {
-        el.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;">No reviews yet. Be the first!</p>');
-        return;
-      }
-      reviews.slice(0,2).forEach(r => el.insertAdjacentHTML('beforeend', buildReviewCard(r)));
-    } catch(e) {}
-  }
-
-  function buildReviewCard(r) {
-    const name     = r.student?.name || 'Anonymous';
-    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-    const stars    = '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
-    const date     = new Date(r.createdAt).toLocaleDateString('en-US',{month:'long',year:'numeric'});
-    const colors   = ['var(--brand-light)','#D1FAE5','#F3E8FF','#FEF3C7'];
-    const ccs      = ['var(--brand)','#065F46','#5B21B6','#92400E'];
-    const ci       = Math.abs((name.charCodeAt(0)||65))%4;
-    return `
-      <div class="review-card">
-        <div class="review-header">
-          <div class="reviewer-avatar" style="background:${colors[ci]};color:${ccs[ci]};">${initials}</div>
-          <div class="reviewer-info"><div class="name">${name}</div><div class="date">${date}</div></div>
-          <div class="review-stars">${stars}</div>
-        </div>
-        <p class="review-text">"${r.comment}"</p>
-      </div>`;
-  }
-
-  // ── GO TO BOOKING PAGE ──
-  function goToBooking() {
-    if (!localStorage.getItem('token')) { showPage('login'); return; }
-    if (!currentListing) return;
-    if (!currentListing.available) { toast('This property is fully booked and cannot be reserved.', 'error'); return; }
-
-    const p       = currentListing.price;
-    const rp      = selectedRoomType === 'Shared' ? Math.round(p*0.65) : selectedRoomType === 'Studio' ? Math.round(p*1.4) : p;
-    const advance = Math.round(rp * 0.3);
-
-    // Populate booking page header card
-    const titleEl = document.querySelector('#page-booking div[style*="font-weight:700;font-size:15px"]');
-    if (titleEl) titleEl.textContent = currentListing.title;
-    const metaEl = document.querySelector('#page-booking div[style*="font-size:13px;color:var(--gray-600)"]');
-    if (metaEl) metaEl.textContent = `${selectedRoomType} Room · ${currentListing.city}`;
-    const priceEl = document.querySelector('#page-booking div[style*="font-size:20px;font-weight:800"]');
-    if (priceEl) { priceEl.textContent = `LKR ${rp.toLocaleString()}`; }
-
-    // Order summary
-    const summaryItems = document.querySelectorAll('#page-booking .summary-item span:last-child');
-    if (summaryItems[0]) summaryItems[0].textContent = `LKR ${advance.toLocaleString()}`;
-    if (summaryItems[1]) summaryItems[1].textContent = `LKR ${rp.toLocaleString()}`;
-    if (summaryItems[2]) summaryItems[2].textContent = `LKR ${rp.toLocaleString()}`;
-    const totalEl = document.querySelector('#page-booking .summary-total span:last-child');
-    if (totalEl) totalEl.textContent = `LKR ${(advance + rp - 1000).toLocaleString()}`;
-
-    // Listing name in summary box
-    const summTitle = document.querySelector('#page-booking .booking-summary > div > div:first-child');
-    if (summTitle) summTitle.textContent = currentListing.title;
-    const summMeta = document.querySelector('#page-booking .booking-summary > div > div:last-child');
-    if (summMeta) summMeta.textContent = `${selectedRoomType} Room · 12 months`;
-
-    // Prefill name/email
-    const userName   = localStorage.getItem('userName') || '';
-    const nameParts  = userName.split(' ');
-    const fnEl = document.querySelectorAll('#page-booking .booking-form-section input[type=text]')[0];
-    const lnEl = document.querySelectorAll('#page-booking .booking-form-section input[type=text]')[1];
-    if (fnEl && !fnEl.value) fnEl.value = nameParts[0] || '';
-    if (lnEl && !lnEl.value) lnEl.value = nameParts.slice(1).join(' ') || '';
-
-    // Set today as default move-in date
-    const dateEl = document.querySelector('#page-booking input[type=date]');
-    if (dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
-
-    showPage('booking');
-  }
-
-  // ── SUBMIT BOOKING ──
-  async function submitBooking() {
-    if (!localStorage.getItem('token')) { showPage('login'); return; }
-    if (!currentListing) { toast('No listing selected. Please go back and choose a property.', 'error'); return; }
-    if (!currentListing.available) { toast('Sorry, this property is no longer available.', 'error'); showPage('results'); loadListings(); return; }
-
-    // Collect form data
-    const inputs   = document.querySelectorAll('#page-booking .booking-form-section input[type=text], #page-booking .booking-form-section input[type=email], #page-booking .booking-form-section input[type=tel]');
-    const fname    = inputs[0]?.value.trim();
-    const lname    = inputs[1]?.value.trim();
-    const emailVal = inputs[2]?.value.trim();
-    const phone    = inputs[3]?.value.trim();
-    const dateEl   = document.querySelector('#page-booking input[type=date]');
-    const moveIn   = dateEl?.value;
-
-    if (!fname || !lname || !emailVal || !phone) { toast('Please fill in all personal details.', 'error'); return; }
-    if (!moveIn) { toast('Please select a move-in date.', 'error'); return; }
-
-    const token = localStorage.getItem('token');
-    try {
-      // Step 1 — create booking record
-      const bookRes  = await fetch(`${API}/bookings`, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({
-          listing:     currentListing._id,
-          moveInDate:  moveIn,
-          roomType:    selectedRoomType,
-          studentName: `${fname} ${lname}`,
-          studentEmail: emailVal,
-          studentPhone: phone
-        })
-      });
-      const bookData = await bookRes.json();
-      if (!bookData.message && !bookData.booking) {
-        toast(bookData.error || 'Booking failed. Please try again.', 'error');
-        return;
-      }
-
-      // Step 2 — mark listing as unavailable (booked)
-      await fetch(`${API}/listings/${currentListing._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ available: false })
-      });
-
-      // Update local state immediately so back-navigation reflects change
-      currentListing.available = false;
-      await loadListings();   // refresh all listings in background
-
-      toast('🎉 Booking confirmed! The owner will contact you shortly.', 'success');
-      setTimeout(() => showPage('home'), 2800);
-
-    } catch(e) { toast('Connection error. Please try again.', 'error'); }
-  }
-
-  // ── REVIEWS PAGE ──
-  async function loadReviews() {
-    if (!currentListing) return;
-    const subtitleEl = document.querySelector('#page-reviews > div > p');
-    if (subtitleEl) subtitleEl.textContent = `${currentListing.title} · ${currentListing.city}`;
-    try {
-      const res     = await fetch(`${API}/reviews/${currentListing._id}`);
-      const reviews = await res.json();
-
-      const avgEl   = document.querySelector('#page-reviews .num');
-      const cntEl   = document.querySelector('#page-reviews .count');
-      const listEl  = document.querySelector('#page-reviews .reviews-list');
-      if (!reviews.length) {
-        if (avgEl)  avgEl.textContent  = '—';
-        if (cntEl)  cntEl.textContent  = '0 reviews';
-        if (listEl) listEl.innerHTML   = '<div style="text-align:center;padding:32px;color:var(--gray-400);">No reviews yet. Be the first!</div>';
-        return;
-      }
-      const avg = reviews.reduce((s,r)=>s+r.rating,0)/reviews.length;
-      if (avgEl)  avgEl.textContent  = avg.toFixed(1);
-      if (cntEl)  cntEl.textContent  = reviews.length + ' reviews';
-
-      // Update rating bars
-      const counts = [0,0,0,0,0];
-      reviews.forEach(r => { if(r.rating>=1&&r.rating<=5) counts[r.rating-1]++; });
-      document.querySelectorAll('#page-reviews .bar-fill').forEach((bar, i) => {
-        bar.style.width = reviews.length ? (counts[4-i]/reviews.length*100)+'%' : '0%';
-      });
-      document.querySelectorAll('#page-reviews .rating-bar-row span:last-child').forEach((sp, i) => {
-        sp.textContent = counts[4-i];
-      });
-
-      if (listEl) {
-        listEl.innerHTML = reviews.map(r => {
-          const name     = r.student?.name || 'Anonymous';
-          const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-          const stars    = '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
-          const date     = new Date(r.createdAt).toLocaleDateString('en-US',{month:'long',year:'numeric'});
-          const colors   = ['var(--brand-light)','#D1FAE5','#F3E8FF','#FEF3C7'];
-          const ccs      = ['var(--brand)','#065F46','#5B21B6','#92400E'];
-          const ci       = Math.abs((name.charCodeAt(0)||65))%4;
-          return `
-            <div class="review-card-full">
-              <div class="review-header">
-                <div class="reviewer-avatar" style="background:${colors[ci]};color:${ccs[ci]};">${initials}</div>
-                <div class="reviewer-info"><div class="name">${name}</div><div class="date">${date}</div></div>
-                <div class="review-stars" style="font-size:16px;">${stars}</div>
-              </div>
-              <p class="review-text" style="margin-bottom:10px;">"${r.comment}"</p>
-            </div>`;
-        }).join('');
-      }
-    } catch(e) {
-      const listEl = document.querySelector('#page-reviews .reviews-list');
-      if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:32px;color:var(--gray-400);">Could not load reviews.</div>';
-    }
-  }
-
-  // ── WRITE REVIEW ──
-  let _writeReviewRating = 0;
-
-  function openWriteReview() {
-    if (!localStorage.getItem('token')) { showPage('login'); return; }
-    // Build a small modal
-    const html = `
-      <div id="_rev_overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;">
-        <div style="background:white;border-radius:20px;padding:32px;width:100%;max-width:460px;position:relative;">
-          <button onclick="document.getElementById('_rev_overlay').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray-400);">✕</button>
-          <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:4px;">Write a Review</h2>
-          <p style="font-size:14px;color:var(--gray-500);margin-bottom:20px;">Share your experience to help other students</p>
-          <div style="margin-bottom:16px;">
-            <div style="font-size:13px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Your Rating</div>
-            <div id="_rev_stars" style="display:flex;gap:6px;font-size:32px;cursor:pointer;">
-              <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
-            </div>
-          </div>
-          <div style="margin-bottom:20px;">
-            <div style="font-size:13px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Your Review</div>
-            <textarea id="_rev_comment" placeholder="Tell students what you liked, what could be better..." style="width:100%;border:1.5px solid var(--gray-200);border-radius:10px;padding:12px 14px;font-size:14px;font-family:inherit;height:110px;resize:vertical;"></textarea>
-          </div>
-          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="submitReview()">Submit Review</button>
-        </div>
-      </div>`;
-    document.body.insertAdjacentHTML('beforeend', html);
-    _writeReviewRating = 0;
-    const starSpans = document.querySelectorAll('#_rev_stars span');
-    starSpans.forEach((s, i) => {
-      s.addEventListener('mouseover', () => starSpans.forEach((x,j) => x.textContent = j<=i ? '★':'☆'));
-      s.addEventListener('mouseout',  () => starSpans.forEach((x,j) => x.textContent = j<_writeReviewRating ? '★':'☆'));
-      s.addEventListener('click',     () => { _writeReviewRating = i+1; starSpans.forEach((x,j) => x.textContent = j<_writeReviewRating ? '★':'☆'); });
+    // Rating bars
+    [1,2,3,4,5].forEach(n => {
+      const cnt  = reviews.filter(r=>r.rating===n).length;
+      const fill = document.querySelectorAll('#page-reviews .bar-fill')[5-n];
+      const span = document.querySelectorAll('#page-reviews .rating-bar-row span:last-child')[5-n];
+      if (fill) fill.style.width = (cnt/reviews.length*100)+'%';
+      if (span) span.textContent = cnt;
     });
-  }
 
-  async function submitReview() {
-    if (!currentListing) { toast('Please select a listing first.', 'error'); return; }
-    if (!_writeReviewRating) { toast('Please select a star rating.', 'error'); return; }
-    const comment = document.getElementById('_rev_comment')?.value.trim();
-    if (!comment) { toast('Please write a comment.', 'error'); return; }
-    try {
-      const token = localStorage.getItem('token');
-      const res   = await fetch(`${API}/reviews`, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ listing: currentListing._id, rating: _writeReviewRating, comment })
-      });
-      const data = await res.json();
-      if (data.message) {
-        document.getElementById('_rev_overlay')?.remove();
-        toast('Review submitted! Thank you 🙏', 'success');
-        loadReviews();
-      } else toast(data.error || 'Could not submit review.', 'error');
-    } catch(e) { toast('Connection error.', 'error'); }
-  }
+    if (list) {
+      list.innerHTML = reviews.slice(0, 10).map(r => reviewCardFullHTML(r)).join('');
+      reviewsOffset = 10;
+    }
+  } catch {}
+}
 
-  // ── OWNER DASHBOARD ──
-  async function loadDashboard() {
-    const token = localStorage.getItem('token');
-    if (!token) return;
+function loadMoreReviews() {
+  if (!currentListing) return;
+  fetch(`${API}/reviews/${currentListing._id}`)
+    .then(r=>r.json())
+    .then(reviews => {
+      const list = document.getElementById('reviews-dynamic-list');
+      if (!list) return;
+      const more = reviews.slice(reviewsOffset, reviewsOffset + 10);
+      more.forEach(r => list.insertAdjacentHTML('beforeend', reviewCardFullHTML(r)));
+      reviewsOffset += more.length;
+      if (reviewsOffset >= reviews.length) showToast('All reviews loaded!', 'success');
+    }).catch(()=>{});
+}
 
-    // Update welcome name
-    const welcomeEl = document.querySelector('#page-dashboard .dashboard-header div > div:first-child');
-    const uname = localStorage.getItem('userName');
-    if (welcomeEl && uname) welcomeEl.textContent = `Welcome back, ${uname.split(' ')[0]} 👋`;
-
-    try {
-      // ── My listings
-      const listRes  = await fetch(`${API}/listings/my`, { headers:{ 'Authorization': `Bearer ${token}` } });
-      const listings = await listRes.json();
-
-      // Stats
-      const statVals = document.querySelectorAll('#page-dashboard .stat-val');
-      if (statVals[0]) statVals[0].textContent = listings.length;
-
-      const revenue = listings.filter(l=>l.available).reduce((s,l)=>s+l.price,0);
-      if (statVals[3]) { statVals[3].textContent = 'LKR ' + (revenue/1000).toFixed(0)+'k'; statVals[3].style.fontSize = '20px'; }
-
-      // ── My Listings panel (right sidebar)
-      const myListEl = document.querySelector('#page-dashboard .bookings-panel:last-child > div');
-      if (myListEl) {
-        myListEl.innerHTML = listings.length ? listings.map(l => `
-          <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div style="font-weight:600;font-size:14px;">${l.title}</div>
-              <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'Available':'Booked'}</span>
-            </div>
-            <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">📍 ${l.city} · LKR ${l.price.toLocaleString()}/mo</div>
-            <div style="display:flex;gap:8px;margin-top:8px;">
-              <button class="btn btn-ghost btn-sm" onclick="editListing('${l._id}')">✏️ Edit</button>
-              ${!l.available ? `<button class="btn btn-sm" style="background:#D1FAE5;color:#065F46;border:none;" onclick="markAvailable('${l._id}')">✅ Re-open</button>` : ''}
-              <button class="btn btn-sm" style="background:#FEF2F2;color:#DC2626;border:none;" onclick="deleteListing('${l._id}')">🗑</button>
-            </div>
-          </div>`).join('')
-          : '<p style="font-size:13px;color:var(--gray-400);">No listings yet. Use the form to add your first property!</p>';
-      }
-
-      // ── Bookings for landlord's listings
-      const bookRes  = await fetch(`${API}/bookings/landlord`, { headers:{ 'Authorization': `Bearer ${token}` } });
-      const bookings = await bookRes.json();
-
-      if (statVals[1]) statVals[1].textContent = bookings.length;
-      if (statVals[2]) statVals[2].textContent = bookings.filter(b=>b.status==='pending').length;
-
-      // Recent Bookings panel
-      const bookEl = document.querySelector('#page-dashboard .bookings-panel:first-child');
-      if (bookEl) {
-        const inner = bookEl.querySelector('.booking-item')?.parentElement || bookEl;
-        inner.querySelectorAll('.booking-item').forEach(el => el.remove());
-        if (!bookings.length) {
-          inner.insertAdjacentHTML('beforeend','<p style="font-size:13px;color:var(--gray-400);">No bookings yet.</p>');
-        } else {
-          bookings.slice(0,6).forEach(b => {
-            const name    = b.studentName || 'Student';
-            const init    = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-            const listing = b.listing || {};
-            const sc      = b.status==='confirmed' ? 'status-confirmed' : b.status==='pending' ? 'status-pending' : 'status-upcoming';
-            const scStyle = b.status==='cancelled' ? 'background:#FEE2E2;color:#991B1B;' : '';
-            inner.insertAdjacentHTML('beforeend', `
-              <div class="booking-item">
-                <div class="booking-avatar">${init}</div>
-                <div class="booking-info">
-                  <div class="name">${name}</div>
-                  <div class="date">${listing.title||'Listing'} · ${b.roomType||'Room'} · ${b.moveInDate?new Date(b.moveInDate).toLocaleDateString():'—'}</div>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-                  <span class="booking-status ${sc}" style="${scStyle}">${b.status||'pending'}</span>
-                  ${b.status==='pending' ? `<button class="btn btn-sm" style="background:#D1FAE5;color:#065F46;border:none;font-size:11px;" onclick="confirmBooking('${b._id}')">✓ Confirm</button>` : ''}
-                </div>
-              </div>`);
-          });
-        }
-      }
-
-    } catch(e) { console.error('Dashboard error:', e); toast('Could not load dashboard data.', 'error'); }
-  }
-
-  async function confirmBooking(bookingId) {
-    const token = localStorage.getItem('token');
-    try {
-      const res  = await fetch(`${API}/bookings/${bookingId}`, { method:'PUT', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify({status:'confirmed'}) });
-      const data = await res.json();
-      if (data.message) { toast('Booking confirmed! ✅', 'success'); loadDashboard(); }
-      else toast(data.error||'Could not confirm booking.','error');
-    } catch(e) { toast('Connection error.','error'); }
-  }
-
-  async function markAvailable(listingId) {
-    const token = localStorage.getItem('token');
-    try {
-      const res  = await fetch(`${API}/listings/${listingId}`, { method:'PUT', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify({available:true}) });
-      const data = await res.json();
-      if (data.message||data.listing) { toast('Listing marked as available! ✅','success'); loadDashboard(); loadListings(); }
-      else toast(data.error||'Could not update.','error');
-    } catch(e) { toast('Connection error.','error'); }
-  }
-
-  // ── SAVE LISTING (dashboard form) ──
-  async function saveListing() {
-    const token = localStorage.getItem('token');
-    if (!token) { showPage('login'); return; }
-
-    const titleEl = document.querySelector('#page-dashboard .listing-form input[type=text]:first-of-type');
-    const addrEl  = document.querySelectorAll('#page-dashboard .listing-form input[type=text]')[1];
-    const priceEl = document.querySelector('#page-dashboard .listing-form input[type=number]');
-    const vacEl   = document.querySelectorAll('#page-dashboard .listing-form input[type=number]')[1];
-    const rtEl    = document.querySelector('#page-dashboard .listing-form select');
-    const descEl  = document.querySelector('#page-dashboard .listing-form textarea');
-    const facBoxes= document.querySelectorAll('#page-dashboard .listing-form input[type=checkbox]');
-
-    const title = titleEl?.value.trim();
-    const price = parseInt(priceEl?.value);
-    if (!title || !price) { toast('Please enter at least a Property Name and Price.', 'error'); return; }
-
-    const amenities = [...facBoxes].filter(c=>c.checked).map(c => c.nextSibling?.textContent?.trim()?.replace(/^[^\s]+\s/,'') || c.parentElement?.textContent?.trim()?.replace(/^[^\s]+\s/,''));
-    const available = document.querySelector('#page-dashboard .toggle.on') !== null;
-    const editId    = document.querySelector('#page-dashboard .listing-form')?.dataset?.editId || '';
-
-    const payload = {
-      title,
-      city: addrEl?.value.split(',').pop()?.trim() || 'Moratuwa',
-      address: addrEl?.value || '',
-      price,
-      vacancies: parseInt(vacEl?.value)||1,
-      roomType: rtEl?.value || 'Single',
-      description: descEl?.value || '',
-      amenities: amenities.filter(Boolean),
-      available
-    };
-
-    try {
-      const method = editId ? 'PUT' : 'POST';
-      const url    = editId ? `${API}/listings/${editId}` : `${API}/listings`;
-      const res    = await fetch(url, { method, headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify(payload) });
-      const data   = await res.json();
-      if (data.listing||data.message) {
-        toast(editId ? 'Listing updated! ✅' : 'Listing created! 🎉', 'success');
-        document.querySelector('#page-dashboard .listing-form').removeAttribute('data-edit-id');
-        loadDashboard();
-        loadListings();
-      } else toast(data.error||'Could not save listing.','error');
-    } catch(e) { toast('Connection error.','error'); }
-  }
-
-  async function editListing(id) {
-    try {
-      const res = await fetch(`${API}/listings/${id}`);
-      const l   = await res.json();
-      const form = document.querySelector('#page-dashboard .listing-form');
-      if (!form) return;
-      form.dataset.editId = l._id;
-      const h3 = form.querySelector('h3');
-      if (h3) h3.textContent = '✏️ Edit Listing — ' + l.title;
-      const inputs = form.querySelectorAll('input[type=text]');
-      if (inputs[0]) inputs[0].value = l.title;
-      if (inputs[1]) inputs[1].value = l.address || l.city || '';
-      const numInputs = form.querySelectorAll('input[type=number]');
-      if (numInputs[0]) numInputs[0].value = l.price;
-      if (numInputs[1]) numInputs[1].value = l.vacancies||1;
-      const rtEl = form.querySelector('select');
-      if (rtEl) rtEl.value = l.roomType||'Single';
-      const descEl = form.querySelector('textarea');
-      if (descEl) descEl.value = l.description||'';
-      if (l.available) form.querySelector('.toggle')?.classList.add('on');
-      else form.querySelector('.toggle')?.classList.remove('on');
-      form.scrollIntoView({behavior:'smooth'});
-    } catch(e) { toast('Could not load listing details.','error'); }
-  }
-
-  async function deleteListing(id) {
-    if (!confirm('Delete this listing? This cannot be undone.')) return;
-    const token = localStorage.getItem('token');
-    try {
-      const res  = await fetch(`${API}/listings/${id}`, { method:'DELETE', headers:{'Authorization':`Bearer ${token}`} });
-      const data = await res.json();
-      if (data.message) { toast('Listing deleted.','success'); loadDashboard(); loadListings(); }
-      else toast(data.error||'Could not delete.','error');
-    } catch(e) { toast('Connection error.','error'); }
-  }
-
-  // ── WIRE UP BUTTONS that previously used simple showPage ──
-  // (All existing onclick="showPage(...)" in the HTML continue to work.)
-  // We only need to wire the buttons that now need API calls.
-
-  document.addEventListener('DOMContentLoaded', function() {
-
-    // ── Interactive star rating on reviews page write-review block ──
+// Write review from reviews page
+document.addEventListener('DOMContentLoaded', () => {
+  const writeBtn = document.querySelector('.write-review .btn-primary');
+  if (writeBtn) {
     const starBox = document.querySelector('.write-review div[style*="28px"]');
+    let chosen = 0;
     if (starBox) {
       const spans = starBox.querySelectorAll('span');
-      let chosen = 0;
-      spans.forEach((s, i) => {
+      spans.forEach((s,i) => {
         s.style.cursor = 'pointer';
-        s.addEventListener('mouseover', () => spans.forEach((x,j) => x.textContent = j<=i?'★':'☆'));
-        s.addEventListener('mouseout',  () => spans.forEach((x,j) => x.textContent = j<chosen?'★':'☆'));
-        s.addEventListener('click',     () => { chosen=i+1; spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'); });
+        s.addEventListener('mouseover', ()=>spans.forEach((x,j)=>x.textContent=j<=i?'★':'☆'));
+        s.addEventListener('mouseout', ()=>spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'));
+        s.addEventListener('click', ()=>{ chosen=i+1; currentRating=chosen; spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'); });
       });
     }
+    writeBtn.addEventListener('click', async () => {
+      if (!isLoggedIn()) { showToast('Please sign in to write a review','warning'); showPage('login'); return; }
+      if (!currentListing) { showToast('Please select a listing first','error'); return; }
+      if (!currentRating)  { showToast('Please select a star rating','error'); return; }
+      const comment = prompt('Share your experience about this boarding place:');
+      if (!comment?.trim()) return;
+      try {
+        const res  = await fetch(`${API}/reviews`, {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
+          body: JSON.stringify({ listing: currentListing._id, rating: currentRating, comment: comment.trim() })
+        });
+        const data = await res.json();
+        if (data.review) { showToast('Review submitted! Thank you 🙏','success'); loadReviewsPage(); }
+        else showToast(data.error||'Could not submit review','error');
+      } catch { showToast('Connection error','error'); }
+    });
+  }
+});
 
-    // ── Sign-In button on login page ──
-    const loginBtn = document.querySelector('#page-login .btn-primary');
-    if (loginBtn) loginBtn.onclick = doLogin;
+// ── Booking ───────────────────────────────────────
+function goToBooking() {
+  if (!isLoggedIn()) { showToast('Please sign in to make a booking','warning'); showPage('login'); return; }
+  if (!currentListing) return;
+  if (!currentListing.available) { showToast('This listing is currently unavailable','error'); return; }
+  showPage('booking');
+}
 
-    // ── Sign-Up button on signup page ──
-    const signupBtn = document.querySelector('#page-signup .btn-primary');
-    if (signupBtn) signupBtn.onclick = doSignup;
+async function submitBooking() {
+  if (!isLoggedIn()) { showToast('Please sign in first','warning'); showPage('login'); return; }
+  if (!currentListing) { showToast('No listing selected','error'); return; }
 
-    // ── "Book Now" / "Reserve" buttons on detail page ──
-    const panelBtns = document.querySelectorAll('#page-detail .panel-btns button');
-    panelBtns.forEach(btn => { btn.onclick = goToBooking; });
+  const fname    = document.getElementById('bk-fname')?.value.trim();
+  const lname    = document.getElementById('bk-lname')?.value.trim();
+  const email    = document.getElementById('bk-email')?.value.trim();
+  const phone    = document.getElementById('bk-phone')?.value.trim();
+  const date     = document.getElementById('bk-date')?.value;
+  const duration = document.getElementById('bk-duration')?.value || '12 months';
 
-    // ── "Pay Advance & Reserve" / confirm booking button on booking page ──
-    const payBtn = document.querySelector('#page-booking .btn-success');
-    if (payBtn) payBtn.onclick = submitBooking;
+  if (!fname || !lname || !email || !date) {
+    showToast('Please fill in your name, email and move-in date', 'error'); return;
+  }
 
-    // ── Dashboard "Save Changes" button ──
-    const saveBtn = document.querySelector('#page-dashboard .btn-primary[style*="flex:1"]');
-    if (saveBtn) saveBtn.onclick = saveListing;
+  try {
+    const res  = await fetch(`${API}/bookings`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
+      body: JSON.stringify({
+        listing:    currentListing._id,
+        moveInDate: date,
+        roomType:   currentListing.roomType || 'Room',
+        duration,
+        message:    `${fname} ${lname} | ${email} | ${phone}`
+      })
+    });
+    const data = await res.json();
+    if (data.booking) {
+      showToast('🎉 Booking submitted! The listing is now marked as unavailable.', 'success');
+      // Immediately update local state
+      currentListing.available = false;
+      allListings = allListings.map(l => l._id===currentListing._id ? {...l, available:false} : l);
+      setTimeout(() => showPage('dashboard'), 2000);
+    } else { showToast(data.error||'Booking failed. Please try again.', 'error'); }
+  } catch { showToast('Connection error — is the server running?', 'error'); }
+}
 
-    // ── "+ Add New Listing" button on dashboard header ──
-    const addBtn = document.querySelector('#page-dashboard .dashboard-header .btn-primary');
-    if (addBtn) addBtn.onclick = () => {
-      const form = document.querySelector('#page-dashboard .listing-form');
-      if (form) { form.removeAttribute('data-edit-id'); const h3=form.querySelector('h3'); if(h3) h3.textContent='✏️ Add New Listing'; form.scrollIntoView({behavior:'smooth'}); }
-    };
+// ── Add listing ───────────────────────────────────
+function goToAddListing() {
+  if (!isLoggedIn()) { showPage('login'); return; }
+  if (getUserRole() !== 'landlord') {
+    showToast('Only owners can add listings. Sign up as an Owner.', 'warning'); return;
+  }
+  showPage('add-listing');
+}
 
-    // ── Reviews page "Write a Review" button ──
-    const writeRevBtn = document.querySelector('#page-reviews .write-review .btn-primary');
-    if (writeRevBtn) writeRevBtn.onclick = openWriteReview;
+async function submitListing() {
+  const token = getToken();
+  const role  = getUserRole();
+  const msg   = document.getElementById('al-msg');
+  const warn  = document.getElementById('al-auth-warning');
 
-    // ── All result/featured cards' "View Details" buttons already call openDetail via renderResultCards ──
-    // ── Home featured cards also call openDetail ──
+  if (!token || role !== 'landlord') { if(warn) warn.style.display='block'; return; }
+  if(warn) warn.style.display='none';
 
-    // ── Owner Portal nav link ──
-    const dashNav = document.getElementById('nav-dashboard');
-    if (dashNav) dashNav.onclick = () => {
-      if (!localStorage.getItem('token')) { showPage('login'); return; }
-      if (localStorage.getItem('userRole') !== 'landlord') { toast('Only property owners can access the Owner Dashboard.','error'); return; }
-      showPage('dashboard');
-    };
+  const title       = document.getElementById('al-title')?.value.trim();
+  const city        = document.getElementById('al-city')?.value.trim();
+  const price       = Number(document.getElementById('al-price')?.value);
+  const roomType    = document.getElementById('al-roomtype')?.value;
+  const amenities   = document.getElementById('al-amenities')?.value.split(',').map(a=>a.trim()).filter(Boolean)||[];
+  const description = document.getElementById('al-description')?.value.trim();
+  const available   = document.getElementById('al-available')?.value === 'true';
 
-    // ── "List Property" nav button ──
-    const listPropBtn = document.querySelector('.nav-end button:first-child');
-    if (listPropBtn && listPropBtn.textContent.includes('List Property')) {
-      listPropBtn.onclick = () => {
-        if (!localStorage.getItem('token')) { showPage('login'); return; }
-        if (localStorage.getItem('userRole') !== 'landlord') { toast('Only property owners can list properties. Please sign up as an owner.','error'); showPage('signup'); return; }
-        showPage('dashboard');
-      };
+  if (!title || !city || !price) return showMsg(msg, '⚠️ Title, City, and Price are required.', 'error');
+  showMsg(msg, '⏳ Submitting your listing...', 'info');
+
+  try {
+    const res  = await fetch(`${API}/listings`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({ title, city, price, roomType, amenities, description, available })
+    });
+    const data = await res.json();
+    if (data.listing) {
+      showMsg(msg, '✅ Listing added! Redirecting to results...', 'success');
+      ['al-title','al-city','al-price','al-amenities','al-description'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+      allListings = [];
+      await fetchListings();
+      setTimeout(() => { msg.style.display='none'; showPage('results'); }, 1500);
+    } else { showMsg(msg, '❌ '+(data.error||'Failed to add listing.'), 'error'); }
+  } catch { showMsg(msg, '❌ Connection error.', 'error'); }
+}
+
+// ── Dashboard ─────────────────────────────────────
+async function loadDashboard() {
+  const name = localStorage.getItem('userName');
+  const role = localStorage.getItem('userRole');
+  const welcomeEl = document.getElementById('dash-welcome');
+  if (welcomeEl) welcomeEl.textContent = name ? `Welcome back, ${name} 👋` : 'Welcome 👋';
+  const roleEl = document.getElementById('dash-stat-role');
+  if (roleEl) roleEl.textContent = role==='landlord'?'Owner':role||'—';
+
+  if (!isLoggedIn()) {
+    showToast('Please sign in to view your dashboard', 'warning');
+    return;
+  }
+
+  // Load listings
+  if (!allListings.length) await fetchListings();
+  const slEl = document.getElementById('dash-stat-listings');
+  if (slEl) slEl.textContent = role==='landlord' ? allListings.length : '—';
+
+  // My listings panel (in the listing-form area)
+  const formArea = document.querySelector('#page-dashboard .listing-form');
+  if (formArea && role==='landlord') {
+    if (!allListings.length) {
+      formArea.innerHTML = '<h3>🏠 My Listings</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">No listings yet. Click "+ Add New Listing" above!</p>';
+    } else {
+      formArea.innerHTML = `<h3>🏠 My Listings (${allListings.length})</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
+        ${allListings.map(l => `
+          <div style="padding:14px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+              <div>
+                <div style="font-weight:700;font-size:15px;">${l.title}</div>
+                <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}</div>
+                <div style="margin-top:6px;"><span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available':'🚫 Booked'}</span></div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button onclick="openDetail('${l._id}')" class="btn btn-ghost btn-sm">View →</button>
+                <button onclick="toggleAvailability('${l._id}',${l.available})" class="btn btn-sm ${l.available?'btn-outline':'btn-success'}">${l.available?'🔒 Mark Booked':'✅ Mark Available'}</button>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    }
+  } else if (formArea && role !== 'landlord') {
+    formArea.innerHTML = '<h3>📋 My Saved Listings</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">Switch to an Owner account to manage listings.</p>';
+  }
+
+  // Load bookings
+  try {
+    const res      = await fetch(`${API}/bookings/user/me`, { headers:{'Authorization':'Bearer '+getToken()} });
+    const bookings = await res.json();
+    const sbEl = document.getElementById('dash-stat-bookings');
+    const spEl = document.getElementById('dash-stat-pending');
+    if (sbEl) sbEl.textContent = Array.isArray(bookings)?bookings.length:'—';
+    if (spEl) spEl.textContent = Array.isArray(bookings)?bookings.filter(b=>b.status==='pending').length:'—';
+
+    // Recent bookings panel (right sidebar)
+    const bPanel = document.querySelector('#page-dashboard .bookings-panel:first-child');
+    if (bPanel && Array.isArray(bookings)) {
+      const header = bPanel.querySelector('div:first-child');
+      const existingItems = bPanel.querySelectorAll('.booking-item');
+      existingItems.forEach(i => i.remove());
+      if (!bookings.length) {
+        bPanel.insertAdjacentHTML('beforeend', '<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
+      } else {
+        bookings.slice(0,5).forEach(b => {
+          const name = b.studentName || localStorage.getItem('userName') || 'Student';
+          const init = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const sc   = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
+          const date = b.moveInDate ? new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
+          bPanel.insertAdjacentHTML('beforeend', `
+            <div class="booking-item">
+              <div class="booking-avatar">${init}</div>
+              <div class="booking-info">
+                <div class="name">${b.listing?.title||'Listing'}</div>
+                <div class="date">${b.roomType||'Room'} · ${date}</div>
+              </div>
+              <div class="booking-status ${sc}">${b.status||'pending'}</div>
+            </div>`);
+        });
+      }
     }
 
-    // ── "View all →" links on detail page that lead to reviews ──
-    const allRevLink = document.querySelector('#page-detail .see-all');
-    if (allRevLink) allRevLink.onclick = () => { showPage('reviews'); loadReviews(); };
+    // My listings panel (right sidebar second panel) - for students showing their bookings
+    const lPanel = document.querySelector('#page-dashboard .bookings-panel:last-child');
+    if (lPanel && role !== 'landlord' && Array.isArray(bookings)) {
+      lPanel.innerHTML = `<h3 style="margin-bottom:16px;">My Bookings</h3>
+        ${bookings.length ? bookings.slice(0,5).map(b => `
+          <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);margin-bottom:8px;">
+            <div style="font-weight:600;font-size:14px;">${b.listing?.title||'Listing'}</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo</div>
+            <div style="margin-top:6px;"><span class="badge ${b.status==='confirmed'?'badge-available':b.status==='cancelled'?'badge-soon':'badge-verified'}">${b.status||'pending'}</span></div>
+          </div>`).join('') : '<p style="color:var(--gray-400);font-size:13px;">No bookings yet.</p>'}`;
+    }
+  } catch(e) { console.log('Dashboard error:', e); }
+}
 
-    // ── Init: load nav state and listings ──
-    updateNavForUser();
-    loadListings();
-  });
+// ── Toggle listing availability ───────────────────
+async function toggleAvailability(id, currentlyAvailable) {
+  try {
+    const res  = await fetch(`${API}/listings/${id}`, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
+      body: JSON.stringify({ available: !currentlyAvailable })
+    });
+    const data = await res.json();
+    if (data.listing) {
+      showToast(currentlyAvailable ? '🔒 Listing marked as booked' : '✅ Listing marked as available', 'success');
+      allListings = allListings.map(l => l._id===id ? {...l, available:!currentlyAvailable} : l);
+      loadDashboard();
+    } else { showToast('Could not update listing', 'error'); }
+  } catch { showToast('Connection error', 'error'); }
+}
+
+// ── Init ──────────────────────────────────────────
+updateNav();
+loadHomeListings();
 </script>
 </body>
 </html>

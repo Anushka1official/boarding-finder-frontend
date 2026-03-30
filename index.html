@@ -975,16 +975,16 @@
           <div style="background:#FEF3C7;color:#92400E;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-bottom:16px;">📅 Future vacancy: July 2026 · 3 more slots</div>
           <div style="border-top:1px solid var(--gray-100);padding-top:16px;">
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Monthly rent</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Monthly rent</span><span id="panel-monthly-rent" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Security deposit</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Security deposit</span><span id="panel-deposit" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:14px;color:var(--gray-600);">
-              <span>Advance payment</span><span style="font-weight:600;color:var(--gray-800);">LKR 5,000</span>
+              <span>Advance payment</span><span id="panel-advance" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--gray-900);border-top:1px solid var(--gray-200);padding-top:12px;">
-              <span>Pay to Book</span><span style="color:var(--brand)">LKR 5,000</span>
+              <span>Pay to Book</span><span id="panel-pay-to-book" style="color:var(--brand)">—</span>
             </div>
           </div>
           <div class="panel-btns">
@@ -1105,7 +1105,7 @@
             <div style="font-weight:600;font-size:14px;" id="bk-sum-title">—</div>
             <div style="font-size:13px;color:var(--gray-500);" id="bk-sum-room">—</div>
           </div>
-          <div class="summary-item"><span>Advance payment</span><span>LKR 5,000</span></div>
+          <div class="summary-item"><span>Advance payment</span><span id="bk-sum-advance">LKR —</span></div>
           <div class="summary-item"><span>Security deposit</span><span id="bk-sum-deposit">LKR —</span></div>
           <div class="summary-item"><span>First month rent</span><span id="bk-sum-rent">LKR —</span></div>
           <div class="summary-item" style="color:var(--success);"><span>🎉 First-time discount</span><span>- LKR 1,000</span></div>
@@ -1478,6 +1478,10 @@
           </select>
         </div>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>Security Deposit (LKR)</label><input id="al-deposit" type="number" placeholder="e.g. 18000"></div>
+        <div class="form-group"><label>Advance Payment (LKR)</label><input id="al-advance" type="number" placeholder="e.g. 5000"></div>
+      </div>
       <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="al-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking, Laundry, Security"></div>
       <div class="form-group"><label>Description</label><textarea id="al-description" placeholder="Describe your property for students..."></textarea></div>
 
@@ -1814,7 +1818,7 @@ function updateNav() {
       <span style="font-size:13px;color:var(--gray-600);font-weight:500;">👤 ${name}</span>
       ${role==='landlord'
         ? '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>'
-        : '<button class="btn btn-ghost" onclick="showPage(\'saved\')">♥ Saved</button><button class="btn btn-ghost" onclick="showPage(\'dashboard\')">My Bookings</button>'}
+        : '<button class="btn btn-ghost" onclick="showPage(\'saved\')">♥ Saved</button>'}
       <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
   } else {
     navEnd.innerHTML = `
@@ -2236,6 +2240,20 @@ async function openDetail(id) {
     availBadge.innerHTML = l.available?'<span class="dot"></span> Available Now':'🕐 Currently Unavailable';
   }
 
+  // Booking panel price breakdown — use owner-set values if available
+  const depositAmt = l.deposit  || l.price;   // fallback: 1 month rent
+  const advanceAmt = l.advance  || 5000;       // fallback: 5000
+  const payToBook  = advanceAmt;
+
+  const panelRent    = document.getElementById('panel-monthly-rent');
+  const panelDep     = document.getElementById('panel-deposit');
+  const panelAdv     = document.getElementById('panel-advance');
+  const panelPay     = document.getElementById('panel-pay-to-book');
+  if (panelRent) panelRent.textContent = `LKR ${Number(l.price).toLocaleString()}`;
+  if (panelDep)  panelDep.textContent  = depositAmt ? `LKR ${Number(depositAmt).toLocaleString()}` : '—';
+  if (panelAdv)  panelAdv.textContent  = advanceAmt ? `LKR ${Number(advanceAmt).toLocaleString()}` : '—';
+  if (panelPay)  panelPay.textContent  = `LKR ${Number(payToBook).toLocaleString()}`;
+
   // Book Now button
   const bookBtn = document.getElementById('book-now-btn');
   if (bookBtn) {
@@ -2258,16 +2276,20 @@ async function openDetail(id) {
   if (saveBtn) saveBtn.textContent = savedIds.has(l._id)?'♥ Saved':'♡ Save';
 
   // Booking summary
-  const sumTitle = document.getElementById('bk-sum-title');
-  const sumRoom  = document.getElementById('bk-sum-room');
-  const sumDep   = document.getElementById('bk-sum-deposit');
-  const sumRent  = document.getElementById('bk-sum-rent');
-  const sumTotal = document.getElementById('bk-sum-total');
+  const sumTitle  = document.getElementById('bk-sum-title');
+  const sumRoom   = document.getElementById('bk-sum-room');
+  const sumDep    = document.getElementById('bk-sum-deposit');
+  const sumRent   = document.getElementById('bk-sum-rent');
+  const sumAdv    = document.getElementById('bk-sum-advance');
+  const sumTotal  = document.getElementById('bk-sum-total');
   if (sumTitle) sumTitle.textContent = l.title;
   if (sumRoom)  sumRoom.textContent  = `${l.roomType||'Room'} · 12 months`;
-  if (sumDep)   sumDep.textContent   = `LKR ${Number(l.price).toLocaleString()}`;
+  const _dep = l.deposit || l.price;
+  const _adv = l.advance || 5000;
+  if (sumDep)   sumDep.textContent   = `LKR ${Number(_dep).toLocaleString()}`;
   if (sumRent)  sumRent.textContent  = `LKR ${Number(l.price).toLocaleString()}`;
-  if (sumTotal) sumTotal.textContent = `LKR ${(5000+l.price+l.price-1000).toLocaleString()}`;
+  if (sumAdv)   sumAdv.textContent   = `LKR ${Number(_adv).toLocaleString()}`;
+  if (sumTotal) sumTotal.textContent = `LKR ${(Number(_adv) + Number(l.price) + Number(_dep) - 1000).toLocaleString()}`;
 
   await loadReviewsPreview();
   reviewsOffset = 0;
@@ -2610,12 +2632,14 @@ async function submitListing() {
   const amenities   = document.getElementById('al-amenities')?.value.split(',').map(a=>a.trim()).filter(Boolean)||[];
   const description = document.getElementById('al-description')?.value.trim();
   const available   = document.getElementById('al-available')?.value === 'true';
+  const deposit     = Number(document.getElementById('al-deposit')?.value) || 0;
+  const advance     = Number(document.getElementById('al-advance')?.value) || 0;
 
   if (!title||!city||!price) return showMsg(msg,'⚠️ Title, City and Price are required.','error');
   showMsg(msg,'⏳ Creating listing...','info');
 
   try {
-    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available})});
+    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available,deposit,advance})});
     const data = await res.json();
     if (!data.listing) return showMsg(msg,'❌ '+(data.error||'Failed to create listing.'),'error');
 
@@ -2629,7 +2653,7 @@ async function submitListing() {
     }
 
     showMsg(msg,'✅ Listing added successfully!','success');
-    ['al-title','al-city','al-price','al-amenities','al-description'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    ['al-title','al-city','al-price','al-amenities','al-description','al-deposit','al-advance'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
     alSelectedFiles = [];
     renderPreviewGrid('al-preview-grid', [], 'al');
     allListings = [];

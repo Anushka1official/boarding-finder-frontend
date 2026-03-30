@@ -1754,7 +1754,10 @@ function showPage(id) {
   if (el) el.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
   if (id === 'results')   applyFilters();
-  if (id === 'dashboard') loadDashboard();
+  if (id === 'dashboard') {
+    if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); showPage('login'); return; }
+    loadDashboard();
+  }
   if (id === 'reviews' && currentListing) loadReviewsPage();
   if (id === 'saved')     loadSavedPage();
 }
@@ -1785,6 +1788,26 @@ function updateNav() {
   const name = localStorage.getItem('userName');
   const role = localStorage.getItem('userRole');
   const navEnd = document.querySelector('.nav-end');
+  const navDashLink = document.getElementById('nav-dashboard');
+
+  // Show/hide Owner Portal nav link — only visible to landlords
+  if (navDashLink) {
+    if (role === 'landlord') {
+      navDashLink.style.display = '';
+      navDashLink.textContent = 'Owner Portal';
+      navDashLink.onclick = function() { showPage('dashboard'); };
+    } else {
+      // Logged-in students get "My Bookings", guests see nothing
+      if (name) {
+        navDashLink.style.display = '';
+        navDashLink.textContent = 'My Bookings';
+        navDashLink.onclick = function() { showPage('dashboard'); };
+      } else {
+        navDashLink.style.display = 'none';
+      }
+    }
+  }
+
   if (!navEnd) return;
   if (name) {
     navEnd.innerHTML = `
@@ -1961,6 +1984,11 @@ function resultCardHTML(l) {
 
 // ── Save / favourite ─────────────────────────────
 function toggleSave(id, btn) {
+  if (!isLoggedIn()) {
+    showToast('Please sign in to save boarding places', 'warning');
+    showPage('login');
+    return;
+  }
   if (savedIds.has(id)) {
     savedIds.delete(id);
     if (btn) { btn.textContent = btn.classList.contains('fav-btn')?'♡':'♡ Save'; btn.classList.remove('active'); }
@@ -2692,7 +2720,31 @@ async function loadDashboard() {
   const welcomeEl = document.getElementById('dash-welcome');
   if (welcomeEl) welcomeEl.textContent = name?`Welcome back, ${name} 👋`:'Welcome 👋';
   const roleEl = document.getElementById('dash-stat-role');
-  if (roleEl) roleEl.textContent = role==='landlord'?'Owner':role||'—';
+  if (roleEl) roleEl.textContent = role==='landlord'?'Owner':'Student';
+
+  // ── Update dashboard title and header badge based on role ──
+  const dashTitle = document.querySelector('#page-dashboard .dashboard-header h1');
+  const dashBadge = document.querySelector('#page-dashboard .dashboard-header .badge-verified');
+  const addBtn    = document.querySelector('#page-dashboard .dashboard-header .btn-primary');
+  if (dashTitle) dashTitle.textContent = role==='landlord' ? 'Owner Dashboard' : 'My Bookings Dashboard';
+  if (dashBadge) {
+    if (role === 'landlord') {
+      dashBadge.textContent = '✅ Verified Owner';
+      dashBadge.style.display = '';
+    } else {
+      dashBadge.textContent = '🎓 Student Account';
+      dashBadge.style.background = '#D1FAE5';
+      dashBadge.style.color = '#065F46';
+    }
+  }
+  // Hide "Add New Listing" button for students
+  if (addBtn) addBtn.style.display = role==='landlord' ? '' : 'none';
+
+  // Update stat labels based on role
+  const statDescs = document.querySelectorAll('#page-dashboard .dash-stat .stat-desc');
+  if (statDescs[0]) statDescs[0].textContent = role==='landlord' ? 'My Listings' : 'Total Bookings';
+  if (statDescs[1]) statDescs[1].textContent = role==='landlord' ? 'My Bookings' : 'Confirmed';
+  if (statDescs[2]) statDescs[2].textContent = 'Pending';
 
   if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); return; }
 

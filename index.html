@@ -2666,16 +2666,20 @@ async function loadDashboard() {
   if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); return; }
 
   if (!allListings.length) await fetchListings();
+  const myUserId = localStorage.getItem('userId');
+  const myListings = role === 'landlord'
+    ? allListings.filter(l => l.owner && l.owner.toString() === myUserId)
+    : [];
   const slEl = document.getElementById('dash-stat-listings');
-  if (slEl) slEl.textContent = role==='landlord'?allListings.length:'—';
+  if (slEl) slEl.textContent = role==='landlord'?myListings.length:'—';
 
   const formArea = document.querySelector('#page-dashboard .listing-form');
   if (formArea && role==='landlord') {
-    if (!allListings.length) {
+    if (!myListings.length) {
       formArea.innerHTML = '<h3>🏠 My Listings</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">No listings yet. Click "+ Add New Listing" above!</p>';
     } else {
-      formArea.innerHTML = `<h3>🏠 My Listings (${allListings.length})</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
-        ${allListings.map(l => {
+      formArea.innerHTML = `<h3>🏠 My Listings (${myListings.length})</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
+        ${myListings.map(l => {
           const img = firstImage(l);
           return `
           <div style="padding:14px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">

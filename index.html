@@ -942,28 +942,13 @@
         </div>
 
         <div class="divider"></div>
-        <div class="reviews-section">
+          <div class="reviews-section">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <h3 style="font-weight:700;font-size:17px;">💬 Student Reviews</h3>
-            <a class="see-all" onclick="showPage('reviews')">All 32 reviews →</a>
+            <a class="see-all" onclick="showPage('reviews')">All reviews →</a>
           </div>
-          <div class="review-card">
-            <div class="review-header">
-              <div class="reviewer-avatar">AP</div>
-              <div class="reviewer-info"><div class="name">Ayesha Perera</div><div class="date">March 2026</div></div>
-              <div class="review-stars">★★★★★</div>
-            </div>
-            <p class="review-text">"Amazing place, very clean and the landlady is very friendly. WiFi works great. Highly recommend for UoC students!"</p>
-          </div>
-          <div class="review-card">
-            <div class="review-header">
-              <div class="reviewer-avatar" style="background:#D1FAE5;color:#065F46;">KD</div>
-              <div class="reviewer-info"><div class="name">Kasun De Silva</div><div class="date">February 2026</div></div>
-              <div class="review-stars">★★★★☆</div>
-            </div>
-            <p class="review-text">"Good value for money. Location is perfect, walking distance from campus. Kitchen facilities could be a bit better."</p>
-          </div>
-          <div id="detail-reviews-extra" style="display:none;"></div>
+          <!-- Dynamic reviews only — populated by loadReviewsPreview() -->
+          <div id="detail-reviews-extra"></div>
           <!-- Write a review -->
           <div style="margin-top:20px;background:var(--brand-light);border:1.5px dashed var(--brand-mid);border-radius:var(--radius-lg);padding:20px;" id="detail-review-form">
             <p style="color:var(--brand);font-weight:600;font-size:15px;margin-bottom:12px;">✍️ Write a Review</p>
@@ -1521,6 +1506,15 @@
   <footer style="margin-top:60px;background:var(--gray-900);color:var(--gray-400);text-align:center;padding:24px;font-size:13px;"><strong style="color:white">Smart Boarding Finder</strong> · © 2026</footer>
 </div>
 
+<!-- ════════════ GALLERY LIGHTBOX ════════════ -->
+<div id="gallery-lightbox" class="gallery-lightbox" style="display:none;" onclick="handleLightboxClick(event)">
+  <button class="close-btn" onclick="closeLightbox()">✕</button>
+  <button class="nav-btn prev-btn" onclick="event.stopPropagation();lightboxNav(-1)">‹</button>
+  <div id="lightbox-content" onclick="event.stopPropagation()"></div>
+  <button class="nav-btn next-btn" onclick="event.stopPropagation();lightboxNav(1)">›</button>
+  <div id="lightbox-counter" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:white;font-size:14px;font-weight:600;background:rgba(0,0,0,.5);padding:4px 14px;border-radius:100px;"></div>
+</div>
+
 <!-- ════════════ LOGIN PAGE ════════════ -->
 <div class="page" id="page-login">
   <div class="auth-page">
@@ -2060,36 +2054,60 @@ function buildGallery(media) {
 }
 
 // ── Lightbox ──────────────────────────────────────
+let _lbTouchStartX = 0;
+
 function openLightbox(index) {
   if (!lightboxMedia.length) return;
   lightboxIndex = index;
   renderLightbox();
-  document.getElementById('gallery-lightbox').style.display = 'flex';
+  const lb = document.getElementById('gallery-lightbox');
+  lb.style.display = 'flex';
   document.body.style.overflow = 'hidden';
+  // Touch swipe support
+  lb.addEventListener('touchstart', _lbTouchStart, { passive: true });
+  lb.addEventListener('touchend',   _lbTouchEnd,   { passive: true });
+}
+function _lbTouchStart(e) { _lbTouchStartX = e.changedTouches[0].screenX; }
+function _lbTouchEnd(e) {
+  const dx = e.changedTouches[0].screenX - _lbTouchStartX;
+  if (Math.abs(dx) > 50) lightboxNav(dx < 0 ? 1 : -1);
 }
 function closeLightbox() {
-  document.getElementById('gallery-lightbox').style.display = 'none';
+  const lb = document.getElementById('gallery-lightbox');
+  lb.style.display = 'none';
+  lb.removeEventListener('touchstart', _lbTouchStart);
+  lb.removeEventListener('touchend',   _lbTouchEnd);
   document.body.style.overflow = '';
+  // Pause any playing video
+  const vid = lb.querySelector('video');
+  if (vid) vid.pause();
+}
+function handleLightboxClick(e) {
+  // Click backdrop (not content/buttons) to close
+  if (e.target === document.getElementById('gallery-lightbox')) closeLightbox();
 }
 function lightboxNav(dir) {
+  if (!lightboxMedia.length) return;
   lightboxIndex = (lightboxIndex + dir + lightboxMedia.length) % lightboxMedia.length;
   renderLightbox();
 }
 function renderLightbox() {
-  const item = lightboxMedia[lightboxIndex];
+  const item    = lightboxMedia[lightboxIndex];
   const content = document.getElementById('lightbox-content');
+  const counter = document.getElementById('lightbox-counter');
   if (!content) return;
   content.innerHTML = item.isVideo
-    ? `<video src="${item.url}" controls autoplay style="max-width:90vw;max-height:90vh;border-radius:var(--radius-md);"></video>`
-    : `<img src="${item.url}" style="max-width:90vw;max-height:90vh;border-radius:var(--radius-md);object-fit:contain;">`;
+    ? `<video src="${item.url}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:var(--radius-md);"></video>`
+    : `<img src="${item.url}" style="max-width:90vw;max-height:85vh;border-radius:var(--radius-md);object-fit:contain;">`;
+  if (counter) counter.textContent = `${lightboxIndex + 1} / ${lightboxMedia.length}`;
 }
 // Keyboard nav for lightbox
 document.addEventListener('keydown', e => {
   const lb = document.getElementById('gallery-lightbox');
   if (!lb || lb.style.display==='none') return;
-  if (e.key==='Escape') closeLightbox();
-  if (e.key==='ArrowRight') lightboxNav(1);
-  if (e.key==='ArrowLeft')  lightboxNav(-1);
+  if (e.key==='Escape')      closeLightbox();
+  if (e.key==='ArrowRight')  lightboxNav(1);
+  if (e.key==='ArrowLeft')   lightboxNav(-1);
 });
 
 // ── Detail page ───────────────────────────────────
@@ -2231,6 +2249,7 @@ function reviewCardFullHTML(r) {
 
 async function loadReviewsPreview() {
   if (!currentListing) return;
+  const extra = document.getElementById('detail-reviews-extra');
   try {
     const res     = await fetch(`${API}/reviews/${currentListing._id}`);
     const reviews = await res.json();
@@ -2238,12 +2257,15 @@ async function loadReviewsPreview() {
       const avg = (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1);
       const rEl = document.getElementById('detail-rating');
       if (rEl) rEl.innerHTML = `<span class="rating-stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</span> ${avg} (${reviews.length} reviews)`;
-      const extra = document.getElementById('detail-reviews-extra');
-      if (extra) { extra.style.display='block'; extra.innerHTML = reviews.slice(0,3).map(r=>reviewCardHTML(r)).join(''); }
+      if (extra) { extra.innerHTML = reviews.slice(0,3).map(r=>reviewCardHTML(r)).join(''); }
+      const seeAll = document.querySelector('#page-detail .see-all');
+      if (seeAll) seeAll.textContent = `All ${reviews.length} reviews →`;
+    } else {
+      if (extra) extra.innerHTML = '<p style="color:var(--gray-400);font-size:14px;padding:12px 0;">No reviews yet for this boarding. Be the first!</p>';
     }
-    const seeAll = document.querySelector('#page-detail .see-all');
-    if (seeAll) seeAll.textContent = `All ${reviews.length} reviews →`;
-  } catch {}
+  } catch {
+    if (extra) extra.innerHTML = '';
+  }
 }
 
 function setRating(val) {
@@ -2671,6 +2693,7 @@ async function loadDashboard() {
               <button onclick="openDetail('${l._id}')" class="btn btn-ghost btn-sm">👁 View</button>
               <button onclick="openManageMedia('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-ghost btn-sm">📸 Manage Media</button>
               <button onclick="toggleAvailability('${l._id}',${l.available})" class="btn btn-sm ${l.available?'btn-outline':'btn-success'}">${l.available?'🔒 Mark Booked':'✅ Mark Available'}</button>
+              <button onclick="deleteListing('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;">🗑 Delete</button>
             </div>
           </div>`;
         }).join('')}
@@ -2724,6 +2747,24 @@ async function loadDashboard() {
           </div>`).join(''):'<p style="color:var(--gray-400);font-size:13px;">No bookings yet.</p>'}`;
     }
   } catch(e) { console.log('Dashboard error:',e); }
+}
+
+// ── Delete listing ────────────────────────────────
+async function deleteListing(id, title) {
+  if (!confirm(`Are you sure you want to permanently delete "${title}"?\n\nThis cannot be undone.`)) return;
+  try {
+    const res  = await fetch(`${API}/listings/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    });
+    const data = await res.json();
+    if (data.message) {
+      showToast(`🗑 "${title}" deleted successfully`, 'success');
+      allListings = allListings.filter(l => l._id !== id);
+      if (currentListing && currentListing._id === id) currentListing = null;
+      loadDashboard();
+    } else { showToast(data.error || 'Could not delete listing', 'error'); }
+  } catch { showToast('Connection error', 'error'); }
 }
 
 // ── Toggle availability ───────────────────────────

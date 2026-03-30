@@ -290,28 +290,6 @@
   .form-group input,.form-group select,.form-group textarea { width:100%;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;color:var(--gray-800);background:white;transition:border-color .2s; }
   .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline:none;border-color:var(--brand); }
   .form-group textarea { height:80px;resize:vertical; }
-
-  /* ── MEDIA UPLOAD ── */
-  .media-upload-area { border:2px dashed var(--gray-300);border-radius:var(--radius-md);padding:28px;text-align:center;cursor:pointer;transition:all .2s;position:relative; }
-  .media-upload-area:hover,.media-upload-area.drag-over { border-color:var(--brand);background:var(--brand-light); }
-  .media-upload-area input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
-  .media-preview-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:14px; }
-  .media-thumb { position:relative;border-radius:var(--radius-sm);overflow:hidden;aspect-ratio:1;background:var(--gray-100); }
-  .media-thumb img,.media-thumb video { width:100%;height:100%;object-fit:cover; }
-  .media-thumb .remove-btn { position:absolute;top:4px;right:4px;width:22px;height:22px;background:rgba(0,0,0,.6);color:white;border:none;border-radius:50%;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;line-height:1; }
-  .media-thumb .media-type-badge { position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.55);color:white;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600; }
-  .upload-progress { height:4px;background:var(--gray-200);border-radius:100px;overflow:hidden;margin-top:8px;display:none; }
-  .upload-progress-bar { height:100%;background:var(--brand);border-radius:100px;transition:width .3s; }
-  /* Gallery with real images */
-  .gallery-cell img { width:100%;height:100%;object-fit:cover; }
-  .gallery-cell video { width:100%;height:100%;object-fit:cover; }
-  .gallery-lightbox { position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:999;display:flex;align-items:center;justify-content:center;cursor:zoom-out; }
-  .gallery-lightbox img,.gallery-lightbox video { max-width:90vw;max-height:90vh;border-radius:var(--radius-md);object-fit:contain; }
-  .gallery-lightbox .close-btn { position:absolute;top:20px;right:24px;color:white;font-size:28px;cursor:pointer;border:none;background:none; }
-  .gallery-lightbox .nav-btn { position:absolute;top:50%;transform:translateY(-50%);color:white;font-size:36px;cursor:pointer;border:none;background:rgba(255,255,255,.12);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center; }
-  .gallery-lightbox .prev-btn { left:16px; }
-  .gallery-lightbox .next-btn { right:16px; }
-
   .upload-zone { border:2px dashed var(--gray-300);border-radius:var(--radius-md);padding:32px;text-align:center;cursor:pointer;transition:all .2s; }
   .upload-zone:hover { border-color:var(--brand);background:var(--brand-light); }
   .upload-zone .upload-icon { font-size:32px;margin-bottom:8px; }
@@ -863,7 +841,7 @@
       <span>Sunset View Boarding House</span>
     </div>
     <!-- Gallery -->
-    <div class="gallery" id="detail-gallery">
+    <div class="gallery">
       <div class="gallery-cell gallery-main" style="background:linear-gradient(135deg,#BFDBFE,#93C5FD);">🏘️</div>
       <div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#A7F3D0,#6EE7B7);">🛏️</div>
       <div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#FED7AA,#FCA5A5);">🍳</div>
@@ -990,16 +968,16 @@
           <div style="background:#FEF3C7;color:#92400E;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-bottom:16px;">📅 Future vacancy: July 2026 · 3 more slots</div>
           <div style="border-top:1px solid var(--gray-100);padding-top:16px;">
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Monthly rent</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Monthly rent</span><span id="panel-monthly-rent" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Security deposit</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Security deposit</span><span id="panel-security-deposit" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:14px;color:var(--gray-600);">
-              <span>Advance payment</span><span style="font-weight:600;color:var(--gray-800);">LKR 5,000</span>
+              <span>Advance payment</span><span id="panel-advance-payment" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--gray-900);border-top:1px solid var(--gray-200);padding-top:12px;">
-              <span>Pay to Book</span><span style="color:var(--brand)">LKR 5,000</span>
+              <span>Pay to Book</span><span id="panel-pay-to-book" style="color:var(--brand)">—</span>
             </div>
           </div>
           <div class="panel-btns">
@@ -1495,22 +1473,6 @@
       </div>
       <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="al-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking, Laundry, Security"></div>
       <div class="form-group"><label>Description</label><textarea id="al-description" placeholder="Describe your property for students..."></textarea></div>
-
-      <!-- Media Upload Section -->
-      <div class="form-group">
-        <label>📸 Photos & Videos <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(optional — up to 10 files)</span></label>
-        <div class="media-upload-area" id="al-drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event,'al')">
-          <input type="file" id="al-media-input" multiple accept="image/*,video/*" onchange="handleFileSelect(this,'al')">
-          <div style="font-size:36px;margin-bottom:8px;">📷</div>
-          <p style="font-weight:600;color:var(--gray-700);margin-bottom:4px;">Drag & drop photos/videos here</p>
-          <p style="font-size:13px;color:var(--gray-400);">or click to browse · JPG, PNG, MP4, MOV · Max 20MB each</p>
-        </div>
-        <div class="upload-progress" id="al-upload-progress">
-          <div class="upload-progress-bar" id="al-progress-bar" style="width:0%"></div>
-        </div>
-        <div class="media-preview-grid" id="al-preview-grid"></div>
-      </div>
-
       <div id="al-msg" style="display:none;padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;font-weight:600;"></div>
       <div style="display:flex;gap:10px;">
         <button onclick="submitListing()" class="btn btn-primary btn-lg" style="flex:1;justify-content:center;">🏠 Submit Listing</button>
@@ -1679,12 +1641,12 @@
 
 <script>
 // ═══════════════════════════════════════════════════
-//  SMART BOARDING FINDER — Full Script with Media
+//  SMART BOARDING FINDER — Complete Connected Script
 // ═══════════════════════════════════════════════════
 
-const API = 'http://localhost:3000/api';
+const API = 'https://boarding-finder-backend-production.up.railway.app/api';
 
-// ── State ─────────────────────────────────────────
+// ── State ────────────────────────────────────────
 let allListings    = [];
 let currentListing = null;
 let currentRating  = 0;
@@ -1692,14 +1654,7 @@ let reviewsOffset  = 0;
 let savedIds       = new Set(JSON.parse(localStorage.getItem('saved') || '[]'));
 let signupRole     = 'student';
 
-// Media state
-let alSelectedFiles    = [];   // files chosen in Add Listing form
-let modalSelectedFiles = [];   // files chosen in Manage Media modal
-let modalListingId     = null; // which listing the modal is for
-let lightboxMedia      = [];   // [{url, isVideo}]
-let lightboxIndex      = 0;
-
-// ── Toast ─────────────────────────────────────────
+// ── Toast notification ───────────────────────────
 function showToast(msg, type = '') {
   let t = document.getElementById('_toast');
   if (!t) {
@@ -1723,7 +1678,7 @@ function showMsg(el, text, type) {
   el.textContent = text;
 }
 
-// ── Page navigation ───────────────────────────────
+// ── Page navigation ──────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
@@ -1736,9 +1691,9 @@ function showPage(id) {
   const el = document.getElementById(navMap[id]);
   if (el) el.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
-  if (id === 'results')   applyFilters();
-  if (id === 'dashboard') loadDashboard();
-  if (id === 'reviews' && currentListing) loadReviewsPage();
+  if (id === 'results')   { applyFilters(); }
+  if (id === 'dashboard') { loadDashboard(); }
+  if (id === 'reviews' && currentListing) { loadReviewsPage(); }
 }
 
 function selectRoom(el) {
@@ -1762,7 +1717,7 @@ function switchSignupRole(role) {
   document.getElementById('signup-owner-fields').style.display   = role==='owner'?'block':'none';
 }
 
-// ── Nav ───────────────────────────────────────────
+// ── Update nav after login/logout ────────────────
 function updateNav() {
   const name = localStorage.getItem('userName');
   const role = localStorage.getItem('userRole');
@@ -1771,7 +1726,7 @@ function updateNav() {
   if (name) {
     navEnd.innerHTML = `
       <span style="font-size:13px;color:var(--gray-600);font-weight:500;">👤 ${name}</span>
-      ${role==='landlord'?'<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>':'<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">My Bookings</button>'}
+      ${role==='landlord' ? '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>' : '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">My Bookings</button>'}
       <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
   } else {
     navEnd.innerHTML = `
@@ -1781,7 +1736,7 @@ function updateNav() {
   }
 }
 
-// ── Auth helpers ──────────────────────────────────
+// ── Auth ──────────────────────────────────────────
 const getToken    = () => localStorage.getItem('token');
 const getUserRole = () => localStorage.getItem('userRole');
 const isLoggedIn  = () => !!getToken();
@@ -1792,18 +1747,18 @@ async function signupUser() {
   const email    = document.getElementById('signup-email')?.value.trim();
   const password = document.getElementById('signup-password')?.value;
   if (!fname || !email || !password) { showToast('Please fill all required fields', 'error'); return; }
-  if (password.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+  if (password.length < 6)           { showToast('Password must be at least 6 characters', 'error'); return; }
   try {
     const res  = await fetch(`${API}/auth/signup`, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name:`${fname} ${lname}`, email, password, role:signupRole==='owner'?'landlord':'student' })
+      body: JSON.stringify({ name:`${fname} ${lname}`, email, password, role: signupRole==='owner'?'landlord':'student' })
     });
     const data = await res.json();
     if (data.message) {
       showToast('Account created! Please sign in.', 'success');
       document.getElementById('login-email').value = email;
       showPage('login');
-    } else { showToast(data.error||'Signup failed', 'error'); }
+    } else { showToast(data.error || 'Signup failed', 'error'); }
   } catch { showToast('Connection error — is the server running?', 'error'); }
 }
 
@@ -1821,11 +1776,11 @@ async function loginUser() {
       localStorage.setItem('token',    data.token);
       localStorage.setItem('userName', data.name);
       localStorage.setItem('userRole', data.role);
-      localStorage.setItem('userId',   data.userId||'');
+      localStorage.setItem('userId',   data.userId || '');
       updateNav();
       showToast(`Welcome back, ${data.name}! 👋`, 'success');
       setTimeout(() => { showPage('home'); loadHomeListings(); }, 800);
-    } else { showToast(data.error||'Login failed — check your credentials', 'error'); }
+    } else { showToast(data.error || 'Login failed — check your credentials', 'error'); }
   } catch { showToast('Connection error — is the server running?', 'error'); }
 }
 
@@ -1838,7 +1793,7 @@ function logoutUser() {
   loadHomeListings();
 }
 
-// ── Listings ──────────────────────────────────────
+// ── Fetch listings from backend ───────────────────
 async function fetchListings() {
   try {
     const res = await fetch(`${API}/listings`);
@@ -1847,26 +1802,7 @@ async function fetchListings() {
   } catch { allListings = []; }
 }
 
-const GRADS = ['linear-gradient(135deg,#BFDBFE,#93C5FD)','linear-gradient(135deg,#A7F3D0,#6EE7B7)','linear-gradient(135deg,#FED7AA,#FCA5A5)','linear-gradient(135deg,#E9D5FF,#C4B5FD)','linear-gradient(135deg,#FEF3C7,#FDE68A)'];
-const ICONS = ['🏘️','🏠','🏡','🏢','🏗️'];
-function gradFor(id) { const n=parseInt(id.slice(-4),16)%GRADS.length; return GRADS[isNaN(n)?0:n]; }
-function iconFor(id) { const n=parseInt(id.slice(-4),16)%ICONS.length; return ICONS[isNaN(n)?0:n]; }
-
-// Get first image URL or null
-function firstImage(l) {
-  if (l.media && l.media.length) {
-    const img = l.media.find(m => m.type === 'image');
-    if (img) return `${API.replace('/api','')}${img.url}`;
-  }
-  return null;
-}
-
-function mediaThumb(l, size='100%') {
-  const img = firstImage(l);
-  if (img) return `<img src="${img}" style="width:${size};height:100%;object-fit:cover;" onerror="this.style.display='none'">`;
-  return iconFor(l._id);
-}
-
+// ── Home page listings ───────────────────────────
 async function loadHomeListings() {
   if (!allListings.length) await fetchListings();
   const grid = document.getElementById('home-listings-grid');
@@ -1879,16 +1815,26 @@ async function loadHomeListings() {
   grid.innerHTML = available.map(l => homeCardHTML(l)).join('');
 }
 
+const GRADS = [
+  'linear-gradient(135deg,#BFDBFE,#93C5FD)',
+  'linear-gradient(135deg,#A7F3D0,#6EE7B7)',
+  'linear-gradient(135deg,#FED7AA,#FCA5A5)',
+  'linear-gradient(135deg,#E9D5FF,#C4B5FD)',
+  'linear-gradient(135deg,#FEF3C7,#FDE68A)'
+];
+const ICONS = ['🏘️','🏠','🏡','🏢','🏗️'];
+
+function gradFor(id) { const n = parseInt(id.slice(-4), 16) % GRADS.length; return GRADS[isNaN(n)?0:n]; }
+function iconFor(id) { const n = parseInt(id.slice(-4), 16) % ICONS.length; return ICONS[isNaN(n)?0:n]; }
+
 function homeCardHTML(l) {
   const saved = savedIds.has(l._id);
-  const img   = firstImage(l);
   return `
   <div class="boarding-card" onclick="openDetail('${l._id}')" style="cursor:pointer;">
     <div class="card-img" style="background:${gradFor(l._id)};">
-      ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<div class="card-img-placeholder">${iconFor(l._id)}</div>`}
+      <div class="card-img-placeholder">${iconFor(l._id)}</div>
       <div class="card-badges">
         <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
-        ${l.media&&l.media.length?`<span class="badge" style="background:rgba(0,0,0,.5);color:white;">📷 ${l.media.length}</span>`:''}
       </div>
       <button class="fav-btn ${saved?'active':''}" onclick="event.stopPropagation();toggleSave('${l._id}',this)">${saved?'♥':'♡'}</button>
     </div>
@@ -1906,11 +1852,10 @@ function homeCardHTML(l) {
 
 function resultCardHTML(l) {
   const saved = savedIds.has(l._id);
-  const img   = firstImage(l);
   return `
   <div class="result-card" onclick="openDetail('${l._id}')" style="cursor:pointer;">
-    <div class="result-img" style="background:${gradFor(l._id)};overflow:hidden;">
-      ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<div class="result-img-placeholder">${iconFor(l._id)}</div>`}
+    <div class="result-img" style="background:${gradFor(l._id)};">
+      <div class="result-img-placeholder">${iconFor(l._id)}</div>
     </div>
     <div class="result-body">
       <div>
@@ -1919,13 +1864,12 @@ function resultCardHTML(l) {
             <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
               <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
               ${l.roomType?`<span class="badge badge-verified">🛏 ${l.roomType}</span>`:''}
-              ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
             </div>
             <div class="result-title">${l.title}</div>
           </div>
           <div class="result-price">LKR ${Number(l.price).toLocaleString()}<br><small>/month</small></div>
         </div>
-        <div class="result-loc">📍 ${l.city}</div>
+        <div class="result-loc">📍 ${l.city}${l.description?' · '+l.description.slice(0,60)+'...':''}</div>
         <div class="result-tags">${(l.amenities||[]).slice(0,5).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
       </div>
       <div class="result-footer">
@@ -1949,150 +1893,83 @@ function toggleSave(id, btn) {
     if (btn) { btn.textContent = btn.classList.contains('fav-btn')?'♥':'♥ Saved'; btn.classList.add('active'); }
   }
   localStorage.setItem('saved', JSON.stringify([...savedIds]));
+  const detailBtn = document.getElementById('detail-save-btn');
+  if (detailBtn && currentListing && currentListing._id === id) {
+    detailBtn.textContent = savedIds.has(id) ? '♥ Saved' : '♡ Save';
+  }
+}
+function toggleSave_detailBtn() {
+  if (!currentListing) return;
+  const btn = document.getElementById('detail-save-btn');
+  toggleSave(currentListing._id, btn);
 }
 
-// ── Home search ───────────────────────────────────
+// ── Home search ──────────────────────────────────
 function doHomeSearch() {
-  const price = document.getElementById('home-price')?.value||'';
-  const room  = document.getElementById('home-room')?.value||'';
-  if (price) { const el=document.getElementById('search-price'); if(el) el.value=price; }
-  if (room)  { const el=document.getElementById('search-room');  if(el) el.value=room; }
+  const price = document.getElementById('home-price')?.value || '';
+  const room  = document.getElementById('home-room')?.value  || '';
+  if (price) { const el = document.getElementById('search-price'); if (el) el.value = price; }
+  if (room)  { const el = document.getElementById('search-room');  if (el) el.value = room; }
   showPage('results');
 }
+
 function quickFilter(type) {
   resetFilters(true);
-  if (type==='available') { const r=document.querySelector('input[name="avail"][value="now"]');    if(r) r.checked=true; }
-  if (type==='future')    { const r=document.querySelector('input[name="avail"][value="future"]'); if(r) r.checked=true; }
+  if (type==='available') { const r = document.querySelector('input[name="avail"][value="now"]'); if (r) r.checked=true; }
+  if (type==='future')    { const r = document.querySelector('input[name="avail"][value="future"]'); if (r) r.checked=true; }
   showPage('results');
 }
+
+// ── Filter + search ──────────────────────────────
 function resetFilters(silent) {
-  ['search-city','search-price','search-room'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  const fp = document.getElementById('filter-price');
-  if (fp) { fp.value=60000; const d=document.getElementById('price-display'); if(d) d.textContent='Any Price'; }
-  document.querySelectorAll('input[name="avail"]').forEach(r => r.checked = r.value==='');
-  document.querySelectorAll('input[name="room"]').forEach(r  => r.checked = r.value==='');
-  document.querySelectorAll('#facilities-filter input').forEach(c => c.checked=false);
+  const sc = document.getElementById('search-city');   if (sc) sc.value = '';
+  const sp = document.getElementById('search-price');  if (sp) sp.value = '';
+  const sr = document.getElementById('search-room');   if (sr) sr.value = '';
+  const fp = document.getElementById('filter-price');  if (fp) { fp.value = 60000; document.getElementById('price-display').textContent = 'Any Price'; }
+  document.querySelectorAll('input[name="avail"]').forEach(r => r.checked = r.value === '');
+  document.querySelectorAll('input[name="room"]').forEach(r  => r.checked = r.value === '');
+  document.querySelectorAll('#facilities-filter input').forEach(c => c.checked = false);
   if (!silent) applyFilters();
 }
 
 async function applyFilters() {
   if (!allListings.length) await fetchListings();
-  const city     = (document.getElementById('search-city')?.value||'').trim().toLowerCase();
-  const priceCap = parseInt(document.getElementById('filter-price')?.value)||60000;
-  const topPrice = parseInt(document.getElementById('search-price')?.value)||60000;
-  const maxPrice = Math.min(priceCap, topPrice);
-  const roomSel  = document.querySelector('input[name="room"]:checked')?.value || document.getElementById('search-room')?.value||'';
-  const availSel = document.querySelector('input[name="avail"]:checked')?.value||'';
-  const amenReq  = [...document.querySelectorAll('#facilities-filter input:checked')].map(c=>c.value.toLowerCase());
-  const sort     = document.getElementById('sort-select')?.value||'newest';
+
+  const city     = (document.getElementById('search-city')?.value  || '').trim().toLowerCase();
+  const priceCap = parseInt(document.getElementById('filter-price')?.value) || 60000;
+  const topPrice = document.getElementById('search-price')?.value ? parseInt(document.getElementById('search-price').value) : 60000;
+  const maxPrice = Math.min(priceCap, topPrice || 60000);
+  const roomSel  = document.querySelector('input[name="room"]:checked')?.value  || document.getElementById('search-room')?.value || '';
+  const availSel = document.querySelector('input[name="avail"]:checked')?.value || '';
+  const amenReq  = [...document.querySelectorAll('#facilities-filter input:checked')].map(c => c.value.toLowerCase());
+  const sort     = document.getElementById('sort-select')?.value || 'newest';
 
   let filtered = allListings.filter(l => {
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
     if (l.price > maxPrice) return false;
-    if (roomSel && l.roomType && l.roomType!==roomSel) return false;
-    if (availSel==='now'    && !l.available) return false;
-    if (availSel==='future' &&  l.available) return false;
+    if (roomSel && l.roomType && l.roomType !== roomSel) return false;
+    if (availSel === 'now'    && !l.available)  return false;
+    if (availSel === 'future' &&  l.available)  return false;
     if (amenReq.length) {
-      const lAm = (l.amenities||[]).map(a=>a.toLowerCase());
-      if (!amenReq.every(req => lAm.some(a=>a.includes(req)))) return false;
+      const lAm = (l.amenities||[]).map(a => a.toLowerCase());
+      if (!amenReq.every(req => lAm.some(a => a.includes(req)))) return false;
     }
     return true;
   });
-  if (sort==='price-asc')  filtered.sort((a,b)=>a.price-b.price);
-  if (sort==='price-desc') filtered.sort((a,b)=>b.price-a.price);
-  if (sort==='newest')     filtered.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  if (sort === 'price-asc')  filtered.sort((a,b) => a.price - b.price);
+  if (sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+  if (sort === 'newest')     filtered.sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
 
   const list  = document.getElementById('results-list');
   const count = document.getElementById('results-count');
   if (count) count.innerHTML = `<strong>${filtered.length} boarding${filtered.length!==1?'s':''}</strong> found near UoM`;
   if (list)  list.innerHTML  = filtered.length
-    ? filtered.map(l=>resultCardHTML(l)).join('')
+    ? filtered.map(l => resultCardHTML(l)).join('')
     : '<div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--gray-400);">😕 No listings match your filters. <a onclick="resetFilters()" style="color:var(--brand);cursor:pointer;font-weight:600;">Reset filters</a></div>';
 }
 
-// ── Gallery helpers ───────────────────────────────
-function buildGallery(media) {
-  const gallery = document.getElementById('detail-gallery');
-  if (!gallery) return;
-
-  lightboxMedia = [];
-
-  if (!media || !media.length) {
-    // Show default placeholder gallery
-    gallery.innerHTML = `
-      <div class="gallery-cell gallery-main" style="background:linear-gradient(135deg,#BFDBFE,#93C5FD);">🏘️</div>
-      <div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#A7F3D0,#6EE7B7);">🛏️</div>
-      <div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#FED7AA,#FCA5A5);">🍳</div>
-      <div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#E9D5FF,#C4B5FD);">🚿</div>
-      <div class="gallery-cell gallery-thumb has-more" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);">🏡</div>`;
-    return;
-  }
-
-  const baseUrl = API.replace('/api', '');
-  media.forEach(m => {
-    lightboxMedia.push({ url: baseUrl + m.url, isVideo: m.type === 'video' });
-  });
-
-  const cells = media.slice(0, 5).map((m, i) => {
-    const url     = baseUrl + m.url;
-    const isVideo = m.type === 'video';
-    const isMain  = i === 0;
-    const hasMore = i === 4 && media.length > 5;
-    const extra   = hasMore ? `<div class="gallery-cell-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,.5);color:white;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;">+${media.length-4} more</div>` : '';
-    return `
-      <div class="gallery-cell ${isMain?'gallery-main':'gallery-thumb'}" style="cursor:pointer;position:relative;" onclick="openLightbox(${i})">
-        ${isVideo
-          ? `<video src="${url}" muted style="width:100%;height:100%;object-fit:cover;"></video><div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:white;padding:3px 8px;border-radius:6px;font-size:11px;">▶ Video</div>`
-          : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`}
-        ${extra}
-      </div>`;
-  });
-
-  // Fill to 5 cells if fewer media items
-  while (cells.length < 5) {
-    const placeholders = ['linear-gradient(135deg,#A7F3D0,#6EE7B7)','linear-gradient(135deg,#FED7AA,#FCA5A5)','linear-gradient(135deg,#E9D5FF,#C4B5FD)','linear-gradient(135deg,#FEF3C7,#FDE68A)'];
-    const emojis = ['🛏️','🍳','🚿','🏡'];
-    const idx = cells.length - 1;
-    cells.push(`<div class="gallery-cell gallery-thumb" style="background:${placeholders[idx%4]};">${emojis[idx%4]}</div>`);
-  }
-
-  gallery.innerHTML = cells.join('');
-}
-
-// ── Lightbox ──────────────────────────────────────
-function openLightbox(index) {
-  if (!lightboxMedia.length) return;
-  lightboxIndex = index;
-  renderLightbox();
-  document.getElementById('gallery-lightbox').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  document.getElementById('gallery-lightbox').style.display = 'none';
-  document.body.style.overflow = '';
-}
-function lightboxNav(dir) {
-  lightboxIndex = (lightboxIndex + dir + lightboxMedia.length) % lightboxMedia.length;
-  renderLightbox();
-}
-function renderLightbox() {
-  const item = lightboxMedia[lightboxIndex];
-  const content = document.getElementById('lightbox-content');
-  if (!content) return;
-  content.innerHTML = item.isVideo
-    ? `<video src="${item.url}" controls autoplay style="max-width:90vw;max-height:90vh;border-radius:var(--radius-md);"></video>`
-    : `<img src="${item.url}" style="max-width:90vw;max-height:90vh;border-radius:var(--radius-md);object-fit:contain;">`;
-}
-// Keyboard nav for lightbox
-document.addEventListener('keydown', e => {
-  const lb = document.getElementById('gallery-lightbox');
-  if (!lb || lb.style.display==='none') return;
-  if (e.key==='Escape') closeLightbox();
-  if (e.key==='ArrowRight') lightboxNav(1);
-  if (e.key==='ArrowLeft')  lightboxNav(-1);
-});
-
-// ── Detail page ───────────────────────────────────
+// ── Open listing detail ───────────────────────────
 async function openDetail(id) {
   try {
     const res = await fetch(`${API}/listings/${id}`);
@@ -2101,13 +1978,10 @@ async function openDetail(id) {
 
   const l = currentListing;
 
-  // Gallery with real media
-  buildGallery(l.media);
-
   // Title + breadcrumb
   const titleEl = document.getElementById('detail-title');
   if (titleEl) titleEl.textContent = l.title;
-  document.querySelectorAll('.breadcrumb span:last-child').forEach(s => { if(s.closest('#page-detail')) s.textContent = l.title; });
+  document.querySelectorAll('.breadcrumb span:last-child').forEach(s => { if (s.closest('#page-detail')) s.textContent = l.title; });
 
   // Meta
   const cityEl   = document.getElementById('detail-city');
@@ -2115,9 +1989,9 @@ async function openDetail(id) {
   const ratingEl = document.getElementById('detail-rating');
   if (cityEl)   cityEl.innerHTML   = `📍 ${l.city}`;
   if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'} · LKR ${Number(l.price).toLocaleString()}/mo`;
-  if (ratingEl) ratingEl.innerHTML = `<span class="rating-stars">★★★★☆</span> Loading...`;
+  if (ratingEl) ratingEl.innerHTML = `<span class="rating-stars">★★★★☆</span> Loading reviews...`;
 
-  // Description
+  // Description paragraph
   const descEl = document.querySelector('#page-detail .detail-content > p');
   if (descEl) descEl.textContent = l.description || 'A comfortable boarding place near campus with great facilities.';
 
@@ -2126,15 +2000,17 @@ async function openDetail(id) {
   if (badgesDiv) {
     badgesDiv.innerHTML = `
       <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
-      <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified</span>
-      ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">📷 ${l.media.length} photos</span>`:''}`;
+      <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified</span>`;
   }
 
   // Amenities
   const facGrid = document.querySelector('#page-detail .facilities-grid');
   if (facGrid && l.amenities?.length) {
-    const em = {WiFi:'📶',Kitchen:'🍳',Parking:'🚗',Laundry:'🧺',Security:'🛡️',AC:'❄️',Meals:'🍽','TV Room':'📺',Garden:'🌿'};
-    facGrid.innerHTML = l.amenities.map(a => `<div class="facility-chip"><span class="facility-icon">${em[a]||'✨'}</span> ${a}</div>`).join('');
+    const emojiMap = { WiFi:'📶', Kitchen:'🍳', Parking:'🚗', Laundry:'🧺', Security:'🛡️', AC:'❄️', Meals:'🍽', 'TV Room':'📺', Garden:'🌿' };
+    facGrid.innerHTML = l.amenities.map(a => {
+      const icon = emojiMap[a] || '✨';
+      return `<div class="facility-chip"><span class="facility-icon">${icon}</span> ${a}</div>`;
+    }).join('');
   }
 
   // Room type card
@@ -2149,40 +2025,60 @@ async function openDetail(id) {
       </div>`;
   }
 
-  // Booking panel
-  const priceBig   = document.querySelector('#page-detail .price-big');
-  const priceSub   = document.querySelector('#page-detail .price-sub');
+  // Booking panel price breakdown (dynamic per listing)
+  const ADVANCE = 5000;
+  const panelMonthly  = document.getElementById('panel-monthly-rent');
+  const panelDeposit  = document.getElementById('panel-security-deposit');
+  const panelAdvance  = document.getElementById('panel-advance-payment');
+  const panelPayNow   = document.getElementById('panel-pay-to-book');
+  if (panelMonthly) panelMonthly.textContent = `LKR ${Number(l.price).toLocaleString()}`;
+  if (panelDeposit) panelDeposit.textContent = `LKR ${Number(l.price).toLocaleString()}`;
+  if (panelAdvance) panelAdvance.textContent = `LKR ${Number(ADVANCE).toLocaleString()}`;
+  if (panelPayNow)  panelPayNow.textContent  = `LKR ${Number(ADVANCE).toLocaleString()}`;
+
+  // Booking panel price + availability
+  const priceBig = document.querySelector('#page-detail .price-big');
+  const priceSub = document.querySelector('#page-detail .price-sub');
   const availBadge = document.querySelector('#page-detail .avail-badge');
   if (priceBig) priceBig.textContent = `LKR ${Number(l.price).toLocaleString()}`;
   if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'} · Bills may vary`;
   if (availBadge) {
-    availBadge.style.background = l.available?'#D1FAE5':'#FEF3C7';
-    availBadge.style.color      = l.available?'#065F46':'#92400E';
-    availBadge.innerHTML = l.available?'<span class="dot"></span> Available Now':'🕐 Currently Unavailable';
+    if (l.available) {
+      availBadge.style.background = '#D1FAE5'; availBadge.style.color = '#065F46';
+      availBadge.innerHTML = '<span class="dot"></span> Available Now';
+    } else {
+      availBadge.style.background = '#FEF3C7'; availBadge.style.color = '#92400E';
+      availBadge.innerHTML = '🕐 Currently Unavailable';
+    }
   }
 
-  // Book Now button
+  // Book Now button state
   const bookBtn = document.getElementById('book-now-btn');
   if (bookBtn) {
     bookBtn.disabled    = !l.available;
-    bookBtn.textContent = l.available?'🏠 Book Now':'🚫 Not Available';
-    bookBtn.style.opacity = l.available?'1':'0.5';
-    bookBtn.style.cursor  = l.available?'pointer':'not-allowed';
+    bookBtn.textContent = l.available ? '🏠 Book Now' : '🚫 Not Available';
+    bookBtn.style.opacity = l.available ? '1' : '0.5';
+    bookBtn.style.cursor  = l.available ? 'pointer' : 'not-allowed';
   }
 
   // Owner details
-  const ownerWrap = document.querySelector('#page-detail .booking-panel > div:last-child > div:last-child');
-  if (ownerWrap) ownerWrap.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">🏠</div>
-      <div><div style="font-weight:600;font-size:14px;">Property Owner</div><div style="font-size:12px;color:var(--success);">✅ Verified Owner</div></div>
-    </div>`;
+  const ownerDiv = document.querySelector('#page-detail .booking-panel > div:last-child > div:last-child');
+  if (ownerDiv) {
+    ownerDiv.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">🏠</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;">Property Owner</div>
+          <div style="font-size:12px;color:var(--success);">✅ Verified Owner</div>
+        </div>
+      </div>`;
+  }
 
-  // Save button
+  // Save button state
   const saveBtn = document.getElementById('detail-save-btn');
-  if (saveBtn) saveBtn.textContent = savedIds.has(l._id)?'♥ Saved':'♡ Save';
+  if (saveBtn) saveBtn.textContent = savedIds.has(l._id) ? '♥ Saved' : '♡ Save';
 
-  // Booking summary
+  // Update booking summary
   const sumTitle = document.getElementById('bk-sum-title');
   const sumRoom  = document.getElementById('bk-sum-room');
   const sumDep   = document.getElementById('bk-sum-deposit');
@@ -2192,20 +2088,48 @@ async function openDetail(id) {
   if (sumRoom)  sumRoom.textContent  = `${l.roomType||'Room'} · 12 months`;
   if (sumDep)   sumDep.textContent   = `LKR ${Number(l.price).toLocaleString()}`;
   if (sumRent)  sumRent.textContent  = `LKR ${Number(l.price).toLocaleString()}`;
-  if (sumTotal) sumTotal.textContent = `LKR ${(5000+l.price+l.price-1000).toLocaleString()}`;
+  if (sumTotal) sumTotal.textContent = `LKR ${(5000 + l.price + l.price - 1000).toLocaleString()}`;
 
+  // Load reviews preview
   await loadReviewsPreview();
   reviewsOffset = 0;
   showPage('detail');
 }
 
-// ── Reviews ───────────────────────────────────────
+// ── Reviews preview (on detail page) ─────────────
+async function loadReviewsPreview() {
+  if (!currentListing) return;
+  try {
+    const res     = await fetch(`${API}/reviews/${currentListing._id}`);
+    const reviews = await res.json();
+
+    // Update rating in detail meta
+    if (reviews.length) {
+      const avg = (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1);
+      const rEl = document.getElementById('detail-rating');
+      if (rEl) rEl.innerHTML = `<span class="rating-stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</span> ${avg} (${reviews.length} reviews)`;
+
+      // Inject real reviews into the 2 preview cards
+      const extra = document.getElementById('detail-reviews-extra');
+      if (extra && reviews.length > 0) {
+        extra.style.display = 'block';
+        extra.innerHTML = reviews.slice(0,3).map(r => reviewCardHTML(r)).join('');
+      }
+    }
+
+    // Update see-all link
+    const seeAll = document.querySelector('#page-detail .see-all');
+    if (seeAll) seeAll.textContent = `All ${reviews.length} reviews →`;
+  } catch {}
+}
+
 function reviewCardHTML(r) {
-  const name  = r.student?.name||'Anonymous';
-  const init  = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-  const date  = new Date(r.createdAt).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+  const name = r.student?.name || 'Anonymous';
+  const init = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  const date = new Date(r.createdAt).toLocaleDateString('en-GB',{month:'short',year:'numeric'});
   const stars = '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
-  return `<div class="review-card" style="margin-top:14px;">
+  return `
+  <div class="review-card" style="margin-top:14px;">
     <div class="review-header">
       <div class="reviewer-avatar">${init}</div>
       <div class="reviewer-info"><div class="name">${name}</div><div class="date">${date}</div></div>
@@ -2214,12 +2138,14 @@ function reviewCardHTML(r) {
     <p class="review-text">"${r.comment||''}"</p>
   </div>`;
 }
+
 function reviewCardFullHTML(r) {
-  const name  = r.student?.name||'Anonymous';
-  const init  = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-  const date  = new Date(r.createdAt).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-  const stars = '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
-  return `<div class="review-card-full">
+  const name = r.student?.name || 'Anonymous';
+  const init = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  const date = new Date(r.createdAt).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const stars= '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
+  return `
+  <div class="review-card-full">
     <div class="review-header">
       <div class="reviewer-avatar">${init}</div>
       <div class="reviewer-info"><div class="name">${name}</div><div class="date">${date}</div></div>
@@ -2229,77 +2155,69 @@ function reviewCardFullHTML(r) {
   </div>`;
 }
 
-async function loadReviewsPreview() {
-  if (!currentListing) return;
-  try {
-    const res     = await fetch(`${API}/reviews/${currentListing._id}`);
-    const reviews = await res.json();
-    if (reviews.length) {
-      const avg = (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1);
-      const rEl = document.getElementById('detail-rating');
-      if (rEl) rEl.innerHTML = `<span class="rating-stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</span> ${avg} (${reviews.length} reviews)`;
-      const extra = document.getElementById('detail-reviews-extra');
-      if (extra) { extra.style.display='block'; extra.innerHTML = reviews.slice(0,3).map(r=>reviewCardHTML(r)).join(''); }
-    }
-    const seeAll = document.querySelector('#page-detail .see-all');
-    if (seeAll) seeAll.textContent = `All ${reviews.length} reviews →`;
-  } catch {}
-}
-
+// ── Star rating ──────────────────────────────────
 function setRating(val) {
   currentRating = val;
   document.querySelectorAll('#detail-stars span').forEach(s => {
-    s.style.color = parseInt(s.dataset.val)<=val?'#F59E0B':'#D1D5DB';
+    s.style.color = parseInt(s.dataset.val) <= val ? '#F59E0B' : '#D1D5DB';
   });
 }
 
+// ── Submit review from detail page ───────────────
 async function submitDetailReview() {
-  if (!isLoggedIn()) { showToast('Please sign in to write a review','warning'); showPage('login'); return; }
+  if (!isLoggedIn()) { showToast('Please sign in to write a review', 'warning'); showPage('login'); return; }
   if (!currentListing) return;
-  if (!currentRating)  { showToast('Please select a star rating','error'); return; }
+  if (!currentRating)  { showToast('Please select a star rating', 'error'); return; }
   const comment = document.getElementById('detail-review-comment')?.value.trim();
   const msg     = document.getElementById('detail-review-msg');
   if (!comment) return showMsg(msg, '⚠️ Please write a comment.', 'error');
   try {
     const res  = await fetch(`${API}/reviews`, {
       method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
-      body: JSON.stringify({ listing:currentListing._id, rating:currentRating, comment })
+      body: JSON.stringify({ listing: currentListing._id, rating: currentRating, comment })
     });
     const data = await res.json();
     if (data.review) {
-      showMsg(msg,'✅ Review submitted! Thank you 🙏','success');
-      document.getElementById('detail-review-comment').value='';
+      showMsg(msg, '✅ Review submitted! Thank you 🙏', 'success');
+      document.getElementById('detail-review-comment').value = '';
       setRating(0);
       await loadReviewsPreview();
-    } else { showMsg(msg,'❌ '+(data.error||'Could not submit'),'error'); }
-  } catch { showMsg(document.getElementById('detail-review-msg'),'❌ Connection error','error'); }
+    } else { showMsg(msg, '❌ '+(data.error||'Could not submit review'), 'error'); }
+  } catch { showMsg(document.getElementById('detail-review-msg'), '❌ Connection error', 'error'); }
 }
 
+// ── Reviews page ──────────────────────────────────
 async function loadReviewsPage() {
   if (!currentListing) return;
   const titleEl = document.getElementById('reviews-title');
   const subEl   = document.getElementById('reviews-sub');
   if (titleEl) titleEl.textContent = `Reviews — ${currentListing.title}`;
   if (subEl)   subEl.textContent   = `${currentListing.title} · ${currentListing.city}`;
+
   try {
     const res     = await fetch(`${API}/reviews/${currentListing._id}`);
     const reviews = await res.json();
     reviewsOffset = 0;
+
     const numEl   = document.getElementById('reviews-avg-num');
     const starsEl = document.getElementById('reviews-avg-stars');
     const cntEl   = document.getElementById('reviews-total-count');
     const list    = document.getElementById('reviews-dynamic-list');
+
     if (!reviews.length) {
-      if (numEl)   numEl.textContent   = '—';
-      if (starsEl) starsEl.textContent = '☆☆☆☆☆';
-      if (cntEl)   cntEl.textContent   = '0 reviews';
-      if (list)    list.innerHTML      = '<p style="color:var(--gray-400);text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
+      if (numEl) numEl.textContent   = '—';
+      if (starsEl) starsEl.textContent='☆☆☆☆☆';
+      if (cntEl) cntEl.textContent   = '0 reviews';
+      if (list) list.innerHTML       = '<p style="color:var(--gray-400);text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
       return;
     }
-    const avg = reviews.reduce((s,r)=>s+r.rating,0)/reviews.length;
+
+    const avg = reviews.reduce((s,r)=>s+r.rating,0) / reviews.length;
     if (numEl)   numEl.textContent   = avg.toFixed(1);
     if (starsEl) starsEl.textContent = '★'.repeat(Math.round(avg))+'☆'.repeat(5-Math.round(avg));
     if (cntEl)   cntEl.textContent   = `${reviews.length} reviews`;
+
+    // Rating bars
     [1,2,3,4,5].forEach(n => {
       const cnt  = reviews.filter(r=>r.rating===n).length;
       const fill = document.querySelectorAll('#page-reviews .bar-fill')[5-n];
@@ -2307,20 +2225,26 @@ async function loadReviewsPage() {
       if (fill) fill.style.width = (cnt/reviews.length*100)+'%';
       if (span) span.textContent = cnt;
     });
-    if (list) { list.innerHTML = reviews.slice(0,10).map(r=>reviewCardFullHTML(r)).join(''); reviewsOffset=10; }
+
+    if (list) {
+      list.innerHTML = reviews.slice(0, 10).map(r => reviewCardFullHTML(r)).join('');
+      reviewsOffset = 10;
+    }
   } catch {}
 }
 
 function loadMoreReviews() {
   if (!currentListing) return;
-  fetch(`${API}/reviews/${currentListing._id}`).then(r=>r.json()).then(reviews => {
-    const list = document.getElementById('reviews-dynamic-list');
-    if (!list) return;
-    const more = reviews.slice(reviewsOffset, reviewsOffset+10);
-    more.forEach(r => list.insertAdjacentHTML('beforeend',reviewCardFullHTML(r)));
-    reviewsOffset += more.length;
-    if (reviewsOffset>=reviews.length) showToast('All reviews loaded!','success');
-  }).catch(()=>{});
+  fetch(`${API}/reviews/${currentListing._id}`)
+    .then(r=>r.json())
+    .then(reviews => {
+      const list = document.getElementById('reviews-dynamic-list');
+      if (!list) return;
+      const more = reviews.slice(reviewsOffset, reviewsOffset + 10);
+      more.forEach(r => list.insertAdjacentHTML('beforeend', reviewCardFullHTML(r)));
+      reviewsOffset += more.length;
+      if (reviewsOffset >= reviews.length) showToast('All reviews loaded!', 'success');
+    }).catch(()=>{});
 }
 
 // Write review from reviews page
@@ -2332,23 +2256,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (starBox) {
       const spans = starBox.querySelectorAll('span');
       spans.forEach((s,i) => {
-        s.style.cursor='pointer';
-        s.addEventListener('mouseover',()=>spans.forEach((x,j)=>x.textContent=j<=i?'★':'☆'));
+        s.style.cursor = 'pointer';
+        s.addEventListener('mouseover', ()=>spans.forEach((x,j)=>x.textContent=j<=i?'★':'☆'));
         s.addEventListener('mouseout', ()=>spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'));
-        s.addEventListener('click',    ()=>{ chosen=i+1; currentRating=chosen; spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'); });
+        s.addEventListener('click', ()=>{ chosen=i+1; currentRating=chosen; spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'); });
       });
     }
     writeBtn.addEventListener('click', async () => {
       if (!isLoggedIn()) { showToast('Please sign in to write a review','warning'); showPage('login'); return; }
       if (!currentListing) { showToast('Please select a listing first','error'); return; }
       if (!currentRating)  { showToast('Please select a star rating','error'); return; }
-      const comment = prompt('Share your experience:');
+      const comment = prompt('Share your experience about this boarding place:');
       if (!comment?.trim()) return;
       try {
-        const res = await fetch(`${API}/reviews`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({listing:currentListing._id,rating:currentRating,comment:comment.trim()})});
+        const res  = await fetch(`${API}/reviews`, {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
+          body: JSON.stringify({ listing: currentListing._id, rating: currentRating, comment: comment.trim() })
+        });
         const data = await res.json();
         if (data.review) { showToast('Review submitted! Thank you 🙏','success'); loadReviewsPage(); }
-        else showToast(data.error||'Could not submit','error');
+        else showToast(data.error||'Could not submit review','error');
       } catch { showToast('Connection error','error'); }
     });
   }
@@ -2365,151 +2292,46 @@ function goToBooking() {
 async function submitBooking() {
   if (!isLoggedIn()) { showToast('Please sign in first','warning'); showPage('login'); return; }
   if (!currentListing) { showToast('No listing selected','error'); return; }
+
   const fname    = document.getElementById('bk-fname')?.value.trim();
   const lname    = document.getElementById('bk-lname')?.value.trim();
   const email    = document.getElementById('bk-email')?.value.trim();
   const phone    = document.getElementById('bk-phone')?.value.trim();
   const date     = document.getElementById('bk-date')?.value;
-  const duration = document.getElementById('bk-duration')?.value||'12 months';
-  if (!fname||!lname||!email||!date) { showToast('Please fill in your name, email and move-in date','error'); return; }
+  const duration = document.getElementById('bk-duration')?.value || '12 months';
+
+  if (!fname || !lname || !email || !date) {
+    showToast('Please fill in your name, email and move-in date', 'error'); return;
+  }
+
   try {
-    const res  = await fetch(`${API}/bookings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({listing:currentListing._id,moveInDate:date,roomType:currentListing.roomType||'Room',duration,message:`${fname} ${lname} | ${email} | ${phone}`})});
+    const res  = await fetch(`${API}/bookings`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
+      body: JSON.stringify({
+        listing:    currentListing._id,
+        moveInDate: date,
+        roomType:   currentListing.roomType || 'Room',
+        duration,
+        message:    `${fname} ${lname} | ${email} | ${phone}`
+      })
+    });
     const data = await res.json();
     if (data.booking) {
-      showToast('🎉 Booking submitted! Listing marked as unavailable.','success');
+      showToast('🎉 Booking submitted! The listing is now marked as unavailable.', 'success');
+      // Immediately update local state
       currentListing.available = false;
-      allListings = allListings.map(l => l._id===currentListing._id?{...l,available:false}:l);
+      allListings = allListings.map(l => l._id===currentListing._id ? {...l, available:false} : l);
       setTimeout(() => showPage('dashboard'), 2000);
-    } else { showToast(data.error||'Booking failed','error'); }
-  } catch { showToast('Connection error — is the server running?','error'); }
+    } else { showToast(data.error||'Booking failed. Please try again.', 'error'); }
+  } catch { showToast('Connection error — is the server running?', 'error'); }
 }
 
-// ══════════════════════════════════════════════════
-//  MEDIA UPLOAD FUNCTIONS
-// ══════════════════════════════════════════════════
-
-// ── File selection & preview ──────────────────────
-function handleFileSelect(input, context) {
-  const files = [...input.files];
-  if (!files.length) return;
-  if (context === 'al') {
-    alSelectedFiles = [...alSelectedFiles, ...files].slice(0, 10);
-    renderPreviewGrid('al-preview-grid', alSelectedFiles, 'al');
-  } else {
-    modalSelectedFiles = [...modalSelectedFiles, ...files].slice(0, 10);
-    renderPreviewGrid('modal-preview-grid', modalSelectedFiles, 'modal');
-  }
-}
-
-function handleDrop(event, context) {
-  event.preventDefault();
-  document.getElementById(context==='al'?'al-drop-zone':'modal-drop-zone').classList.remove('drag-over');
-  const files = [...event.dataTransfer.files].filter(f => f.type.startsWith('image/')||f.type.startsWith('video/'));
-  if (!files.length) { showToast('Please drop image or video files only','error'); return; }
-  if (context === 'al') {
-    alSelectedFiles = [...alSelectedFiles, ...files].slice(0, 10);
-    renderPreviewGrid('al-preview-grid', alSelectedFiles, 'al');
-  } else {
-    modalSelectedFiles = [...modalSelectedFiles, ...files].slice(0, 10);
-    renderPreviewGrid('modal-preview-grid', modalSelectedFiles, 'modal');
-  }
-}
-
-function renderPreviewGrid(gridId, files, context) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-  if (!files.length) { grid.innerHTML=''; return; }
-  grid.innerHTML = files.map((f, i) => {
-    const isVideo = f.type.startsWith('video/');
-    const url     = URL.createObjectURL(f);
-    return `
-      <div class="media-thumb">
-        ${isVideo
-          ? `<video src="${url}" muted style="width:100%;height:100%;object-fit:cover;"></video>`
-          : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`}
-        <button class="remove-btn" onclick="removeFile(${i},'${context}')">✕</button>
-        <span class="media-type-badge">${isVideo?'▶ VIDEO':'📷 IMG'}</span>
-      </div>`;
-  }).join('');
-}
-
-function removeFile(index, context) {
-  if (context === 'al') {
-    alSelectedFiles.splice(index, 1);
-    renderPreviewGrid('al-preview-grid', alSelectedFiles, 'al');
-  } else {
-    modalSelectedFiles.splice(index, 1);
-    renderPreviewGrid('modal-preview-grid', modalSelectedFiles, 'modal');
-  }
-}
-
-// ── Upload files to backend ───────────────────────
-async function uploadFilesForListing(listingId, files, progressId, barId) {
-  if (!files.length) return true;
-  const progressEl = document.getElementById(progressId);
-  const barEl      = document.getElementById(barId);
-  if (progressEl) progressEl.style.display = 'block';
-
-  const formData = new FormData();
-  files.forEach(f => formData.append('media', f));
-
-  try {
-    // Simulate progress
-    let prog = 0;
-    const progInterval = setInterval(() => {
-      prog = Math.min(prog + 8, 85);
-      if (barEl) barEl.style.width = prog + '%';
-    }, 150);
-
-    const res  = await fetch(`${API}/listings/${listingId}/media`, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + getToken() },
-      body: formData
-    });
-    clearInterval(progInterval);
-    if (barEl) barEl.style.width = '100%';
-    setTimeout(() => { if (progressEl) progressEl.style.display='none'; if (barEl) barEl.style.width='0%'; }, 800);
-
-    const data = await res.json();
-    if (data.listing) { allListings = allListings.map(l => l._id===data.listing._id?data.listing:l); return true; }
-    showToast(data.error||'Upload failed', 'error'); return false;
-  } catch {
-    if (progressEl) progressEl.style.display='none';
-    showToast('Upload failed — connection error', 'error'); return false;
-  }
-}
-
-// ── Delete a media item ───────────────────────────
-async function deleteMedia(listingId, mediaIndex) {
-  if (!confirm('Delete this photo/video?')) return;
-  try {
-    const res  = await fetch(`${API}/listings/${listingId}/media/${mediaIndex}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': 'Bearer ' + getToken() }
-    });
-    const data = await res.json();
-    if (data.listing) {
-      allListings = allListings.map(l => l._id===data.listing._id?data.listing:l);
-      showToast('Media deleted','success');
-      renderExistingMedia(data.listing);
-      // If on detail page for this listing, rebuild gallery
-      if (currentListing && currentListing._id===listingId) {
-        currentListing = data.listing;
-        buildGallery(data.listing.media);
-      }
-    } else { showToast(data.error||'Delete failed','error'); }
-  } catch { showToast('Connection error','error'); }
-}
-
-// ── Add Listing with media ────────────────────────
+// ── Add listing ───────────────────────────────────
 function goToAddListing() {
   if (!isLoggedIn()) { showPage('login'); return; }
-  if (getUserRole() !== 'landlord') { showToast('Only owners can add listings. Sign up as an Owner.','warning'); return; }
-  // Reset form
-  alSelectedFiles = [];
-  renderPreviewGrid('al-preview-grid', [], 'al');
-  const input = document.getElementById('al-media-input');
-  if (input) input.value = '';
+  if (getUserRole() !== 'landlord') {
+    showToast('Only owners can add listings. Sign up as an Owner.', 'warning'); return;
+  }
   showPage('add-listing');
 }
 
@@ -2520,7 +2342,7 @@ async function submitListing() {
   const warn  = document.getElementById('al-auth-warning');
 
   if (!token || role !== 'landlord') { if(warn) warn.style.display='block'; return; }
-  if (warn) warn.style.display = 'none';
+  if(warn) warn.style.display='none';
 
   const title       = document.getElementById('al-title')?.value.trim();
   const city        = document.getElementById('al-city')?.value.trim();
@@ -2530,106 +2352,23 @@ async function submitListing() {
   const description = document.getElementById('al-description')?.value.trim();
   const available   = document.getElementById('al-available')?.value === 'true';
 
-  if (!title||!city||!price) return showMsg(msg,'⚠️ Title, City and Price are required.','error');
-  showMsg(msg,'⏳ Creating listing...','info');
+  if (!title || !city || !price) return showMsg(msg, '⚠️ Title, City, and Price are required.', 'error');
+  showMsg(msg, '⏳ Submitting your listing...', 'info');
 
   try {
-    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available})});
+    const res  = await fetch(`${API}/listings`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({ title, city, price, roomType, amenities, description, available })
+    });
     const data = await res.json();
-    if (!data.listing) return showMsg(msg,'❌ '+(data.error||'Failed to create listing.'),'error');
-
-    const listingId = data.listing._id;
-
-    // Upload media if any selected
-    if (alSelectedFiles.length) {
-      showMsg(msg,`⬆️ Uploading ${alSelectedFiles.length} file(s)...`,'info');
-      const ok = await uploadFilesForListing(listingId, alSelectedFiles, 'al-upload-progress', 'al-progress-bar');
-      if (!ok) return;
-    }
-
-    showMsg(msg,'✅ Listing added successfully!','success');
-    ['al-title','al-city','al-price','al-amenities','al-description'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-    alSelectedFiles = [];
-    renderPreviewGrid('al-preview-grid', [], 'al');
-    allListings = [];
-    await fetchListings();
-    setTimeout(() => { msg.style.display='none'; showPage('results'); }, 1500);
-  } catch { showMsg(msg,'❌ Connection error.','error'); }
-}
-
-// ── Manage Media Modal (after listing) ───────────
-function openManageMedia(listingId, listingTitle) {
-  modalListingId = listingId;
-  modalSelectedFiles = [];
-  renderPreviewGrid('modal-preview-grid', [], 'modal');
-  const nameEl = document.getElementById('media-modal-listing-name');
-  if (nameEl) nameEl.textContent = listingTitle;
-  const input = document.getElementById('modal-media-input');
-  if (input) input.value = '';
-  const msgEl = document.getElementById('modal-upload-msg');
-  if (msgEl) msgEl.style.display = 'none';
-
-  // Load existing media
-  const listing = allListings.find(l => l._id === listingId);
-  if (listing) renderExistingMedia(listing);
-
-  const modal = document.getElementById('media-modal');
-  if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
-}
-
-function closeMediaModal() {
-  const modal = document.getElementById('media-modal');
-  if (modal) { modal.style.display = 'none'; document.body.style.overflow = ''; }
-  modalSelectedFiles = [];
-  modalListingId = null;
-}
-
-function renderExistingMedia(listing) {
-  const container = document.getElementById('modal-existing-media');
-  if (!container) return;
-  const media = listing.media || [];
-  if (!media.length) {
-    container.innerHTML = '<p style="color:var(--gray-400);font-size:13px;grid-column:1/-1;">No media uploaded yet.</p>';
-    return;
-  }
-  const baseUrl = API.replace('/api','');
-  container.innerHTML = media.map((m, i) => {
-    const url     = baseUrl + m.url;
-    const isVideo = m.type === 'video';
-    return `
-      <div class="media-thumb">
-        ${isVideo
-          ? `<video src="${url}" muted style="width:100%;height:100%;object-fit:cover;"></video>`
-          : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`}
-        <button class="remove-btn" onclick="deleteMedia('${listing._id}',${i})" title="Delete">✕</button>
-        <span class="media-type-badge">${isVideo?'▶ VIDEO':'📷 IMG'}</span>
-      </div>`;
-  }).join('');
-}
-
-async function uploadModalMedia() {
-  if (!modalListingId) return;
-  if (!modalSelectedFiles.length) { showToast('Please select files to upload first','error'); return; }
-  const msgEl = document.getElementById('modal-upload-msg');
-  showMsg(msgEl, `⬆️ Uploading ${modalSelectedFiles.length} file(s)...`, 'info');
-  const ok = await uploadFilesForListing(modalListingId, modalSelectedFiles, 'modal-upload-progress', 'modal-progress-bar');
-  if (ok) {
-    showMsg(msgEl, `✅ ${modalSelectedFiles.length} file(s) uploaded successfully!`, 'success');
-    modalSelectedFiles = [];
-    renderPreviewGrid('modal-preview-grid', [], 'modal');
-    const input = document.getElementById('modal-media-input');
-    if (input) input.value = '';
-    // Refresh existing media display
-    await fetchListings();
-    const updated = allListings.find(l => l._id === modalListingId);
-    if (updated) renderExistingMedia(updated);
-    // If detail page is open for this listing, refresh gallery
-    if (currentListing && currentListing._id === modalListingId) {
-      currentListing = updated;
-      buildGallery(updated?.media);
-    }
-    loadDashboard();
-  }
+    if (data.listing) {
+      showMsg(msg, '✅ Listing added! Redirecting to results...', 'success');
+      ['al-title','al-city','al-price','al-amenities','al-description'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+      allListings = [];
+      await fetchListings();
+      setTimeout(() => { msg.style.display='none'; showPage('results'); }, 1500);
+    } else { showMsg(msg, '❌ '+(data.error||'Failed to add listing.'), 'error'); }
+  } catch { showMsg(msg, '❌ Connection error.', 'error'); }
 }
 
 // ── Dashboard ─────────────────────────────────────
@@ -2637,70 +2376,71 @@ async function loadDashboard() {
   const name = localStorage.getItem('userName');
   const role = localStorage.getItem('userRole');
   const welcomeEl = document.getElementById('dash-welcome');
-  if (welcomeEl) welcomeEl.textContent = name?`Welcome back, ${name} 👋`:'Welcome 👋';
+  if (welcomeEl) welcomeEl.textContent = name ? `Welcome back, ${name} 👋` : 'Welcome 👋';
   const roleEl = document.getElementById('dash-stat-role');
   if (roleEl) roleEl.textContent = role==='landlord'?'Owner':role||'—';
 
-  if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); return; }
+  if (!isLoggedIn()) {
+    showToast('Please sign in to view your dashboard', 'warning');
+    return;
+  }
 
+  // Load listings
   if (!allListings.length) await fetchListings();
   const slEl = document.getElementById('dash-stat-listings');
-  if (slEl) slEl.textContent = role==='landlord'?allListings.length:'—';
+  if (slEl) slEl.textContent = role==='landlord' ? allListings.length : '—';
 
+  // My listings panel (in the listing-form area)
   const formArea = document.querySelector('#page-dashboard .listing-form');
   if (formArea && role==='landlord') {
     if (!allListings.length) {
       formArea.innerHTML = '<h3>🏠 My Listings</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">No listings yet. Click "+ Add New Listing" above!</p>';
     } else {
       formArea.innerHTML = `<h3>🏠 My Listings (${allListings.length})</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
-        ${allListings.map(l => {
-          const img = firstImage(l);
-          return `
+        ${allListings.map(l => `
           <div style="padding:14px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-            <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
-              ${img?`<img src="${img}" style="width:60px;height:60px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;" onerror="this.remove()">`:
-                    `<div style="width:60px;height:60px;border-radius:var(--radius-sm);background:${gradFor(l._id)};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${iconFor(l._id)}</div>`}
-              <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+              <div>
                 <div style="font-weight:700;font-size:15px;">${l.title}</div>
                 <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}</div>
-                <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
                 <div style="margin-top:6px;"><span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available':'🚫 Booked'}</span></div>
               </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button onclick="openDetail('${l._id}')" class="btn btn-ghost btn-sm">View →</button>
+                <button onclick="toggleAvailability('${l._id}',${l.available})" class="btn btn-sm ${l.available?'btn-outline':'btn-success'}">${l.available?'🔒 Mark Booked':'✅ Mark Available'}</button>
+              </div>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-              <button onclick="openDetail('${l._id}')" class="btn btn-ghost btn-sm">👁 View</button>
-              <button onclick="openManageMedia('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-ghost btn-sm">📸 Manage Media</button>
-              <button onclick="toggleAvailability('${l._id}',${l.available})" class="btn btn-sm ${l.available?'btn-outline':'btn-success'}">${l.available?'🔒 Mark Booked':'✅ Mark Available'}</button>
-            </div>
-          </div>`;
-        }).join('')}
+          </div>`).join('')}
       </div>`;
     }
-  } else if (formArea && role!=='landlord') {
-    formArea.innerHTML = '<h3>📋 My Activity</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">Switch to an Owner account to manage listings.</p>';
+  } else if (formArea && role !== 'landlord') {
+    formArea.innerHTML = '<h3>📋 My Saved Listings</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">Switch to an Owner account to manage listings.</p>';
   }
 
+  // Load bookings
   try {
-    const res      = await fetch(`${API}/bookings/user/me`,{headers:{'Authorization':'Bearer '+getToken()}});
+    const res      = await fetch(`${API}/bookings/user/me`, { headers:{'Authorization':'Bearer '+getToken()} });
     const bookings = await res.json();
     const sbEl = document.getElementById('dash-stat-bookings');
     const spEl = document.getElementById('dash-stat-pending');
     if (sbEl) sbEl.textContent = Array.isArray(bookings)?bookings.length:'—';
     if (spEl) spEl.textContent = Array.isArray(bookings)?bookings.filter(b=>b.status==='pending').length:'—';
 
+    // Recent bookings panel (right sidebar)
     const bPanel = document.querySelector('#page-dashboard .bookings-panel:first-child');
     if (bPanel && Array.isArray(bookings)) {
+      const header = bPanel.querySelector('div:first-child');
       const existingItems = bPanel.querySelectorAll('.booking-item');
-      existingItems.forEach(i=>i.remove());
+      existingItems.forEach(i => i.remove());
       if (!bookings.length) {
-        bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
+        bPanel.insertAdjacentHTML('beforeend', '<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
       } else {
         bookings.slice(0,5).forEach(b => {
-          const name = localStorage.getItem('userName')||'Student';
+          const name = b.studentName || localStorage.getItem('userName') || 'Student';
           const init = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
           const sc   = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
-          const date = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
-          bPanel.insertAdjacentHTML('beforeend',`
+          const date = b.moveInDate ? new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
+          bPanel.insertAdjacentHTML('beforeend', `
             <div class="booking-item">
               <div class="booking-avatar">${init}</div>
               <div class="booking-info">
@@ -2713,30 +2453,35 @@ async function loadDashboard() {
       }
     }
 
+    // My listings panel (right sidebar second panel) - for students showing their bookings
     const lPanel = document.querySelector('#page-dashboard .bookings-panel:last-child');
-    if (lPanel && role!=='landlord' && Array.isArray(bookings)) {
+    if (lPanel && role !== 'landlord' && Array.isArray(bookings)) {
       lPanel.innerHTML = `<h3 style="margin-bottom:16px;">My Bookings</h3>
-        ${bookings.length?bookings.slice(0,5).map(b=>`
+        ${bookings.length ? bookings.slice(0,5).map(b => `
           <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);margin-bottom:8px;">
             <div style="font-weight:600;font-size:14px;">${b.listing?.title||'Listing'}</div>
             <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo</div>
             <div style="margin-top:6px;"><span class="badge ${b.status==='confirmed'?'badge-available':b.status==='cancelled'?'badge-soon':'badge-verified'}">${b.status||'pending'}</span></div>
-          </div>`).join(''):'<p style="color:var(--gray-400);font-size:13px;">No bookings yet.</p>'}`;
+          </div>`).join('') : '<p style="color:var(--gray-400);font-size:13px;">No bookings yet.</p>'}`;
     }
-  } catch(e) { console.log('Dashboard error:',e); }
+  } catch(e) { console.log('Dashboard error:', e); }
 }
 
-// ── Toggle availability ───────────────────────────
+// ── Toggle listing availability ───────────────────
 async function toggleAvailability(id, currentlyAvailable) {
   try {
-    const res  = await fetch(`${API}/listings/${id}`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({available:!currentlyAvailable})});
+    const res  = await fetch(`${API}/listings/${id}`, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},
+      body: JSON.stringify({ available: !currentlyAvailable })
+    });
     const data = await res.json();
     if (data.listing) {
-      showToast(currentlyAvailable?'🔒 Marked as booked':'✅ Marked as available','success');
-      allListings = allListings.map(l => l._id===id?{...l,available:!currentlyAvailable}:l);
+      showToast(currentlyAvailable ? '🔒 Listing marked as booked' : '✅ Listing marked as available', 'success');
+      allListings = allListings.map(l => l._id===id ? {...l, available:!currentlyAvailable} : l);
       loadDashboard();
-    } else { showToast('Could not update listing','error'); }
-  } catch { showToast('Connection error','error'); }
+    } else { showToast('Could not update listing', 'error'); }
+  } catch { showToast('Connection error', 'error'); }
 }
 
 // ── Init ──────────────────────────────────────────

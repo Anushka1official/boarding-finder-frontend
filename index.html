@@ -491,10 +491,10 @@
   <!-- Stats -->
   <div style="padding:40px 24px 0;max-width:700px;margin:0 auto;">
     <div class="stats-row">
-      <div class="stat-item"><span class="stat-num" id="home-stat-listings">1,240+</span><div class="stat-label">Active Listings</div></div>
-      <div class="stat-item"><span class="stat-num" id="home-stat-students">8,500+</span><div class="stat-label">Students Housed</div></div>
-      <div class="stat-item"><span class="stat-num" id="home-stat-owners">320+</span><div class="stat-label">Verified Owners</div></div>
-      <div class="stat-item"><span class="stat-num" id="home-stat-rating">4.7★</span><div class="stat-label">Avg. Rating</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-listings">—</span><div class="stat-label">Active Listings</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-students">—</span><div class="stat-label">Students Housed</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-owners">—</span><div class="stat-label">Verified Owners</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-rating">—</span><div class="stat-label">Avg. Rating</div></div>
     </div>
   </div>
 
@@ -2857,10 +2857,10 @@ async function loadHomeStats() {
     const elStudents = document.getElementById('home-stat-students');
     const elOwners   = document.getElementById('home-stat-owners');
     const elRating   = document.getElementById('home-stat-rating');
-    if (elListings) elListings.textContent = totalListings > 0 ? totalListings + '+' : '1,240+';
-    if (elStudents) elStudents.textContent = studentsHoused > 0 ? studentsHoused + '+' : '8,500+';
-    if (elOwners)   elOwners.textContent   = totalOwners > 0 ? totalOwners + '+' : '320+';
-    if (elRating)   elRating.textContent   = avgRating ? avgRating + '★' : '4.7★';
+    if (elListings) elListings.textContent = totalListings > 0 ? totalListings : '—';
+    if (elStudents) elStudents.textContent = studentsHoused > 0 ? studentsHoused : '—';
+    if (elOwners)   elOwners.textContent   = totalOwners > 0 ? totalOwners : '—';
+    if (elRating)   elRating.textContent   = avgRating ? avgRating + '★' : '—';
   } catch {}
 }
 

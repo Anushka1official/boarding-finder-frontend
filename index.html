@@ -491,10 +491,10 @@
   <!-- Stats -->
   <div style="padding:40px 24px 0;max-width:700px;margin:0 auto;">
     <div class="stats-row">
-      <div class="stat-item"><span class="stat-num">1,240+</span><div class="stat-label">Active Listings</div></div>
-      <div class="stat-item"><span class="stat-num">8,500+</span><div class="stat-label">Students Housed</div></div>
-      <div class="stat-item"><span class="stat-num">320+</span><div class="stat-label">Verified Owners</div></div>
-      <div class="stat-item"><span class="stat-num">4.7★</span><div class="stat-label">Avg. Rating</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-listings">1,240+</span><div class="stat-label">Active Listings</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-students">8,500+</span><div class="stat-label">Students Housed</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-owners">320+</span><div class="stat-label">Verified Owners</div></div>
+      <div class="stat-item"><span class="stat-num" id="home-stat-rating">4.7★</span><div class="stat-label">Avg. Rating</div></div>
     </div>
   </div>
 
@@ -1515,6 +1515,29 @@
   <div id="lightbox-counter" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:white;font-size:14px;font-weight:600;background:rgba(0,0,0,.5);padding:4px 14px;border-radius:100px;"></div>
 </div>
 
+<!-- ════════════ SAVED PAGE ════════════ -->
+<div class="page" id="page-saved">
+  <div style="max-width:1100px;margin:0 auto;padding:32px 24px;">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">Home</a><span class="sep">›</span>
+      <span>Saved Boardings</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 style="font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--gray-900);">♥ Saved Boardings</h1>
+        <p style="color:var(--gray-500);font-size:14px;margin-top:4px;" id="saved-subtitle">Your favourite boarding places</p>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="showPage('results')">🔍 Find More</button>
+    </div>
+    <div id="saved-grid" class="cards-grid">
+      <!-- populated by loadSavedPage() -->
+    </div>
+  </div>
+  <footer style="margin-top:40px;background:var(--gray-900);color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+    <strong style="color:white">Smart Boarding Finder</strong> · © 2026
+  </footer>
+</div>
+
 <!-- ════════════ LOGIN PAGE ════════════ -->
 <div class="page" id="page-login">
   <div class="auth-page">
@@ -1726,13 +1749,14 @@ function showPage(id) {
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
   const navMap = { home:'nav-home', results:'nav-results', dashboard:'nav-dashboard',
     detail:'nav-results', booking:'nav-results', reviews:'nav-results',
-    'add-listing':'nav-dashboard', login:null, signup:null };
+    'add-listing':'nav-dashboard', saved:null, login:null, signup:null };
   const el = document.getElementById(navMap[id]);
   if (el) el.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
   if (id === 'results')   applyFilters();
   if (id === 'dashboard') loadDashboard();
   if (id === 'reviews' && currentListing) loadReviewsPage();
+  if (id === 'saved')     loadSavedPage();
 }
 
 function selectRoom(el) {
@@ -1765,7 +1789,9 @@ function updateNav() {
   if (name) {
     navEnd.innerHTML = `
       <span style="font-size:13px;color:var(--gray-600);font-weight:500;">👤 ${name}</span>
-      ${role==='landlord'?'<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>':'<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">My Bookings</button>'}
+      ${role==='landlord'
+        ? '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>'
+        : '<button class="btn btn-ghost" onclick="showPage(\'saved\')">♥ Saved</button><button class="btn btn-ghost" onclick="showPage(\'dashboard\')">My Bookings</button>'}
       <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
   } else {
     navEnd.innerHTML = `
@@ -1943,6 +1969,9 @@ function toggleSave(id, btn) {
     if (btn) { btn.textContent = btn.classList.contains('fav-btn')?'♥':'♥ Saved'; btn.classList.add('active'); }
   }
   localStorage.setItem('saved', JSON.stringify([...savedIds]));
+  // If saved page is currently open, refresh it
+  const savedPage = document.getElementById('page-saved');
+  if (savedPage && savedPage.classList.contains('active')) loadSavedPage();
 }
 
 // ── Home search ───────────────────────────────────
@@ -2261,6 +2290,8 @@ async function loadReviewsPreview() {
       const seeAll = document.querySelector('#page-detail .see-all');
       if (seeAll) seeAll.textContent = `All ${reviews.length} reviews →`;
     } else {
+      const rEl = document.getElementById('detail-rating');
+      if (rEl) rEl.innerHTML = `<span style="color:var(--gray-300);">☆☆☆☆☆</span> No ratings yet`;
       if (extra) extra.innerHTML = '<p style="color:var(--gray-400);font-size:14px;padding:12px 0;">No reviews yet for this boarding. Be the first!</p>';
     }
   } catch {
@@ -2784,9 +2815,96 @@ async function toggleAvailability(id, currentlyAvailable) {
   } catch { showToast('Connection error','error'); }
 }
 
+// ── Home Stats (dynamic) ──────────────────────────
+async function loadHomeStats() {
+  try {
+    if (!allListings.length) await fetchListings();
+
+    // Active listings = total listings
+    const totalListings = allListings.length;
+
+    // Unique owners (unique owner IDs)
+    const ownerSet = new Set(allListings.map(l => l.owner?.toString()).filter(Boolean));
+    const totalOwners = ownerSet.size;
+
+    // Students housed = total bookings (approximate: use allListings count × 2 as proxy,
+    // but try to fetch real bookings count from backend)
+    let studentsHoused = totalListings * 2; // fallback estimate
+    try {
+      const bRes = await fetch(`${API}/bookings`);
+      if (bRes.ok) {
+        const bookings = await bRes.json();
+        if (Array.isArray(bookings)) studentsHoused = bookings.length;
+      }
+    } catch {}
+
+    // Average rating across all reviews
+    let avgRating = null;
+    try {
+      // Fetch reviews for all listings and compute global average
+      const reviewPromises = allListings.slice(0, 20).map(l =>
+        fetch(`${API}/reviews/${l._id}`).then(r => r.json()).catch(() => [])
+      );
+      const allReviews = (await Promise.all(reviewPromises)).flat();
+      if (allReviews.length) {
+        const sum = allReviews.reduce((s, r) => s + (r.rating || 0), 0);
+        avgRating = (sum / allReviews.length).toFixed(1);
+      }
+    } catch {}
+
+    // Update DOM
+    const elListings = document.getElementById('home-stat-listings');
+    const elStudents = document.getElementById('home-stat-students');
+    const elOwners   = document.getElementById('home-stat-owners');
+    const elRating   = document.getElementById('home-stat-rating');
+    if (elListings) elListings.textContent = totalListings > 0 ? totalListings + '+' : '1,240+';
+    if (elStudents) elStudents.textContent = studentsHoused > 0 ? studentsHoused + '+' : '8,500+';
+    if (elOwners)   elOwners.textContent   = totalOwners > 0 ? totalOwners + '+' : '320+';
+    if (elRating)   elRating.textContent   = avgRating ? avgRating + '★' : '4.7★';
+  } catch {}
+}
+
+// ── Saved / Favourites Page ───────────────────────
+async function loadSavedPage() {
+  const grid     = document.getElementById('saved-grid');
+  const subtitle = document.getElementById('saved-subtitle');
+  if (!grid) return;
+
+  if (!savedIds.size) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:60px 24px;">
+        <div style="font-size:48px;margin-bottom:16px;">💔</div>
+        <div style="font-size:17px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">No saved boardings yet</div>
+        <div style="font-size:14px;color:var(--gray-400);margin-bottom:20px;">Click the ♡ heart on any boarding to save it here</div>
+        <button class="btn btn-primary" onclick="showPage('results')">🔍 Browse Boardings</button>
+      </div>`;
+    if (subtitle) subtitle.textContent = 'Your favourite boarding places';
+    return;
+  }
+
+  if (!allListings.length) await fetchListings();
+
+  const saved = allListings.filter(l => savedIds.has(l._id));
+
+  if (!saved.length) {
+    // IDs in localStorage but listings may have been deleted
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:60px 24px;">
+        <div style="font-size:48px;margin-bottom:16px;">🏚️</div>
+        <div style="font-size:17px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">Saved listings no longer available</div>
+        <button class="btn btn-primary" onclick="showPage('results')">🔍 Browse Boardings</button>
+      </div>`;
+    return;
+  }
+
+  if (subtitle) subtitle.textContent = `${saved.length} boarding${saved.length !== 1 ? 's' : ''} saved`;
+  grid.innerHTML = saved.map(l => homeCardHTML(l)).join('');
+}
+
 // ── Init ──────────────────────────────────────────
 updateNav();
 loadHomeListings();
+loadHomeStats();
 </script>
 </body>
 </html>

@@ -2086,10 +2086,23 @@ function resetFilters(silent) {
 
 async function applyFilters() {
   if (!allListings.length) await fetchListings();
-  const city     = (document.getElementById('search-city')?.value||'').trim().toLowerCase();
-  const priceCap = parseInt(document.getElementById('filter-price')?.value)||60000;
-  const topPrice = parseInt(document.getElementById('search-price')?.value)||60000;
-  const maxPrice = Math.min(priceCap, topPrice);
+  const city      = (document.getElementById('search-city')?.value||'').trim().toLowerCase();
+
+  // Slider upper bound
+  const sliderMax = parseInt(document.getElementById('filter-price')?.value)||60000;
+
+  // Dropdown: encode as "min:max" so ranges work correctly
+  // "15000" = under 15k (0–15000), "25000" = 15k–25k, "40000" = 25k–40k, "" = any
+  const dropVal   = document.getElementById('search-price')?.value || '';
+  let dropMin = 0, dropMax = 60000;
+  if (dropVal === '15000') { dropMin = 0;     dropMax = 15000; }
+  if (dropVal === '25000') { dropMin = 15001; dropMax = 25000; }
+  if (dropVal === '40000') { dropMin = 25001; dropMax = 40000; }
+
+  // Effective price window = intersection of slider and dropdown
+  const priceMin = dropVal ? dropMin : 0;
+  const priceMax = dropVal ? Math.min(dropMax, sliderMax) : sliderMax;
+
   const roomSel  = document.querySelector('input[name="room"]:checked')?.value || document.getElementById('search-room')?.value||'';
   const availSel = document.querySelector('input[name="avail"]:checked')?.value||'';
   const amenReq  = [...document.querySelectorAll('#facilities-filter input:checked')].map(c=>c.value.toLowerCase());
@@ -2097,7 +2110,8 @@ async function applyFilters() {
 
   let filtered = allListings.filter(l => {
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
-    if (l.price > maxPrice) return false;
+    // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
+    if (l.price < priceMin || l.price > priceMax) return false;
     if (roomSel && l.roomType && l.roomType!==roomSel) return false;
     if (availSel==='now'    && !l.available) return false;
     if (availSel==='future' &&  l.available) return false;

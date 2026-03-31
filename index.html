@@ -291,25 +291,6 @@
   .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline:none;border-color:var(--brand); }
   .form-group textarea { height:80px;resize:vertical; }
 
-
-  /* ── OWNER VERIFICATION ── */
-  .verify-page { min-height:100vh; background:linear-gradient(135deg,#EFF6FF 0%,#E0F2FE 50%,#F0FDF4 100%); display:flex; align-items:center; justify-content:center; padding:80px 24px 40px; }
-  .verify-card { background:white; border-radius:var(--radius-xl); border:1px solid var(--gray-200); box-shadow:var(--shadow-lg); overflow:hidden; width:100%; max-width:460px; }
-  .verify-header { background:linear-gradient(135deg,#1D4ED8,#0EA5E9); padding:28px 32px; text-align:center; color:white; }
-  .verify-header h2 { font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin-bottom:6px; }
-  .verify-header p { font-size:13px; opacity:.85; }
-  .verify-step { display:none; padding:28px 32px 32px; }
-  .verify-step.active { display:block; }
-  .otp-inputs { display:flex; gap:10px; justify-content:center; margin:20px 0; }
-  .otp-input { width:48px; height:56px; text-align:center; font-size:22px; font-weight:700; border:2px solid var(--gray-200); border-radius:var(--radius-md); font-family:inherit; color:var(--gray-800); transition:border-color .2s; }
-  .otp-input:focus { outline:none; border-color:var(--brand); background:var(--brand-light); }
-  .otp-input.filled { border-color:var(--brand); }
-  .verify-status { padding:12px 16px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; margin-top:14px; display:none; }
-  .verify-badge { display:inline-flex; align-items:center; gap:6px; background:#D1FAE5; color:#065F46; padding:6px 14px; border-radius:100px; font-size:13px; font-weight:700; }
-  .unverified-banner { background:#FEF3C7; border:1px solid #FDE68A; border-radius:var(--radius-md); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
-  .unverified-banner p { font-size:13px; color:#92400E; font-weight:500; margin:0; }
-  .resend-timer { font-size:12px; color:var(--gray-400); text-align:center; margin-top:8px; }
-
   /* ── MEDIA UPLOAD ── */
   .media-upload-area { border:2px dashed var(--gray-300);border-radius:var(--radius-md);padding:28px;text-align:center;cursor:pointer;transition:all .2s;position:relative; }
   .media-upload-area:hover,.media-upload-area.drag-over { border-color:var(--brand);background:var(--brand-light); }
@@ -443,6 +424,30 @@
   .owner-extras .oe-title { font-size:13px;font-weight:700;color:var(--brand);margin-bottom:10px; }
   .forgot-link { text-align:right;margin-top:-10px;margin-bottom:18px; }
   .forgot-link a { font-size:13px;color:var(--brand);cursor:pointer;font-weight:600; }
+
+  /* ── PHONE VERIFY PAGE ── */
+  .verify-step { display:none; }
+  .verify-step.active { display:block; }
+  .otp-inputs { display:flex; gap:10px; justify-content:center; margin:20px 0; }
+  .otp-inputs input {
+    width:48px; height:56px; text-align:center; font-size:22px; font-weight:700;
+    border:2px solid var(--gray-200); border-radius:var(--radius-md);
+    font-family:inherit; color:var(--gray-900); background:var(--gray-50);
+    transition:border-color .2s;
+  }
+  .otp-inputs input:focus { outline:none; border-color:var(--brand); background:white; }
+  .verified-ring {
+    width:72px; height:72px; border-radius:50%; margin:0 auto 16px;
+    background:linear-gradient(135deg,#D1FAE5,#A7F3D0);
+    display:flex; align-items:center; justify-content:center; font-size:34px;
+    border:3px solid #10B981;
+  }
+  .phone-verified-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:#D1FAE5; color:#065F46; padding:4px 12px;
+    border-radius:100px; font-size:12px; font-weight:700; border:1px solid #6EE7B7;
+  }
+
 </style>
 </head>
 <body>
@@ -457,7 +462,7 @@
   <div class="nav-links">
     <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
     <a onclick="showPage('results')" id="nav-results">Search</a>
-    <a onclick="showPage('dashboard')" id="nav-dashboard" style="display:none;">Owner Portal</a>
+    <a onclick="showPage('dashboard')" id="nav-dashboard">Owner Portal</a>
   </div>
   <div class="nav-end">
     <button class="btn btn-ghost" onclick="showPage('dashboard')">List Property</button>
@@ -935,32 +940,16 @@
         </div>
 
         <div class="divider"></div>
-        <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">✨ Facilities & Amenities</h3>
+        <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;" class="fac-heading">✨ Facilities & Amenities</h3>
         <div class="facilities-grid">
-          <div class="facility-chip"><span class="facility-icon">📶</span> WiFi</div>
-          <div class="facility-chip"><span class="facility-icon">🍳</span> Kitchen</div>
-          <div class="facility-chip"><span class="facility-icon">🚗</span> Parking</div>
-          <div class="facility-chip"><span class="facility-icon">🧺</span> Laundry</div>
-          <div class="facility-chip"><span class="facility-icon">🛡️</span> 24h Security</div>
-          <div class="facility-chip"><span class="facility-icon">❄️</span> AC (optional)</div>
-          <div class="facility-chip"><span class="facility-icon">📺</span> Common TV</div>
-          <div class="facility-chip"><span class="facility-icon">💡</span> Bills Included</div>
-          <div class="facility-chip"><span class="facility-icon">🚿</span> Attached Bath</div>
-          <div class="facility-chip"><span class="facility-icon">🚪</span> Key Lock</div>
         </div>
 
         <div class="divider"></div>
-        <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">📋 House Rules</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--gray-600);">
-          <div>✅ No smoking inside</div>
-          <div>✅ Guests until 9 PM</div>
-          <div>✅ Quiet hours 10 PM–6 AM</div>
-          <div>✅ No parties</div>
-          <div>✅ Cooking allowed</div>
-          <div>✅ Pets not allowed</div>
+        <div id="detail-rules-section" style="display:none;">
+          <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">📋 House Rules</h3>
+          <div id="detail-rules-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--gray-600);"></div>
+          <div class="divider"></div>
         </div>
-
-        <div class="divider"></div>
           <div class="reviews-section">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <h3 style="font-weight:700;font-size:17px;">💬 Student Reviews</h3>
@@ -994,16 +983,16 @@
           <div style="background:#FEF3C7;color:#92400E;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-bottom:16px;">📅 Future vacancy: July 2026 · 3 more slots</div>
           <div style="border-top:1px solid var(--gray-100);padding-top:16px;">
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Monthly rent</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Monthly rent</span><span id="panel-monthly-rent" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
-              <span>Security deposit</span><span style="font-weight:600;color:var(--gray-800);">LKR 18,000</span>
+              <span>Security deposit</span><span id="panel-deposit" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:14px;color:var(--gray-600);">
-              <span>Advance payment</span><span style="font-weight:600;color:var(--gray-800);">LKR 5,000</span>
+              <span>Advance payment</span><span id="panel-advance" style="font-weight:600;color:var(--gray-800);">—</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--gray-900);border-top:1px solid var(--gray-200);padding-top:12px;">
-              <span>Pay to Book</span><span style="color:var(--brand)">LKR 5,000</span>
+              <span>Pay to Book</span><span id="panel-pay-to-book" style="color:var(--brand)">—</span>
             </div>
           </div>
           <div class="panel-btns">
@@ -1124,7 +1113,7 @@
             <div style="font-weight:600;font-size:14px;" id="bk-sum-title">—</div>
             <div style="font-size:13px;color:var(--gray-500);" id="bk-sum-room">—</div>
           </div>
-          <div class="summary-item"><span>Advance payment</span><span>LKR 5,000</span></div>
+          <div class="summary-item"><span>Advance payment</span><span id="bk-sum-advance">LKR —</span></div>
           <div class="summary-item"><span>Security deposit</span><span id="bk-sum-deposit">LKR —</span></div>
           <div class="summary-item"><span>First month rent</span><span id="bk-sum-rent">LKR —</span></div>
           <div class="summary-item" style="color:var(--success);"><span>🎉 First-time discount</span><span>- LKR 1,000</span></div>
@@ -1158,9 +1147,9 @@
     <div class="dashboard-header">
       <div>
         <div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;" id="dash-welcome">Welcome back 👋</div>
-        <h1 id="dash-title">Owner Dashboard</h1>
+        <h1>Owner Dashboard</h1>
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;" id="dash-header-actions">
         <span class="badge badge-verified" style="font-size:13px;padding:6px 14px;">✅ Verified Owner</span>
         <button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>
       </div>
@@ -1278,62 +1267,21 @@
       </div>
 
       <!-- Right sidebar -->
-      <div class="dash-side" id="dash-side">
+      <div class="dash-side">
         <!-- Recent Bookings -->
-        <div class="bookings-panel">
+        <div class="bookings-panel" id="dash-bookings-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <h3>Recent Bookings</h3>
             <a style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">View all</a>
           </div>
-          <div class="booking-item">
-            <div class="booking-avatar">AP</div>
-            <div class="booking-info"><div class="name">Ayesha Perera</div><div class="date">Single Room · Apr 2026</div></div>
-            <div class="booking-status status-confirmed">Confirmed</div>
-          </div>
-          <div class="booking-item">
-            <div class="booking-avatar" style="background:#FEF3C7;color:#92400E;">KS</div>
-            <div class="booking-info"><div class="name">Kasun Silva</div><div class="date">Shared Room · Apr 2026</div></div>
-            <div class="booking-status status-pending">Pending</div>
-          </div>
-          <div class="booking-item">
-            <div class="booking-avatar" style="background:#F3E8FF;color:#5B21B6;">NF</div>
-            <div class="booking-info"><div class="name">Nimesha Fernando</div><div class="date">Single Room · Jul 2026</div></div>
-            <div class="booking-status status-upcoming">Reserved</div>
-          </div>
-          <div class="booking-item">
-            <div class="booking-avatar" style="background:#D1FAE5;color:#065F46;">RM</div>
-            <div class="booking-info"><div class="name">Ravindu Manoj</div><div class="date">Studio · Jul 2026</div></div>
-            <div class="booking-status status-upcoming">Reserved</div>
-          </div>
+          <p style="color:var(--gray-400);font-size:13px;padding:8px 0;">Loading...</p>
         </div>
 
-        <!-- Quick stats per listing -->
-        <div class="bookings-panel">
+        <!-- My Listings sidebar (owner only) -->
+        <div class="bookings-panel" id="dash-listings-panel" style="display:none;">
           <h3 style="margin-bottom:16px;">My Listings</h3>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div style="font-weight:600;font-size:14px;">Sunset View</div>
-                <span class="badge badge-available">Active</span>
-              </div>
-              <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">2 vacancies · LKR 18,000</div>
-              <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">⭐ 4.8 · 32 reviews</div>
-            </div>
-            <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div style="font-weight:600;font-size:14px;">Annex No. 2</div>
-                <span class="badge badge-available">Active</span>
-              </div>
-              <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">0 vacancies · LKR 14,500</div>
-              <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">⭐ 4.6 · 18 reviews</div>
-            </div>
-            <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div style="font-weight:600;font-size:14px;">Galle Face Rooms</div>
-                <span class="badge badge-soon">Unavailable</span>
-              </div>
-              <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Renovation in progress</div>
-            </div>
+          <div id="dash-listings-sidebar-content">
+            <p style="color:var(--gray-400);font-size:13px;">Loading...</p>
           </div>
         </div>
       </div>
@@ -1497,8 +1445,25 @@
           </select>
         </div>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>Security Deposit (LKR)</label><input id="al-deposit" type="number" placeholder="e.g. 18000"></div>
+        <div class="form-group"><label>Advance Payment (LKR)</label><input id="al-advance" type="number" placeholder="e.g. 5000"></div>
+      </div>
       <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="al-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking, Laundry, Security"></div>
       <div class="form-group"><label>Description</label><textarea id="al-description" placeholder="Describe your property for students..."></textarea></div>
+      <div class="form-group">
+        <label>📋 House Rules <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;" id="al-rules-grid">
+          <label class="check-item"><input type="checkbox" value="No smoking inside" class="al-rule"> 🚭 No smoking inside</label>
+          <label class="check-item"><input type="checkbox" value="Guests until 9 PM" class="al-rule"> 🕘 Guests until 9 PM</label>
+          <label class="check-item"><input type="checkbox" value="Quiet hours 10 PM–6 AM" class="al-rule"> 🔇 Quiet hours 10 PM–6 AM</label>
+          <label class="check-item"><input type="checkbox" value="No parties" class="al-rule"> 🎉 No parties</label>
+          <label class="check-item"><input type="checkbox" value="Cooking allowed" class="al-rule"> 🍳 Cooking allowed</label>
+          <label class="check-item"><input type="checkbox" value="Pets not allowed" class="al-rule"> 🐾 Pets not allowed</label>
+          <label class="check-item"><input type="checkbox" value="No alcohol" class="al-rule"> 🍺 No alcohol</label>
+          <label class="check-item"><input type="checkbox" value="Keep common areas clean" class="al-rule"> 🧹 Keep common areas clean</label>
+        </div>
+      </div>
 
       <!-- Media Upload Section -->
       <div class="form-group">
@@ -1523,6 +1488,104 @@
     </div>
   </div>
   <footer style="margin-top:60px;background:var(--gray-900);color:var(--gray-400);text-align:center;padding:24px;font-size:13px;"><strong style="color:white">Smart Boarding Finder</strong> · © 2026</footer>
+</div>
+
+<!-- ════════════ MANAGE MEDIA MODAL ════════════ -->
+<div id="media-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:var(--radius-xl);width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--gray-200);">
+      <div>
+        <div style="font-weight:700;font-size:17px;">📸 Manage Media</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-top:2px;" id="media-modal-listing-name"></div>
+      </div>
+      <button onclick="closeMediaModal()" style="border:none;background:none;font-size:22px;cursor:pointer;color:var(--gray-500);line-height:1;">✕</button>
+    </div>
+    <div style="padding:20px 24px;">
+      <!-- Existing media -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Current Photos & Videos</div>
+        <div class="media-preview-grid" id="modal-existing-media">
+          <p style="color:var(--gray-400);font-size:13px;">No media yet.</p>
+        </div>
+      </div>
+      <!-- Upload new -->
+      <div style="font-size:13px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Add New Photos / Videos</div>
+      <div class="media-upload-area" id="modal-drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event,'modal')">
+        <input type="file" id="modal-media-input" multiple accept="image/*,video/*" onchange="handleFileSelect(this,'modal')">
+        <div style="font-size:28px;margin-bottom:6px;">📷</div>
+        <p style="font-weight:600;color:var(--gray-700);margin-bottom:3px;font-size:14px;">Drag & drop or click to browse</p>
+        <p style="font-size:12px;color:var(--gray-400);">JPG, PNG, MP4, MOV · Max 20MB each</p>
+      </div>
+      <div class="upload-progress" id="modal-upload-progress" style="margin-top:8px;">
+        <div class="upload-progress-bar" id="modal-progress-bar" style="width:0%"></div>
+      </div>
+      <div class="media-preview-grid" id="modal-preview-grid" style="margin-top:10px;"></div>
+      <div id="modal-upload-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);margin-top:12px;font-size:14px;font-weight:600;"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button onclick="uploadModalMedia()" class="btn btn-primary" style="flex:1;justify-content:center;">⬆️ Upload Selected</button>
+        <button onclick="closeMediaModal()" class="btn btn-ghost">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ EDIT LISTING MODAL ════════════ -->
+<div id="edit-listing-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;padding:20px;overflow-y:auto;">
+  <div style="background:white;border-radius:var(--radius-xl);width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);margin:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--gray-200);position:sticky;top:0;background:white;z-index:1;">
+      <div>
+        <div style="font-weight:700;font-size:17px;">✏️ Edit Listing</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-top:2px;" id="edit-modal-title-display"></div>
+      </div>
+      <button onclick="closeEditModal()" style="border:none;background:none;font-size:22px;cursor:pointer;color:var(--gray-500);line-height:1;">✕</button>
+    </div>
+    <div style="padding:20px 24px;">
+      <div class="form-group"><label>Property Name</label><input id="el-title" type="text" placeholder="e.g. Sunset View Boarding House"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>City / Area</label><input id="el-city" type="text" placeholder="e.g. Katubedda, Moratuwa"></div>
+        <div class="form-group"><label>Room Type</label>
+          <select id="el-roomtype">
+            <option value="Single Room">Single Room</option>
+            <option value="Shared Room">Shared Room</option>
+            <option value="Studio">Studio / Annex</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>Monthly Price (LKR)</label><input id="el-price" type="number" placeholder="18000"></div>
+        <div class="form-group"><label>Availability</label>
+          <select id="el-available">
+            <option value="true">✅ Available Now</option>
+            <option value="false">🕐 Coming Soon</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group"><label>Security Deposit (LKR)</label><input id="el-deposit" type="number" placeholder="e.g. 18000"></div>
+        <div class="form-group"><label>Advance Payment (LKR)</label><input id="el-advance" type="number" placeholder="e.g. 5000"></div>
+      </div>
+      <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="el-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking"></div>
+      <div class="form-group"><label>Description</label><textarea id="el-description" placeholder="Describe your property..." style="height:80px;resize:vertical;"></textarea></div>
+      <div class="form-group">
+        <label>📋 House Rules</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <label class="check-item"><input type="checkbox" value="No smoking inside" class="el-rule"> 🚭 No smoking inside</label>
+          <label class="check-item"><input type="checkbox" value="Guests until 9 PM" class="el-rule"> 🕘 Guests until 9 PM</label>
+          <label class="check-item"><input type="checkbox" value="Quiet hours 10 PM–6 AM" class="el-rule"> 🔇 Quiet hours 10 PM–6 AM</label>
+          <label class="check-item"><input type="checkbox" value="No parties" class="el-rule"> 🎉 No parties</label>
+          <label class="check-item"><input type="checkbox" value="Cooking allowed" class="el-rule"> 🍳 Cooking allowed</label>
+          <label class="check-item"><input type="checkbox" value="Pets not allowed" class="el-rule"> 🐾 Pets not allowed</label>
+          <label class="check-item"><input type="checkbox" value="No alcohol" class="el-rule"> 🍺 No alcohol</label>
+          <label class="check-item"><input type="checkbox" value="Keep common areas clean" class="el-rule"> 🧹 Keep common areas clean</label>
+        </div>
+      </div>
+      <div id="el-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:12px;font-size:14px;font-weight:600;"></div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button onclick="saveEditListing()" class="btn btn-primary" style="flex:1;justify-content:center;">💾 Save Changes</button>
+        <button onclick="closeEditModal()" class="btn btn-ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ════════════ GALLERY LIGHTBOX ════════════ -->
@@ -1558,83 +1621,89 @@
 </div>
 
 
-<!-- ════════════ OWNER VERIFY PHONE PAGE ════════════ -->
+<!-- ════════════ PHONE VERIFY PAGE ════════════ -->
 <div class="page" id="page-verify">
-  <div class="verify-page">
-    <div style="width:100%;max-width:460px;">
-      <div class="verify-card">
-        <div class="verify-header">
-          <div style="width:52px;height:52px;background:rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;">📱</div>
-          <h2>Verify Your Phone</h2>
-          <p>Owner verification builds trust with students</p>
-        </div>
-
-        <!-- Step 1: Enter phone -->
-        <div class="verify-step active" id="vstep-1">
-          <div style="text-align:center;margin-bottom:20px;">
-            <div style="font-size:32px;margin-bottom:10px;">📞</div>
-            <p style="font-weight:600;font-size:15px;color:var(--gray-800);margin-bottom:6px;">Enter your phone number</p>
-            <p style="font-size:13px;color:var(--gray-500);">We'll send a 6-digit OTP to verify your identity</p>
+  <div class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-logo">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
           </div>
-          <div class="auth-field">
-            <label>Mobile Number</label>
-            <div class="input-icon-wrap">
-              <span class="input-icon">📱</span>
-              <input id="verify-phone" type="tel" placeholder="+94 77 123 4567" style="padding-left:40px;font-size:16px;">
+          <h2>Verify Your Phone</h2>
+          <p>Become a Verified Owner — trusted by students</p>
+        </div>
+        <div class="auth-body">
+
+          <!-- Step 1: Enter phone -->
+          <div class="verify-step active" id="verify-step-1">
+            <div style="text-align:center;margin-bottom:22px;">
+              <div style="font-size:44px;margin-bottom:10px;">📱</div>
+              <div style="font-size:15px;font-weight:600;color:var(--gray-800);margin-bottom:6px;">Enter Your Phone Number</div>
+              <div style="font-size:13px;color:var(--gray-500);">We'll send a 6-digit OTP to verify your identity as a property owner.</div>
+            </div>
+            <div class="auth-field">
+              <label>Mobile Number (International Format)</label>
+              <div class="input-icon-wrap">
+                <span class="input-icon">📱</span>
+                <input id="verify-phone-input" type="tel" placeholder="+94 77 123 4567" style="padding-left:40px;">
+              </div>
+              <div style="font-size:12px;color:var(--gray-400);margin-top:5px;">Example: +94771234567 &nbsp;·&nbsp; Include country code</div>
+            </div>
+            <div id="verify-step1-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:14px;font-size:14px;font-weight:500;"></div>
+            <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="sendOtp()">
+              📤 Send OTP
+            </button>
+            <div class="auth-footer" style="margin-top:16px;">
+              <a onclick="showPage('dashboard')">← Back to Dashboard</a>
             </div>
           </div>
-          <div id="vstep1-msg" class="verify-status"></div>
-          <button onclick="sendOTP()" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:16px;" id="send-otp-btn">
-            📤 Send OTP
-          </button>
-          <div style="text-align:center;margin-top:16px;">
-            <a onclick="showPage('dashboard')" style="font-size:13px;color:var(--gray-400);cursor:pointer;">Skip for now →</a>
-          </div>
-        </div>
 
-        <!-- Step 2: Enter OTP -->
-        <div class="verify-step" id="vstep-2">
-          <div style="text-align:center;margin-bottom:20px;">
-            <div style="font-size:32px;margin-bottom:10px;">🔐</div>
-            <p style="font-weight:600;font-size:15px;color:var(--gray-800);margin-bottom:6px;">Enter the OTP</p>
-            <p id="otp-sent-to" style="font-size:13px;color:var(--gray-500);">We sent a 6-digit code to your phone</p>
+          <!-- Step 2: Enter OTP -->
+          <div class="verify-step" id="verify-step-2">
+            <div style="text-align:center;margin-bottom:22px;">
+              <div style="font-size:44px;margin-bottom:10px;">🔢</div>
+              <div style="font-size:15px;font-weight:600;color:var(--gray-800);margin-bottom:6px;">Enter the OTP</div>
+              <div style="font-size:13px;color:var(--gray-500);">A 6-digit code was sent to <strong id="verify-phone-display">your phone</strong>.</div>
+            </div>
+            <div class="otp-inputs">
+              <input id="otp-0" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,0)" onkeydown="otpKeydown(event,0)">
+              <input id="otp-1" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,1)" onkeydown="otpKeydown(event,1)">
+              <input id="otp-2" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,2)" onkeydown="otpKeydown(event,2)">
+              <input id="otp-3" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,3)" onkeydown="otpKeydown(event,3)">
+              <input id="otp-4" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,4)" onkeydown="otpKeydown(event,4)">
+              <input id="otp-5" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,5)" onkeydown="otpKeydown(event,5)">
+            </div>
+            <div id="verify-step2-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:14px;font-size:14px;font-weight:500;"></div>
+            <div style="text-align:center;font-size:13px;color:var(--gray-500);margin-bottom:14px;" id="otp-timer">Code valid for 10 minutes</div>
+            <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="verifyOtp()">
+              ✅ Verify OTP
+            </button>
+            <div style="text-align:center;margin-top:14px;font-size:13px;">
+              <span style="color:var(--gray-500);">Didn't get it?</span>
+              <a style="color:var(--brand);font-weight:600;cursor:pointer;margin-left:6px;" onclick="goToVerifyStep1()">Change number / Resend</a>
+            </div>
           </div>
-          <div class="otp-inputs">
-            <input class="otp-input" id="otp-1" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,1)" onkeydown="otpKey(event,1)">
-            <input class="otp-input" id="otp-2" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,2)" onkeydown="otpKey(event,2)">
-            <input class="otp-input" id="otp-3" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,3)" onkeydown="otpKey(event,3)">
-            <input class="otp-input" id="otp-4" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,4)" onkeydown="otpKey(event,4)">
-            <input class="otp-input" id="otp-5" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,5)" onkeydown="otpKey(event,5)">
-            <input class="otp-input" id="otp-6" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,6)" onkeydown="otpKey(event,6)">
-          </div>
-          <div id="vstep2-msg" class="verify-status"></div>
-          <button onclick="verifyOTP()" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:8px;" id="verify-otp-btn">
-            ✅ Verify OTP
-          </button>
-          <div class="resend-timer" id="resend-timer">Resend OTP in <span id="resend-countdown">60</span>s</div>
-          <div style="text-align:center;margin-top:10px;display:none;" id="resend-btn-wrap">
-            <a onclick="resendOTP()" style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">Resend OTP</a>
-          </div>
-          <div style="text-align:center;margin-top:12px;">
-            <a onclick="goBackToPhone()" style="font-size:12px;color:var(--gray-400);cursor:pointer;">← Change phone number</a>
-          </div>
-        </div>
 
-        <!-- Step 3: Success -->
-        <div class="verify-step" id="vstep-3">
-          <div style="text-align:center;padding:20px 0;">
-            <div style="font-size:56px;margin-bottom:16px;">🎉</div>
-            <div class="verify-badge" style="margin:0 auto 16px;">✅ Owner Verified</div>
-            <p style="font-weight:700;font-size:17px;color:var(--gray-800);margin-bottom:8px;">You're now a verified owner!</p>
-            <p style="font-size:13px;color:var(--gray-500);margin-bottom:24px;">Your listings will now show the ✅ Verified Owner badge, making students more confident in booking.</p>
-            <button onclick="showPage('dashboard')" class="btn btn-primary btn-lg" style="justify-content:center;">Go to Dashboard →</button>
+          <!-- Step 3: Success -->
+          <div class="verify-step" id="verify-step-3">
+            <div style="text-align:center;padding:10px 0 20px;">
+              <div class="verified-ring">✅</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);margin-bottom:8px;">You're Verified! 🎉</div>
+              <div style="font-size:14px;color:var(--gray-500);margin-bottom:20px;">Your phone number has been confirmed. You now show as a <strong>Verified Owner</strong> to all students.</div>
+              <span class="phone-verified-badge">✅ Verified Owner</span>
+            </div>
+            <button class="btn btn-success btn-lg" style="width:100%;justify-content:center;margin-top:24px;" onclick="showPage('dashboard')">
+              🏠 Go to Dashboard
+            </button>
           </div>
+
         </div>
       </div>
-
       <div style="display:flex;justify-content:center;gap:24px;margin-top:20px;flex-wrap:wrap;">
-        <div style="font-size:12px;color:var(--gray-500);">🔒 Your number is kept private</div>
-        <div style="font-size:12px;color:var(--gray-500);">✅ One-time verification</div>
+        <div style="font-size:12px;color:var(--gray-500);">🔒 SSL Secured</div>
+        <div style="font-size:12px;color:var(--gray-500);">✅ Verified Platform</div>
+        <div style="font-size:12px;color:var(--gray-500);">🇱🇰 Made for Sri Lanka</div>
       </div>
     </div>
   </div>
@@ -1754,17 +1823,14 @@
           <div id="signup-owner-fields" style="display:none;">
             <div class="owner-extras">
               <div class="oe-title">🏠 Property Owner Details</div>
-              <div class="auth-field"><label>NIC Number</label><input id="signup-nic" type="text" placeholder="199512345678 or 952345678V"></div>
+              <div class="auth-field"><label>NIC Number</label><input type="text" placeholder="199512345678 or 952345678V"></div>
               <div class="auth-row" style="margin-bottom:12px;">
                 <div class="auth-field" style="margin-bottom:0;">
                   <label>Number of Properties</label>
                   <select><option>1 property</option><option>2–3 properties</option><option>4+ properties</option></select>
                 </div>
               </div>
-              <div class="auth-field" style="margin-bottom:0;"><label>Property / Business Name</label><input id="signup-business" type="text" placeholder="e.g. Sunset View Boarding House"></div>
-            </div>
-            <div style="background:var(--brand-light);border:1px solid var(--brand-mid);border-radius:var(--radius-md);padding:12px 14px;margin-top:10px;font-size:13px;color:var(--brand);">
-              📱 After signing up, you'll be asked to verify your phone number to receive the <strong>✅ Verified Owner</strong> badge.
+              <div class="auth-field" style="margin-bottom:0;"><label>Property / Business Name</label><input type="text" placeholder="e.g. Sunset View Boarding House"></div>
             </div>
           </div>
           <div style="margin-bottom:18px;"></div>
@@ -1854,14 +1920,27 @@ function showPage(id) {
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
   const navMap = { home:'nav-home', results:'nav-results', dashboard:'nav-dashboard',
     detail:'nav-results', booking:'nav-results', reviews:'nav-results',
-    'add-listing':'nav-dashboard', saved:null, login:null, signup:null };
+    'add-listing':'nav-dashboard', saved:null, login:null, signup:null, verify:null };
   const el = document.getElementById(navMap[id]);
   if (el) el.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
   if (id === 'results')   applyFilters();
-  if (id === 'dashboard') loadDashboard();
+  if (id === 'dashboard') {
+    if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); showPage('login'); return; }
+    loadDashboard();
+  }
   if (id === 'reviews' && currentListing) loadReviewsPage();
   if (id === 'saved')     loadSavedPage();
+  if (id === 'verify') {
+    if (!isLoggedIn()) { showToast('Please sign in first','warning'); showPage('login'); return; }
+    if (getUserRole() !== 'landlord') { showToast('Only owners can verify their phone','warning'); showPage('home'); return; }
+    if (localStorage.getItem('phoneVerified') === '1') {
+      document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('verify-step-3').classList.add('active');
+    } else {
+      goToVerifyStep1();
+    }
+  }
 }
 
 function selectRoom(el) {
@@ -1890,29 +1969,34 @@ function updateNav() {
   const name = localStorage.getItem('userName');
   const role = localStorage.getItem('userRole');
   const navEnd = document.querySelector('.nav-end');
-  const ownerPortalLink = document.getElementById('nav-dashboard');
+  const navDashLink = document.getElementById('nav-dashboard');
 
-  // Show "Owner Portal" nav link ONLY for landlords
-  if (ownerPortalLink) {
-    ownerPortalLink.style.display = (name && role === 'landlord') ? '' : 'none';
+  // Show/hide Owner Portal nav link — only visible to landlords
+  if (navDashLink) {
+    if (role === 'landlord') {
+      navDashLink.style.display = '';
+      navDashLink.textContent = 'Owner Portal';
+      navDashLink.onclick = function() { showPage('dashboard'); };
+    } else {
+      // Logged-in students get "My Bookings", guests see nothing
+      if (name) {
+        navDashLink.style.display = '';
+        navDashLink.textContent = 'My Bookings';
+        navDashLink.onclick = function() { showPage('dashboard'); };
+      } else {
+        navDashLink.style.display = 'none';
+      }
+    }
   }
 
   if (!navEnd) return;
   if (name) {
-    if (role === 'landlord') {
-      // Owner nav: Dashboard + Sign Out
-      navEnd.innerHTML = `
-        <span style="font-size:13px;color:var(--gray-600);font-weight:500;">🏠 ${name}</span>
-        <button class="btn btn-ghost" onclick="showPage('dashboard')">Owner Portal</button>
-        <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
-    } else {
-      // Student nav: Saved + My Bookings + Sign Out
-      navEnd.innerHTML = `
-        <span style="font-size:13px;color:var(--gray-600);font-weight:500;">👤 ${name}</span>
-        <button class="btn btn-ghost" onclick="showPage('saved')">♥ Saved</button>
-        <button class="btn btn-ghost" onclick="showPage('dashboard')">My Bookings</button>
-        <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
-    }
+    navEnd.innerHTML = `
+      <span style="font-size:13px;color:var(--gray-600);font-weight:500;">👤 ${name}</span>
+      ${role==='landlord'
+        ? '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>'
+        : '<button class="btn btn-ghost" onclick="showPage(\'saved\')">♥ Saved</button>'}
+      <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
   } else {
     navEnd.innerHTML = `
       <button class="btn btn-ghost" onclick="goToAddListing()">List Property</button>
@@ -1942,27 +2026,7 @@ async function signupUser() {
     if (data.message) {
       showToast('Account created! Please sign in.', 'success');
       document.getElementById('login-email').value = email;
-      if (signupRole === 'owner') {
-        // Auto-login then go to phone verify
-        const loginRes  = await fetch(`${API}/auth/login`, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ email, password })
-        });
-        const loginData = await loginRes.json();
-        if (loginData.token) {
-          localStorage.setItem('token',    loginData.token);
-          localStorage.setItem('userName', loginData.name);
-          localStorage.setItem('userRole', loginData.role);
-          localStorage.setItem('userId',   loginData.userId||'');
-          localStorage.setItem('userVerified', 'false');
-          updateNav();
-          showPage('verify');
-        } else {
-          showPage('login');
-        }
-      } else {
-        showPage('login');
-      }
+      showPage('login');
     } else { showToast(data.error||'Signup failed', 'error'); }
   } catch { showToast('Connection error — is the server running?', 'error'); }
 }
@@ -1978,28 +2042,21 @@ async function loginUser() {
     });
     const data = await res.json();
     if (data.token) {
-      localStorage.setItem('token',    data.token);
-      localStorage.setItem('userName', data.name);
-      localStorage.setItem('userRole', data.role);
-      localStorage.setItem('userId',   data.userId||'');
-      localStorage.setItem('userVerified', data.isVerified ? 'true' : 'false');
+      localStorage.setItem('token',         data.token);
+      localStorage.setItem('userName',      data.name);
+      localStorage.setItem('userRole',      data.role);
+      localStorage.setItem('userId',        data.userId||'');
+      localStorage.setItem('phoneVerified', data.phoneVerified ? '1' : '0');
+      localStorage.setItem('userPhone',     data.phone || '');
       updateNav();
       showToast(`Welcome back, ${data.name}! 👋`, 'success');
-      // Apply any pending save action from before login
-      const pendingSave = sessionStorage.getItem('pendingSave');
-      if (pendingSave) {
-        sessionStorage.removeItem('pendingSave');
-        savedIds.add(pendingSave);
-        localStorage.setItem('saved', JSON.stringify([...savedIds]));
-        showToast('✅ Boarding place saved!', 'success');
-      }
       setTimeout(() => { showPage('home'); loadHomeListings(); }, 800);
     } else { showToast(data.error||'Login failed — check your credentials', 'error'); }
   } catch { showToast('Connection error — is the server running?', 'error'); }
 }
 
 function logoutUser() {
-  ['token','userName','userRole','userId'].forEach(k => localStorage.removeItem(k));
+  ['token','userName','userRole','userId','phoneVerified','userPhone'].forEach(k => localStorage.removeItem(k));
   allListings = [];
   updateNav();
   showToast('Signed out successfully', 'success');
@@ -2057,6 +2114,7 @@ function homeCardHTML(l) {
       ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<div class="card-img-placeholder">${iconFor(l._id)}</div>`}
       <div class="card-badges">
         <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
+        ${l.ownerVerified?'<span class="badge badge-verified">✅ Verified</span>':''}
         ${l.media&&l.media.length?`<span class="badge" style="background:rgba(0,0,0,.5);color:white;">📷 ${l.media.length}</span>`:''}
       </div>
       <button class="fav-btn ${saved?'active':''}" onclick="event.stopPropagation();toggleSave('${l._id}',this)">${saved?'♥':'♡'}</button>
@@ -2087,8 +2145,8 @@ function resultCardHTML(l) {
           <div>
             <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
               <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
-              ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-700);">🛏 ${l.roomType}</span>`:''}
-              ${l.ownerVerified?`<span class="badge badge-verified">✅ Verified</span>`:''}
+              ${l.ownerVerified?'<span class="badge badge-verified">✅ Verified Owner</span>':''}
+              ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🛏 ${l.roomType}</span>`:''}
               ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
             </div>
             <div class="result-title">${l.title}</div>
@@ -2111,11 +2169,8 @@ function resultCardHTML(l) {
 
 // ── Save / favourite ─────────────────────────────
 function toggleSave(id, btn) {
-  // Redirect to login if not signed in
   if (!isLoggedIn()) {
     showToast('Please sign in to save boarding places', 'warning');
-    // Remember what they were trying to save so we can come back
-    sessionStorage.setItem('pendingSave', id);
     showPage('login');
     return;
   }
@@ -2127,6 +2182,7 @@ function toggleSave(id, btn) {
     if (btn) { btn.textContent = btn.classList.contains('fav-btn')?'♥':'♥ Saved'; btn.classList.add('active'); }
   }
   localStorage.setItem('saved', JSON.stringify([...savedIds]));
+  // If saved page is currently open, refresh it
   const savedPage = document.getElementById('page-saved');
   if (savedPage && savedPage.classList.contains('active')) loadSavedPage();
 }
@@ -2157,10 +2213,23 @@ function resetFilters(silent) {
 
 async function applyFilters() {
   if (!allListings.length) await fetchListings();
-  const city     = (document.getElementById('search-city')?.value||'').trim().toLowerCase();
-  const priceCap = parseInt(document.getElementById('filter-price')?.value)||60000;
-  const topPrice = parseInt(document.getElementById('search-price')?.value)||60000;
-  const maxPrice = Math.min(priceCap, topPrice);
+  const city      = (document.getElementById('search-city')?.value||'').trim().toLowerCase();
+
+  // Slider upper bound
+  const sliderMax = parseInt(document.getElementById('filter-price')?.value)||60000;
+
+  // Dropdown: encode as "min:max" so ranges work correctly
+  // "15000" = under 15k (0–15000), "25000" = 15k–25k, "40000" = 25k–40k, "" = any
+  const dropVal   = document.getElementById('search-price')?.value || '';
+  let dropMin = 0, dropMax = 60000;
+  if (dropVal === '15000') { dropMin = 0;     dropMax = 15000; }
+  if (dropVal === '25000') { dropMin = 15001; dropMax = 25000; }
+  if (dropVal === '40000') { dropMin = 25001; dropMax = 40000; }
+
+  // Effective price window = intersection of slider and dropdown
+  const priceMin = dropVal ? dropMin : 0;
+  const priceMax = dropVal ? Math.min(dropMax, sliderMax) : sliderMax;
+
   const roomSel  = document.querySelector('input[name="room"]:checked')?.value || document.getElementById('search-room')?.value||'';
   const availSel = document.querySelector('input[name="avail"]:checked')?.value||'';
   const amenReq  = [...document.querySelectorAll('#facilities-filter input:checked')].map(c=>c.value.toLowerCase());
@@ -2168,7 +2237,8 @@ async function applyFilters() {
 
   let filtered = allListings.filter(l => {
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
-    if (l.price > maxPrice) return false;
+    // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
+    if (l.price < priceMin || l.price > priceMax) return false;
     if (roomSel && l.roomType && l.roomType!==roomSel) return false;
     if (availSel==='now'    && !l.available) return false;
     if (availSel==='future' &&  l.available) return false;
@@ -2330,15 +2400,46 @@ async function openDetail(id) {
   if (badgesDiv) {
     badgesDiv.innerHTML = `
       <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
-      ${l.ownerVerified?`<span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified Owner</span>`:''}
+      <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified</span>
       ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">📷 ${l.media.length} photos</span>`:''}`;
   }
 
   // Amenities
-  const facGrid = document.querySelector('#page-detail .facilities-grid');
-  if (facGrid && l.amenities?.length) {
-    const em = {WiFi:'📶',Kitchen:'🍳',Parking:'🚗',Laundry:'🧺',Security:'🛡️',AC:'❄️',Meals:'🍽','TV Room':'📺',Garden:'🌿'};
-    facGrid.innerHTML = l.amenities.map(a => `<div class="facility-chip"><span class="facility-icon">${em[a]||'✨'}</span> ${a}</div>`).join('');
+  const facGrid     = document.querySelector('#page-detail .facilities-grid');
+  const facSection  = document.querySelector('#page-detail .facilities-grid')?.closest('div.divider + div') || null;
+  const facHeading  = document.querySelector('#page-detail h3.fac-heading');
+
+  if (facGrid) {
+    const validAmenities = (l.amenities || []).filter(a => a && a.trim());
+    if (validAmenities.length) {
+      const em = {WiFi:'📶',Kitchen:'🍳',Parking:'🚗',Laundry:'🧺',Security:'🛡️',AC:'❄️',Meals:'🍽','TV Room':'📺',Garden:'🌿'};
+      facGrid.innerHTML = validAmenities.map(a => {
+        const icon = em[a] ? `<span class="facility-icon">${em[a]}</span> ` : '';
+        return `<div class="facility-chip">${icon}${a}</div>`;
+      }).join('');
+      // Show the heading + grid
+      const h = document.querySelector('#page-detail .fac-heading');
+      if (h) h.style.display = '';
+      facGrid.style.display = '';
+    } else {
+      // Hide heading and grid when no amenities
+      const h = document.querySelector('#page-detail .fac-heading');
+      if (h) h.style.display = 'none';
+      facGrid.style.display = 'none';
+      facGrid.innerHTML = '';
+    }
+  }
+
+  // House Rules — show only if owner set them
+  const rulesSection = document.getElementById('detail-rules-section');
+  const rulesGrid    = document.getElementById('detail-rules-grid');
+  if (rulesSection && rulesGrid) {
+    if (l.rules && l.rules.length) {
+      rulesGrid.innerHTML = l.rules.map(r => `<div>✅ ${r}</div>`).join('');
+      rulesSection.style.display = '';
+    } else {
+      rulesSection.style.display = 'none';
+    }
   }
 
   // Room type card
@@ -2365,6 +2466,20 @@ async function openDetail(id) {
     availBadge.innerHTML = l.available?'<span class="dot"></span> Available Now':'🕐 Currently Unavailable';
   }
 
+  // Booking panel price breakdown — use owner-set values if available
+  const depositAmt = l.deposit  || l.price;   // fallback: 1 month rent
+  const advanceAmt = l.advance  || 5000;       // fallback: 5000
+  const payToBook  = advanceAmt;
+
+  const panelRent    = document.getElementById('panel-monthly-rent');
+  const panelDep     = document.getElementById('panel-deposit');
+  const panelAdv     = document.getElementById('panel-advance');
+  const panelPay     = document.getElementById('panel-pay-to-book');
+  if (panelRent) panelRent.textContent = `LKR ${Number(l.price).toLocaleString()}`;
+  if (panelDep)  panelDep.textContent  = depositAmt ? `LKR ${Number(depositAmt).toLocaleString()}` : '—';
+  if (panelAdv)  panelAdv.textContent  = advanceAmt ? `LKR ${Number(advanceAmt).toLocaleString()}` : '—';
+  if (panelPay)  panelPay.textContent  = `LKR ${Number(payToBook).toLocaleString()}`;
+
   // Book Now button
   const bookBtn = document.getElementById('book-now-btn');
   if (bookBtn) {
@@ -2374,17 +2489,16 @@ async function openDetail(id) {
     bookBtn.style.cursor  = l.available?'pointer':'not-allowed';
   }
 
-  // Owner details — show verified badge based on listing owner's verification
+  // Owner details — show verified status from listing data
   const ownerWrap = document.querySelector('#page-detail .booking-panel > div:last-child > div:last-child');
   if (ownerWrap) {
-    const ownerVerified = l.ownerVerified === true;
+    const verifiedBadge = l.ownerVerified
+      ? '<div style="font-size:12px;color:var(--success);font-weight:600;">✅ Verified Owner</div>'
+      : '<div style="font-size:12px;color:var(--gray-400);">Owner</div>';
     ownerWrap.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">🏠</div>
-        <div>
-          <div style="font-weight:600;font-size:14px;">${l.ownerName||'Property Owner'}</div>
-          <div style="font-size:12px;color:${ownerVerified?'var(--success)':'var(--warning)'};">${ownerVerified?'✅ Verified Owner':'⚠️ Owner not yet verified'}</div>
-        </div>
+        <div><div style="font-weight:600;font-size:14px;">Property Owner</div>${verifiedBadge}</div>
       </div>`;
   }
 
@@ -2393,16 +2507,20 @@ async function openDetail(id) {
   if (saveBtn) saveBtn.textContent = savedIds.has(l._id)?'♥ Saved':'♡ Save';
 
   // Booking summary
-  const sumTitle = document.getElementById('bk-sum-title');
-  const sumRoom  = document.getElementById('bk-sum-room');
-  const sumDep   = document.getElementById('bk-sum-deposit');
-  const sumRent  = document.getElementById('bk-sum-rent');
-  const sumTotal = document.getElementById('bk-sum-total');
+  const sumTitle  = document.getElementById('bk-sum-title');
+  const sumRoom   = document.getElementById('bk-sum-room');
+  const sumDep    = document.getElementById('bk-sum-deposit');
+  const sumRent   = document.getElementById('bk-sum-rent');
+  const sumAdv    = document.getElementById('bk-sum-advance');
+  const sumTotal  = document.getElementById('bk-sum-total');
   if (sumTitle) sumTitle.textContent = l.title;
   if (sumRoom)  sumRoom.textContent  = `${l.roomType||'Room'} · 12 months`;
-  if (sumDep)   sumDep.textContent   = `LKR ${Number(l.price).toLocaleString()}`;
+  const _dep = l.deposit || l.price;
+  const _adv = l.advance || 5000;
+  if (sumDep)   sumDep.textContent   = `LKR ${Number(_dep).toLocaleString()}`;
   if (sumRent)  sumRent.textContent  = `LKR ${Number(l.price).toLocaleString()}`;
-  if (sumTotal) sumTotal.textContent = `LKR ${(5000+l.price+l.price-1000).toLocaleString()}`;
+  if (sumAdv)   sumAdv.textContent   = `LKR ${Number(_adv).toLocaleString()}`;
+  if (sumTotal) sumTotal.textContent = `LKR ${(Number(_adv) + Number(l.price) + Number(_dep) - 1000).toLocaleString()}`;
 
   await loadReviewsPreview();
   reviewsOffset = 0;
@@ -2745,12 +2863,15 @@ async function submitListing() {
   const amenities   = document.getElementById('al-amenities')?.value.split(',').map(a=>a.trim()).filter(Boolean)||[];
   const description = document.getElementById('al-description')?.value.trim();
   const available   = document.getElementById('al-available')?.value === 'true';
+  const deposit     = Number(document.getElementById('al-deposit')?.value) || 0;
+  const advance     = Number(document.getElementById('al-advance')?.value) || 0;
+  const rules       = [...document.querySelectorAll('.al-rule:checked')].map(c => c.value);
 
   if (!title||!city||!price) return showMsg(msg,'⚠️ Title, City and Price are required.','error');
   showMsg(msg,'⏳ Creating listing...','info');
 
   try {
-    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available})});
+    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available,deposit,advance,rules})});
     const data = await res.json();
     if (!data.listing) return showMsg(msg,'❌ '+(data.error||'Failed to create listing.'),'error');
 
@@ -2764,7 +2885,8 @@ async function submitListing() {
     }
 
     showMsg(msg,'✅ Listing added successfully!','success');
-    ['al-title','al-city','al-price','al-amenities','al-description'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    ['al-title','al-city','al-price','al-amenities','al-description','al-deposit','al-advance'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.querySelectorAll('.al-rule').forEach(c => c.checked = false);
     alSelectedFiles = [];
     renderPreviewGrid('al-preview-grid', [], 'al');
     allListings = [];
@@ -2849,92 +2971,106 @@ async function uploadModalMedia() {
 }
 
 // ── Dashboard ─────────────────────────────────────
-// ── Dashboard ─────────────────────────────────────
 async function loadDashboard() {
   const name = localStorage.getItem('userName');
   const role = localStorage.getItem('userRole');
-
-  if (!isLoggedIn()) {
-    showToast('Please sign in to view your dashboard', 'warning');
-    showPage('login');
-    return;
-  }
-
-  if (role === 'landlord') {
-    await loadOwnerDashboard(name, role);
-  } else {
-    await loadStudentDashboard(name, role);
-  }
-}
-
-// ── OWNER DASHBOARD ───────────────────────────────
-async function loadOwnerDashboard(name, role) {
   const welcomeEl = document.getElementById('dash-welcome');
-  if (welcomeEl) welcomeEl.textContent = name ? `Welcome back, ${name} 👋` : 'Welcome, Owner 👋';
-  const titleEl = document.getElementById('dash-title');
-  if (titleEl) titleEl.textContent = 'Owner Dashboard';
+  if (welcomeEl) welcomeEl.textContent = name?`Welcome back, ${name} 👋`:'Welcome 👋';
   const roleEl = document.getElementById('dash-stat-role');
-  if (roleEl) roleEl.textContent = 'Owner';
+  if (roleEl) roleEl.textContent = role==='landlord'?'Owner':'Student';
 
-  // Show + Add New Listing button
-  const addBtn = document.querySelector('#page-dashboard .dashboard-header button.btn-primary');
-  if (addBtn) addBtn.style.display = '';
-  const isVerified = localStorage.getItem('userVerified') === 'true';
-  const verifiedBadge = document.querySelector('#page-dashboard .dashboard-header .badge-verified');
-  if (verifiedBadge) {
-    verifiedBadge.style.display = '';
-    if (isVerified) {
-      verifiedBadge.innerHTML = '✅ Verified Owner';
-      verifiedBadge.style.background = '#D1FAE5';
-      verifiedBadge.style.color = '#065F46';
+  // ── Update dashboard title and header badge based on role ──
+  const dashTitle = document.querySelector('#page-dashboard .dashboard-header h1');
+  const dashBadge = document.querySelector('#page-dashboard .dashboard-header .badge-verified');
+  const addBtn    = document.querySelector('#page-dashboard .dashboard-header .btn-primary');
+  if (dashTitle) dashTitle.textContent = role==='landlord' ? 'Owner Dashboard' : 'My Bookings Dashboard';
+  if (dashBadge) {
+    if (role === 'landlord') {
+      const isVerified = localStorage.getItem('phoneVerified') === '1';
+      if (isVerified) {
+        dashBadge.textContent = '✅ Verified Owner';
+        dashBadge.style.background = '';
+        dashBadge.style.color = '';
+        dashBadge.style.display = '';
+      } else {
+        dashBadge.textContent = '⚠️ Unverified';
+        dashBadge.style.background = '#FEF3C7';
+        dashBadge.style.color = '#92400E';
+        dashBadge.style.display = '';
+      }
     } else {
-      verifiedBadge.innerHTML = '⚠️ Phone Not Verified';
-      verifiedBadge.style.background = '#FEF3C7';
-      verifiedBadge.style.color = '#92400E';
-      verifiedBadge.style.cursor = 'pointer';
-      verifiedBadge.onclick = () => showPage('verify');
-      verifiedBadge.title = 'Click to verify your phone number';
+      dashBadge.textContent = '🎓 Student Account';
+      dashBadge.style.background = '#D1FAE5';
+      dashBadge.style.color = '#065F46';
     }
   }
-  // Show unverified warning banner in left panel area
-  const dashWrap = document.querySelector('#page-dashboard .dashboard-wrap');
-  const existingBanner = document.getElementById('owner-unverified-banner');
-  if (existingBanner) existingBanner.remove();
-  if (!isVerified && dashWrap) {
-    const banner = document.createElement('div');
-    banner.id = 'owner-unverified-banner';
-    banner.className = 'unverified-banner';
-    banner.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;">⚠️</span>
-        <div>
-          <p style="font-weight:700;margin-bottom:2px;">Phone verification required</p>
-          <p>Verify your phone to get the ✅ Verified Owner badge on your listings — students trust verified owners more!</p>
-        </div>
-      </div>
-      <button onclick="showPage('verify')" class="btn btn-sm" style="background:#F59E0B;color:white;border:none;white-space:nowrap;">Verify Now →</button>`;
-    const grid = document.querySelector('#page-dashboard .dashboard-grid');
-    if (grid) grid.parentNode.insertBefore(banner, grid);
+  // Hide "Add New Listing" button for students
+  if (addBtn) addBtn.style.display = role==='landlord' ? '' : 'none';
+
+  // ── Phone verification banner & header actions ──
+  const isPhoneVerified = localStorage.getItem('phoneVerified') === '1';
+  const headerActions   = document.getElementById('dash-header-actions');
+  if (headerActions && role === 'landlord') {
+    if (isPhoneVerified) {
+      headerActions.innerHTML = `
+        <span class="badge badge-verified" style="font-size:13px;padding:6px 14px;">✅ Verified Owner</span>
+        <button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>`;
+    } else {
+      headerActions.innerHTML = `
+        <span class="badge" style="font-size:13px;padding:6px 14px;background:#FEF3C7;color:#92400E;">⚠️ Phone Not Verified</span>
+        <button class="btn btn-outline" onclick="showPage('verify')" style="border-color:#F59E0B;color:#92400E;">📱 Verify Phone</button>
+        <button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>`;
+    }
+  } else if (headerActions && role !== 'landlord') {
+    headerActions.innerHTML = `<span class="badge" style="font-size:13px;padding:6px 14px;background:#D1FAE5;color:#065F46;">🎓 Student Account</span>`;
   }
 
-  // Stat labels for owner
-  const statDescs = document.querySelectorAll('#page-dashboard .stat-desc');
-  if (statDescs[0]) statDescs[0].textContent = 'My Listings';
-  if (statDescs[1]) statDescs[1].textContent = 'Bookings Received';
+  // ── Show/hide verify-phone banner inside the dashboard body ──
+  let existingBanner = document.getElementById('phone-verify-banner');
+  if (role === 'landlord' && !isPhoneVerified) {
+    if (!existingBanner) {
+      const dashWrap = document.querySelector('#page-dashboard .dashboard-wrap');
+      const dashGrid = document.querySelector('#page-dashboard .dashboard-grid');
+      const banner = document.createElement('div');
+      banner.id = 'phone-verify-banner';
+      banner.style.cssText = 'background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:1.5px solid #F59E0B;border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;';
+      banner.innerHTML = `
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:32px;">📱</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:#92400E;">Verify Your Phone Number</div>
+            <div style="font-size:13px;color:#A16207;margin-top:2px;">Verified owners get a <strong>✅ badge</strong> on all listings, building student trust.</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="showPage('verify')" style="background:#D97706;border:none;white-space:nowrap;">📱 Verify Now</button>`;
+      if (dashWrap && dashGrid) {
+        dashWrap.insertBefore(banner, dashGrid);
+      }
+    }
+  } else {
+    if (existingBanner) existingBanner.remove();
+  }
+
+  // Update stat labels based on role
+  const statDescs = document.querySelectorAll('#page-dashboard .dash-stat .stat-desc');
+  if (statDescs[0]) statDescs[0].textContent = role==='landlord' ? 'My Listings' : 'Total Bookings';
+  if (statDescs[1]) statDescs[1].textContent = role==='landlord' ? 'My Bookings' : 'Confirmed';
   if (statDescs[2]) statDescs[2].textContent = 'Pending';
-  if (statDescs[3]) statDescs[3].textContent = 'Account Type';
+
+  if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); return; }
 
   if (!allListings.length) await fetchListings();
-  const myUserId   = localStorage.getItem('userId');
-  const myListings = allListings.filter(l => l.owner && l.owner.toString() === myUserId);
+  const myUserId = localStorage.getItem('userId');
+  const myListings = role === 'landlord'
+    ? allListings.filter(l => l.owner && l.owner.toString() === myUserId)
+    : [];
   const slEl = document.getElementById('dash-stat-listings');
-  if (slEl) slEl.textContent = myListings.length;
+  if (slEl) slEl.textContent = role==='landlord'?myListings.length:'—';
 
-  // LEFT: My listings panel
   const formArea = document.querySelector('#page-dashboard .listing-form');
-  if (formArea) {
+  if (formArea && role==='landlord') {
     if (!myListings.length) {
-      formArea.innerHTML = '<h3>🏠 My Listings</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">No listings yet. Click "+ Add New Listing" to get started!</p>';
+      formArea.innerHTML = '<h3>🏠 My Listings</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">No listings yet. Click "+ Add New Listing" above!</p>';
     } else {
       formArea.innerHTML = `<h3>🏠 My Listings (${myListings.length})</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
         ${myListings.map(l => {
@@ -2942,8 +3078,8 @@ async function loadOwnerDashboard(name, role) {
           return `
           <div style="padding:14px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
             <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
-              ${img ? `<img src="${img}" style="width:60px;height:60px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;" onerror="this.remove()">` :
-                      `<div style="width:60px;height:60px;border-radius:var(--radius-sm);background:${gradFor(l._id)};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${iconFor(l._id)}</div>`}
+              ${img?`<img src="${img}" style="width:60px;height:60px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;" onerror="this.remove()">`:
+                    `<div style="width:60px;height:60px;border-radius:var(--radius-sm);background:${gradFor(l._id)};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${iconFor(l._id)}</div>`}
               <div style="flex:1;min-width:0;">
                 <div style="font-weight:700;font-size:15px;">${l.title}</div>
                 <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}</div>
@@ -2953,186 +3089,172 @@ async function loadOwnerDashboard(name, role) {
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
               <button onclick="openDetail('${l._id}')" class="btn btn-ghost btn-sm">👁 View</button>
-              <button onclick="openManageMedia('${l._id}','${l.title.replace(/'/g,"\\\'")}')" class="btn btn-ghost btn-sm">📸 Media</button>
+              <button onclick="openEditListing('${l._id}')" class="btn btn-ghost btn-sm">✏️ Edit</button>
+              <button onclick="openManageMedia('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-ghost btn-sm">📸 Media</button>
               <button onclick="toggleAvailability('${l._id}',${l.available})" class="btn btn-sm ${l.available?'btn-outline':'btn-success'}">${l.available?'🔒 Mark Booked':'✅ Mark Available'}</button>
-              <button onclick="deleteListing('${l._id}','${l.title.replace(/'/g,"\\\'")}')" class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;">🗑 Delete</button>
+              <button onclick="deleteListing('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;">🗑 Delete</button>
             </div>
           </div>`;
         }).join('')}
       </div>`;
     }
+  } else if (formArea && role!=='landlord') {
+    formArea.innerHTML = '<h3>📋 My Activity</h3><p style="color:var(--gray-400);font-size:14px;margin-top:16px;">Switch to an Owner account to manage listings.</p>';
   }
 
-  // RIGHT SIDEBAR: bookings received + listing summary
-  const dashSide = document.getElementById('dash-side');
-  if (dashSide) {
-    let bookingsHtml = '<p style="color:var(--gray-400);font-size:13px;">No bookings received yet.</p>';
-    try {
-      const res      = await fetch(`${API}/bookings/user/me`, { headers: { 'Authorization': 'Bearer ' + getToken() } });
-      const bookings = await res.json();
-      const sbEl = document.getElementById('dash-stat-bookings');
-      const spEl = document.getElementById('dash-stat-pending');
-      if (sbEl) sbEl.textContent = Array.isArray(bookings) ? bookings.length : '—';
-      if (spEl) spEl.textContent = Array.isArray(bookings) ? bookings.filter(b => b.status === 'pending').length : '—';
-      if (Array.isArray(bookings) && bookings.length) {
-        bookingsHtml = bookings.slice(0, 6).map(b => {
-          const bname = b.studentName || 'Student';
-          const init  = bname.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-          const sc    = b.status === 'confirmed' ? 'status-confirmed' : b.status === 'cancelled' ? 'status-upcoming' : 'status-pending';
-          const date  = b.moveInDate ? new Date(b.moveInDate).toLocaleDateString('en-GB', { day:'numeric', month:'short' }) : '—';
-          return `
+  try {
+    const res      = await fetch(`${API}/bookings/user/me`,{headers:{'Authorization':'Bearer '+getToken()}});
+    const bookings = await res.json();
+    const sbEl = document.getElementById('dash-stat-bookings');
+    const spEl = document.getElementById('dash-stat-pending');
+    if (sbEl) sbEl.textContent = Array.isArray(bookings)?bookings.length:'—';
+    if (spEl) spEl.textContent = Array.isArray(bookings)?bookings.filter(b=>b.status==='pending').length:'—';
+
+    const bPanel = document.getElementById('dash-bookings-panel');
+    if (bPanel && Array.isArray(bookings)) {
+      // Clear old items except the header
+      bPanel.querySelectorAll('.booking-item, p').forEach(i => i.remove());
+      if (!bookings.length) {
+        bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
+      } else {
+        bookings.slice(0,5).forEach(b => {
+          const bname = b.listing?.title || localStorage.getItem('userName') || 'Student';
+          const init  = bname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const sc    = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
+          const date  = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+          bPanel.insertAdjacentHTML('beforeend',`
             <div class="booking-item">
               <div class="booking-avatar">${init}</div>
               <div class="booking-info">
-                <div class="name">${b.listing?.title || 'Listing'}</div>
+                <div class="name">${b.listing?.title||'Listing'}</div>
                 <div class="date">${b.roomType||'Room'} · ${date}</div>
               </div>
-              <div class="booking-status ${sc}">${b.status || 'pending'}</div>
-            </div>`;
-        }).join('');
+              <div class="booking-status ${sc}">${b.status||'pending'}</div>
+            </div>`);
+        });
       }
-    } catch(e) { console.log('Booking fetch error', e); }
-
-    const statsHtml = myListings.length ? myListings.slice(0, 4).map(l => `
-      <div style="padding:10px 12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-weight:600;font-size:13px;">${l.title}</div>
-          <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">LKR ${Number(l.price).toLocaleString()}/mo</div>
-        </div>
-        <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:10px;">${l.available?'Active':'Booked'}</span>
-      </div>`).join('') : '<p style="color:var(--gray-400);font-size:13px;">No listings yet.</p>';
-
-    dashSide.innerHTML = `
-      <div class="bookings-panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <h3>📅 Bookings Received</h3>
-        </div>
-        ${bookingsHtml}
-      </div>
-      <div class="bookings-panel">
-        <h3 style="margin-bottom:12px;">🏠 My Listings Summary</h3>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          ${statsHtml}
-        </div>
-      </div>`;
-  }
-}
-
-// ── STUDENT DASHBOARD (My Bookings) ──────────────
-async function loadStudentDashboard(name, role) {
-  const welcomeEl = document.getElementById('dash-welcome');
-  if (welcomeEl) welcomeEl.textContent = name ? `Welcome back, ${name} 👋` : 'Welcome 👋';
-  const titleEl = document.getElementById('dash-title');
-  if (titleEl) titleEl.textContent = 'My Bookings';
-  const roleEl = document.getElementById('dash-stat-role');
-  if (roleEl) roleEl.textContent = 'Student';
-
-  // Hide owner-only buttons
-  const addBtn = document.querySelector('#page-dashboard .dashboard-header button.btn-primary');
-  if (addBtn) addBtn.style.display = 'none';
-  const verifiedBadge = document.querySelector('#page-dashboard .dashboard-header .badge-verified');
-  if (verifiedBadge) verifiedBadge.style.display = 'none';
-
-  // Stat labels for student
-  const statDescs = document.querySelectorAll('#page-dashboard .stat-desc');
-  if (statDescs[0]) statDescs[0].textContent = 'Total Bookings';
-  if (statDescs[1]) statDescs[1].textContent = 'Confirmed';
-  if (statDescs[2]) statDescs[2].textContent = 'Pending';
-  if (statDescs[3]) statDescs[3].textContent = 'Account Type';
-
-  let bookings = [];
-  try {
-    const res = await fetch(`${API}/bookings/user/me`, { headers: { 'Authorization': 'Bearer ' + getToken() } });
-    bookings = await res.json();
-    if (!Array.isArray(bookings)) bookings = [];
-  } catch(e) { bookings = []; }
-
-  const slEl  = document.getElementById('dash-stat-listings');
-  const sbEl  = document.getElementById('dash-stat-bookings');
-  const spEl  = document.getElementById('dash-stat-pending');
-  if (slEl) slEl.textContent = bookings.length;
-  if (sbEl) sbEl.textContent = bookings.filter(b => b.status === 'confirmed').length;
-  if (spEl) spEl.textContent = bookings.filter(b => b.status === 'pending').length;
-
-  // LEFT: detailed booking cards
-  const formArea = document.querySelector('#page-dashboard .listing-form');
-  if (formArea) {
-    if (!bookings.length) {
-      formArea.innerHTML = `
-        <h3>📋 My Bookings</h3>
-        <div style="text-align:center;padding:48px 24px;">
-          <div style="font-size:48px;margin-bottom:16px;">🏠</div>
-          <p style="font-weight:600;font-size:16px;color:var(--gray-700);margin-bottom:8px;">No bookings yet</p>
-          <p style="color:var(--gray-400);font-size:14px;margin-bottom:20px;">Find a boarding place and book it to see your bookings here.</p>
-          <button onclick="showPage('results')" class="btn btn-primary">🔍 Browse Boardings</button>
-        </div>`;
-    } else {
-      formArea.innerHTML = `<h3>📋 My Bookings (${bookings.length})</h3>
-        <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
-          ${bookings.map(b => {
-            const statusMap = { confirmed:['#D1FAE5','#065F46'], pending:['#FEF3C7','#92400E'], cancelled:['#FEE2E2','#DC2626'] };
-            const [bg, col] = statusMap[b.status] || ['#F3F4F6','#374151'];
-            const date = b.moveInDate ? new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '—';
-            const listingGrad = b.listing ? gradFor(b.listing._id||'x') : 'var(--gray-100)';
-            return `
-            <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);">
-              <div style="display:flex;gap:14px;padding:16px;align-items:flex-start;flex-wrap:wrap;">
-                <div style="width:72px;height:72px;border-radius:var(--radius-md);background:${listingGrad};display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🏠</div>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-weight:700;font-size:15px;margin-bottom:2px;">${b.listing?.title||'Boarding Place'}</div>
-                  <div style="font-size:13px;color:var(--gray-500);">📍 ${b.listing?.city||'—'}</div>
-                  <div style="font-size:13px;color:var(--gray-500);">🛏 ${b.roomType||'Room'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo</div>
-                  <div style="font-size:13px;color:var(--gray-600);margin-top:4px;">📅 Move-in: ${date}</div>
-                </div>
-                <div>
-                  <span style="padding:5px 12px;border-radius:100px;font-size:12px;font-weight:700;background:${bg};color:${col};">${b.status||'pending'}</span>
-                </div>
-              </div>
-              <div style="background:var(--gray-50);border-top:1px solid var(--gray-100);padding:10px 16px;display:flex;gap:8px;align-items:center;">
-                ${b.listing ? `<button onclick="openDetail('${b.listing._id}')" class="btn btn-ghost btn-sm">👁 View Listing</button>` : ''}
-                ${b.status==='pending' ? '<span style="font-size:12px;color:var(--gray-400);">⏳ Awaiting owner confirmation</span>' : ''}
-                ${b.status==='confirmed' ? '<span style="font-size:12px;color:var(--success);font-weight:600;">✅ Confirmed — ready to move in!</span>' : ''}
-              </div>
-            </div>`;
-          }).join('')}
-        </div>`;
     }
-  }
 
-  // RIGHT SIDEBAR for student: saved listings + tips
-  if (!allListings.length) await fetchListings();
-  const savedListings = allListings.filter(l => savedIds.has(l._id)).slice(0, 4);
-  const dashSide = document.getElementById('dash-side');
-  if (dashSide) {
-    dashSide.innerHTML = `
-      <div class="bookings-panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <h3>♥ Saved Boardings</h3>
-          <a onclick="showPage('saved')" style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">View all</a>
-        </div>
-        ${savedListings.length ? savedListings.map(l => `
-          <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100);">
-            <div style="width:40px;height:40px;border-radius:var(--radius-sm);background:${gradFor(l._id)};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${iconFor(l._id)}</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.title}</div>
-              <div style="font-size:12px;color:var(--gray-400);">LKR ${Number(l.price).toLocaleString()}/mo</div>
+    // Sidebar listings panel — owner only
+    const lPanelWrap    = document.getElementById('dash-listings-panel');
+    const lPanelContent = document.getElementById('dash-listings-sidebar-content');
+    if (role === 'landlord' && lPanelWrap && lPanelContent) {
+      lPanelWrap.style.display = '';
+      if (!myListings.length) {
+        lPanelContent.innerHTML = '<p style="color:var(--gray-400);font-size:13px;">No listings yet.</p>';
+      } else {
+        lPanelContent.innerHTML = myListings.map(l => `
+          <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);margin-bottom:8px;cursor:pointer;" onclick="openDetail('${l._id}')">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:600;font-size:14px;">${l.title}</div>
+              <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'Active':'Unavailable'}</span>
             </div>
-            <button onclick="openDetail('${l._id}')" class="btn btn-ghost btn-sm" style="font-size:12px;">View</button>
-          </div>`).join('') :
-          '<p style="color:var(--gray-400);font-size:13px;">No saved boardings yet.<br><a onclick="showPage(\'results\')" style="color:var(--brand);cursor:pointer;font-weight:600;">Browse listings →</a></p>'}
-      </div>
-      <div class="bookings-panel">
-        <h3 style="margin-bottom:12px;">💡 Tips for Students</h3>
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--gray-600);">
-          <div style="display:flex;gap:8px;"><span>🔍</span><span>Use filters to find boardings near your faculty</span></div>
-          <div style="display:flex;gap:8px;"><span>📅</span><span>Book early — slots fill quickly near semester start</span></div>
-          <div style="display:flex;gap:8px;"><span>♥</span><span>Save favourites to compare before booking</span></div>
-          <div style="display:flex;gap:8px;"><span>⭐</span><span>Read student reviews before deciding</span></div>
-        </div>
-      </div>`;
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo</div>
+            <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
+          </div>`).join('');
+      }
+    } else if (lPanelWrap) {
+      lPanelWrap.style.display = 'none';
+    }
+
+  } catch(e) { console.log('Dashboard error:',e); }
+}
+
+// ── Edit Listing Modal ────────────────────────────
+let editListingId = null;
+
+function openEditListing(id) {
+  const listing = allListings.find(l => l._id === id);
+  if (!listing) { showToast('Listing not found', 'error'); return; }
+  editListingId = id;
+
+  // Pre-fill all fields with current values
+  const set = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val ?? ''; };
+  set('el-title',       listing.title);
+  set('el-city',        listing.city);
+  set('el-price',       listing.price);
+  set('el-deposit',     listing.deposit || '');
+  set('el-advance',     listing.advance || '');
+  set('el-amenities',   (listing.amenities || []).join(', '));
+  set('el-description', listing.description || '');
+
+  // Room type
+  const rtEl = document.getElementById('el-roomtype');
+  if (rtEl) rtEl.value = listing.roomType || 'Single Room';
+
+  // Availability
+  const avEl = document.getElementById('el-available');
+  if (avEl) avEl.value = listing.available ? 'true' : 'false';
+
+  // House rules — check matching boxes
+  document.querySelectorAll('.el-rule').forEach(cb => {
+    cb.checked = (listing.rules || []).includes(cb.value);
+  });
+
+  // Header subtitle
+  const titleDisplay = document.getElementById('edit-modal-title-display');
+  if (titleDisplay) titleDisplay.textContent = listing.title;
+
+  // Clear message
+  const msgEl = document.getElementById('el-msg');
+  if (msgEl) msgEl.style.display = 'none';
+
+  // Show modal
+  const modal = document.getElementById('edit-listing-modal');
+  if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+}
+
+function closeEditModal() {
+  const modal = document.getElementById('edit-listing-modal');
+  if (modal) { modal.style.display = 'none'; document.body.style.overflow = ''; }
+  editListingId = null;
+}
+
+async function saveEditListing() {
+  if (!editListingId) return;
+  const msgEl = document.getElementById('el-msg');
+
+  const title       = document.getElementById('el-title')?.value.trim();
+  const city        = document.getElementById('el-city')?.value.trim();
+  const price       = Number(document.getElementById('el-price')?.value);
+  const roomType    = document.getElementById('el-roomtype')?.value;
+  const available   = document.getElementById('el-available')?.value === 'true';
+  const deposit     = Number(document.getElementById('el-deposit')?.value) || 0;
+  const advance     = Number(document.getElementById('el-advance')?.value) || 0;
+  const amenities   = document.getElementById('el-amenities')?.value.split(',').map(a => a.trim()).filter(Boolean) || [];
+  const description = document.getElementById('el-description')?.value.trim();
+  const rules       = [...document.querySelectorAll('.el-rule:checked')].map(c => c.value);
+
+  if (!title || !city || !price) {
+    showMsg(msgEl, '⚠️ Title, City and Price are required.', 'error');
+    return;
+  }
+  showMsg(msgEl, '⏳ Saving changes...', 'info');
+
+  try {
+    const res  = await fetch(`${API}/listings/${editListingId}`, {
+      method:  'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+      body:    JSON.stringify({ title, city, price, roomType, available, deposit, advance, amenities, description, rules })
+    });
+    const data = await res.json();
+    if (data.listing) {
+      // Update local cache
+      allListings = allListings.map(l => l._id === editListingId ? data.listing : l);
+      // If this is the currently viewed listing, update it too
+      if (currentListing && currentListing._id === editListingId) currentListing = data.listing;
+      showMsg(msgEl, '✅ Changes saved successfully!', 'success');
+      showToast(`✅ "${data.listing.title}" updated!`, 'success');
+      setTimeout(() => { closeEditModal(); loadDashboard(); }, 900);
+    } else {
+      showMsg(msgEl, '❌ ' + (data.error || 'Could not save changes.'), 'error');
+    }
+  } catch {
+    showMsg(msgEl, '❌ Connection error.', 'error');
   }
 }
 
+// ── Delete listing ────────────────────────────────
 async function deleteListing(id, title) {
   if (!confirm(`Are you sure you want to permanently delete "${title}"?\n\nThis cannot be undone.`)) return;
   try {
@@ -3249,244 +3371,143 @@ async function loadSavedPage() {
   grid.innerHTML = saved.map(l => homeCardHTML(l)).join('');
 }
 
-// ── Init ──────────────────────────────────────────
 
 // ══════════════════════════════════════════════════
-//  OTP PHONE VERIFICATION
+//  PHONE VERIFICATION (OTP) — OWNER FLOW
 // ══════════════════════════════════════════════════
 
-let otpResendTimer = null;
-let generatedOTP   = '';   // stored client-side (demo mode — no SMS provider needed yet)
-let verifyPhone    = '';
-
-// ── OTP input navigation ─────────────────────────
-function otpInput(el, idx) {
-  el.value = el.value.replace(/\D/g, '').slice(0, 1);
-  el.classList.toggle('filled', el.value !== '');
-  if (el.value && idx < 6) {
-    document.getElementById('otp-' + (idx + 1))?.focus();
-  }
-  // Auto-submit when all 6 filled
-  const full = [1,2,3,4,5,6].map(i => document.getElementById('otp-'+i)?.value || '').join('');
-  if (full.length === 6) document.getElementById('verify-otp-btn')?.focus();
+function goToVerifyStep1() {
+  document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('verify-step-1').classList.add('active');
+  const msgEl = document.getElementById('verify-step1-msg');
+  if (msgEl) msgEl.style.display = 'none';
+  // Pre-fill if we already have a phone stored
+  const existingPhone = localStorage.getItem('userPhone');
+  const input = document.getElementById('verify-phone-input');
+  if (input && existingPhone) input.value = existingPhone;
 }
 
-function otpKey(event, idx) {
-  if (event.key === 'Backspace') {
-    const el = document.getElementById('otp-' + idx);
-    if (!el.value && idx > 1) {
-      document.getElementById('otp-' + (idx - 1))?.focus();
-    }
-  }
-  if (event.key === 'ArrowLeft' && idx > 1) document.getElementById('otp-' + (idx - 1))?.focus();
-  if (event.key === 'ArrowRight' && idx < 6) document.getElementById('otp-' + (idx + 1))?.focus();
-}
+async function sendOtp() {
+  if (!isLoggedIn()) { showToast('Please sign in first', 'warning'); showPage('login'); return; }
+  const phone = document.getElementById('verify-phone-input')?.value.trim();
+  const msgEl = document.getElementById('verify-step1-msg');
+  if (!phone) { showMsg(msgEl, '⚠️ Please enter your phone number.', 'error'); return; }
 
-// Allow paste of 6-digit OTP
-document.addEventListener('paste', function(e) {
-  const active = document.activeElement;
-  if (!active || !active.classList.contains('otp-input')) return;
-  e.preventDefault();
-  const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
-  [...pasted].forEach((ch, i) => {
-    const inp = document.getElementById('otp-' + (i+1));
-    if (inp) { inp.value = ch; inp.classList.add('filled'); }
-  });
-  document.getElementById('otp-' + Math.min(pasted.length+1, 6))?.focus();
-});
-
-// ── Generate a 6-digit OTP ────────────────────────
-function makeOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-// ── Send OTP ─────────────────────────────────────
-async function sendOTP() {
-  const phone = document.getElementById('verify-phone')?.value.trim();
-  const msg   = document.getElementById('vstep1-msg');
-  const btn   = document.getElementById('send-otp-btn');
-
-  if (!phone || phone.length < 9) {
-    showVerifyMsg(msg, '⚠️ Please enter a valid phone number.', 'error'); return;
-  }
-
-  verifyPhone  = phone;
-  btn.disabled = true;
-  btn.textContent = '⏳ Sending...';
-  showVerifyMsg(msg, '', '');
+  showMsg(msgEl, '⏳ Sending OTP...', 'info');
+  const btn = document.querySelector('#verify-step-1 .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = '📤 Sending...'; }
 
   try {
-    // Call backend to send OTP
     const res  = await fetch(`${API}/auth/send-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
       body: JSON.stringify({ phone })
     });
     const data = await res.json();
-
-    if (data.success) {
-      // In demo mode the backend returns the OTP directly — production would use SMS
-      if (data.otp) {
-        generatedOTP = data.otp.toString();
-        showVerifyMsg(msg, `🧪 Demo mode: Your OTP is ${generatedOTP} (in production this is sent by SMS)`, 'info');
-      } else {
-        generatedOTP = ''; // real SMS was sent — user enters it from their phone
-      }
-
-      // Move to step 2
-      document.getElementById('vstep-1').classList.remove('active');
-      document.getElementById('vstep-2').classList.add('active');
-      document.getElementById('otp-sent-to').textContent = `We sent a 6-digit code to ${phone}`;
-      document.getElementById('otp-1').focus();
-      startResendTimer();
+    if (data.message) {
+      localStorage.setItem('userPhone', phone);
+      showMsg(msgEl, '✅ OTP sent! Check your phone.', 'success');
+      setTimeout(() => {
+        document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('verify-step-2').classList.add('active');
+        const dispEl = document.getElementById('verify-phone-display');
+        if (dispEl) dispEl.textContent = phone;
+        // Clear OTP boxes
+        for (let i = 0; i < 6; i++) {
+          const box = document.getElementById('otp-' + i);
+          if (box) box.value = '';
+        }
+        document.getElementById('otp-0')?.focus();
+        startOtpTimer();
+      }, 800);
     } else {
-      showVerifyMsg(msg, '❌ ' + (data.error || 'Could not send OTP. Try again.'), 'error');
-      btn.disabled = false;
-      btn.textContent = '📤 Send OTP';
+      showMsg(msgEl, '❌ ' + (data.error || 'Failed to send OTP.'), 'error');
     }
   } catch {
-    showVerifyMsg(msg, '❌ Connection error — is the server running?', 'error');
-    btn.disabled = false;
-    btn.textContent = '📤 Send OTP';
+    showMsg(msgEl, '❌ Connection error. Is the server running?', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📤 Send OTP'; }
   }
 }
 
-// ── Verify OTP ────────────────────────────────────
-async function verifyOTP() {
-  const entered = [1,2,3,4,5,6].map(i => document.getElementById('otp-'+i)?.value||'').join('');
-  const msg     = document.getElementById('vstep2-msg');
-  const btn     = document.getElementById('verify-otp-btn');
-
-  if (entered.length < 6) {
-    showVerifyMsg(msg, '⚠️ Please enter all 6 digits.', 'error'); return;
+// OTP input: auto-advance to next box
+function otpInput(input, index) {
+  const val = input.value.replace(/\D/g, '');
+  input.value = val ? val[0] : '';
+  if (val && index < 5) {
+    document.getElementById('otp-' + (index + 1))?.focus();
   }
+}
 
-  btn.disabled    = true;
-  btn.textContent = '⏳ Verifying...';
+// OTP backspace: go back to previous box
+function otpKeydown(event, index) {
+  if (event.key === 'Backspace' && !event.target.value && index > 0) {
+    document.getElementById('otp-' + (index - 1))?.focus();
+  }
+}
+
+// Countdown timer
+let otpTimerInterval = null;
+function startOtpTimer() {
+  const timerEl = document.getElementById('otp-timer');
+  let seconds = 600; // 10 min
+  if (otpTimerInterval) clearInterval(otpTimerInterval);
+  otpTimerInterval = setInterval(() => {
+    seconds--;
+    if (timerEl) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      timerEl.textContent = `Code expires in ${m}:${s.toString().padStart(2,'0')}`;
+    }
+    if (seconds <= 0) {
+      clearInterval(otpTimerInterval);
+      if (timerEl) timerEl.textContent = '⏰ Code expired. Please request a new one.';
+    }
+  }, 1000);
+}
+
+async function verifyOtp() {
+  const otp = [0,1,2,3,4,5].map(i => document.getElementById('otp-' + i)?.value || '').join('');
+  const msgEl = document.getElementById('verify-step2-msg');
+  if (otp.length < 6) { showMsg(msgEl, '⚠️ Please enter all 6 digits.', 'error'); return; }
+
+  showMsg(msgEl, '⏳ Verifying...', 'info');
+  const btn = document.querySelector('#verify-step-2 .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Verifying...'; }
 
   try {
     const res  = await fetch(`${API}/auth/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
-      body: JSON.stringify({ phone: verifyPhone, otp: entered })
+      body: JSON.stringify({ otp })
     });
     const data = await res.json();
-
-    if (data.success) {
-      // Mark as verified in localStorage
-      localStorage.setItem('userVerified', 'true');
-      clearResendTimer();
-      updateNav();
-
+    if (data.message) {
+      if (otpTimerInterval) clearInterval(otpTimerInterval);
+      // Mark verified in localStorage
+      localStorage.setItem('phoneVerified', '1');
       // Show success step
-      document.getElementById('vstep-2').classList.remove('active');
-      document.getElementById('vstep-3').classList.add('active');
+      document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('verify-step-3').classList.add('active');
       showToast('🎉 Phone verified! You are now a Verified Owner.', 'success');
     } else {
-      showVerifyMsg(msg, '❌ ' + (data.error || 'Incorrect OTP. Please try again.'), 'error');
-      // Shake effect on OTP inputs
-      document.querySelectorAll('.otp-input').forEach(el => {
-        el.style.borderColor = '#EF4444';
-        el.style.background  = '#FEE2E2';
-        setTimeout(() => { el.style.borderColor = ''; el.style.background = ''; }, 1200);
-      });
-      btn.disabled    = false;
-      btn.textContent = '✅ Verify OTP';
+      showMsg(msgEl, '❌ ' + (data.error || 'Incorrect OTP.'), 'error');
+      // Shake the OTP boxes
+      const otpWrap = document.querySelector('.otp-inputs');
+      if (otpWrap) {
+        otpWrap.style.animation = 'none';
+        otpWrap.style.transform = 'translateX(-8px)';
+        setTimeout(() => { otpWrap.style.transform = ''; }, 150);
+      }
     }
   } catch {
-    showVerifyMsg(msg, '❌ Connection error — is the server running?', 'error');
-    btn.disabled    = false;
-    btn.textContent = '✅ Verify OTP';
+    showMsg(msgEl, '❌ Connection error.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Verify OTP'; }
   }
 }
 
-// ── Go back to phone input ────────────────────────
-function goBackToPhone() {
-  clearResendTimer();
-  [1,2,3,4,5,6].forEach(i => {
-    const el = document.getElementById('otp-'+i);
-    if (el) { el.value = ''; el.classList.remove('filled'); }
-  });
-  document.getElementById('vstep-2').classList.remove('active');
-  document.getElementById('vstep-1').classList.add('active');
-  const btn = document.getElementById('send-otp-btn');
-  if (btn) { btn.disabled = false; btn.textContent = '📤 Send OTP'; }
-}
-
-// ── Resend OTP ────────────────────────────────────
-async function resendOTP() {
-  document.getElementById('resend-btn-wrap').style.display = 'none';
-  const sendBtn = document.getElementById('send-otp-btn');
-  if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = '📤 Send OTP'; }
-  [1,2,3,4,5,6].forEach(i => {
-    const el = document.getElementById('otp-'+i);
-    if (el) { el.value = ''; el.classList.remove('filled'); }
-  });
-  // Go back to step 1 briefly then resend
-  const phone = document.getElementById('verify-phone');
-  if (phone) phone.value = verifyPhone;
-  document.getElementById('vstep-2').classList.remove('active');
-  document.getElementById('vstep-1').classList.add('active');
-  setTimeout(() => sendOTP(), 100);
-}
-
-// ── Countdown timer ───────────────────────────────
-function startResendTimer() {
-  clearResendTimer();
-  let seconds = 60;
-  const timerEl   = document.getElementById('resend-timer');
-  const countEl   = document.getElementById('resend-countdown');
-  const resendWrap = document.getElementById('resend-btn-wrap');
-  if (timerEl)   timerEl.style.display   = 'block';
-  if (resendWrap) resendWrap.style.display = 'none';
-  if (countEl)   countEl.textContent = seconds;
-  otpResendTimer = setInterval(() => {
-    seconds--;
-    if (countEl) countEl.textContent = seconds;
-    if (seconds <= 0) {
-      clearResendTimer();
-      if (timerEl)   timerEl.style.display   = 'none';
-      if (resendWrap) resendWrap.style.display = 'block';
-    }
-  }, 1000);
-}
-
-function clearResendTimer() {
-  if (otpResendTimer) { clearInterval(otpResendTimer); otpResendTimer = null; }
-}
-
-// ── Helper: show message in verify steps ─────────
-function showVerifyMsg(el, text, type) {
-  if (!el) return;
-  if (!text) { el.style.display = 'none'; return; }
-  el.style.display    = 'block';
-  el.style.background = type==='error'?'#FEE2E2':type==='success'?'#D1FAE5':'#EFF6FF';
-  el.style.color      = type==='error'?'#DC2626':type==='success'?'#065F46':'#1D4ED8';
-  el.textContent      = text;
-}
-
-// ── Reset verify steps when navigating to page ───
-const _origShowPage = showPage;
-function showPage(id) {
-  if (id === 'verify') {
-    // Reset to step 1
-    document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
-    document.getElementById('vstep-1')?.classList.add('active');
-    clearResendTimer();
-    [1,2,3,4,5,6].forEach(i => {
-      const el = document.getElementById('otp-'+i);
-      if (el) { el.value = ''; el.classList.remove('filled'); el.style.borderColor=''; el.style.background=''; }
-    });
-    const sendBtn = document.getElementById('send-otp-btn');
-    if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = '📤 Send OTP'; }
-    ['vstep1-msg','vstep2-msg'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-  }
-  _origShowPage(id);
-}
-
+// ── Init ──────────────────────────────────────────
 updateNav();
 loadHomeListings();
 loadHomeStats();

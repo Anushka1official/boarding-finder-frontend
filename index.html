@@ -916,18 +916,8 @@
         </div>
 
         <div class="divider"></div>
-        <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">✨ Facilities & Amenities</h3>
+        <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;" class="fac-heading">✨ Facilities & Amenities</h3>
         <div class="facilities-grid">
-          <div class="facility-chip"><span class="facility-icon">📶</span> WiFi</div>
-          <div class="facility-chip"><span class="facility-icon">🍳</span> Kitchen</div>
-          <div class="facility-chip"><span class="facility-icon">🚗</span> Parking</div>
-          <div class="facility-chip"><span class="facility-icon">🧺</span> Laundry</div>
-          <div class="facility-chip"><span class="facility-icon">🛡️</span> 24h Security</div>
-          <div class="facility-chip"><span class="facility-icon">❄️</span> AC (optional)</div>
-          <div class="facility-chip"><span class="facility-icon">📺</span> Common TV</div>
-          <div class="facility-chip"><span class="facility-icon">💡</span> Bills Included</div>
-          <div class="facility-chip"><span class="facility-icon">🚿</span> Attached Bath</div>
-          <div class="facility-chip"><span class="facility-icon">🚪</span> Key Lock</div>
         </div>
 
         <div class="divider"></div>
@@ -2274,10 +2264,29 @@ async function openDetail(id) {
   }
 
   // Amenities
-  const facGrid = document.querySelector('#page-detail .facilities-grid');
-  if (facGrid && l.amenities?.length) {
-    const em = {WiFi:'📶',Kitchen:'🍳',Parking:'🚗',Laundry:'🧺',Security:'🛡️',AC:'❄️',Meals:'🍽','TV Room':'📺',Garden:'🌿'};
-    facGrid.innerHTML = l.amenities.map(a => `<div class="facility-chip"><span class="facility-icon">${em[a]||'✨'}</span> ${a}</div>`).join('');
+  const facGrid     = document.querySelector('#page-detail .facilities-grid');
+  const facSection  = document.querySelector('#page-detail .facilities-grid')?.closest('div.divider + div') || null;
+  const facHeading  = document.querySelector('#page-detail h3.fac-heading');
+
+  if (facGrid) {
+    const validAmenities = (l.amenities || []).filter(a => a && a.trim());
+    if (validAmenities.length) {
+      const em = {WiFi:'📶',Kitchen:'🍳',Parking:'🚗',Laundry:'🧺',Security:'🛡️',AC:'❄️',Meals:'🍽','TV Room':'📺',Garden:'🌿'};
+      facGrid.innerHTML = validAmenities.map(a => {
+        const icon = em[a] ? `<span class="facility-icon">${em[a]}</span> ` : '';
+        return `<div class="facility-chip">${icon}${a}</div>`;
+      }).join('');
+      // Show the heading + grid
+      const h = document.querySelector('#page-detail .fac-heading');
+      if (h) h.style.display = '';
+      facGrid.style.display = '';
+    } else {
+      // Hide heading and grid when no amenities
+      const h = document.querySelector('#page-detail .fac-heading');
+      if (h) h.style.display = 'none';
+      facGrid.style.display = 'none';
+      facGrid.innerHTML = '';
+    }
   }
 
   // House Rules — show only if owner set them

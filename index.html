@@ -931,17 +931,11 @@
         </div>
 
         <div class="divider"></div>
-        <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">📋 House Rules</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--gray-600);">
-          <div>✅ No smoking inside</div>
-          <div>✅ Guests until 9 PM</div>
-          <div>✅ Quiet hours 10 PM–6 AM</div>
-          <div>✅ No parties</div>
-          <div>✅ Cooking allowed</div>
-          <div>✅ Pets not allowed</div>
+        <div id="detail-rules-section" style="display:none;">
+          <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">📋 House Rules</h3>
+          <div id="detail-rules-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--gray-600);"></div>
+          <div class="divider"></div>
         </div>
-
-        <div class="divider"></div>
           <div class="reviews-section">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <h3 style="font-weight:700;font-size:17px;">💬 Student Reviews</h3>
@@ -1261,60 +1255,19 @@
       <!-- Right sidebar -->
       <div class="dash-side">
         <!-- Recent Bookings -->
-        <div class="bookings-panel">
+        <div class="bookings-panel" id="dash-bookings-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <h3>Recent Bookings</h3>
             <a style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">View all</a>
           </div>
-          <div class="booking-item">
-            <div class="booking-avatar">AP</div>
-            <div class="booking-info"><div class="name">Ayesha Perera</div><div class="date">Single Room · Apr 2026</div></div>
-            <div class="booking-status status-confirmed">Confirmed</div>
-          </div>
-          <div class="booking-item">
-            <div class="booking-avatar" style="background:#FEF3C7;color:#92400E;">KS</div>
-            <div class="booking-info"><div class="name">Kasun Silva</div><div class="date">Shared Room · Apr 2026</div></div>
-            <div class="booking-status status-pending">Pending</div>
-          </div>
-          <div class="booking-item">
-            <div class="booking-avatar" style="background:#F3E8FF;color:#5B21B6;">NF</div>
-            <div class="booking-info"><div class="name">Nimesha Fernando</div><div class="date">Single Room · Jul 2026</div></div>
-            <div class="booking-status status-upcoming">Reserved</div>
-          </div>
-          <div class="booking-item">
-            <div class="booking-avatar" style="background:#D1FAE5;color:#065F46;">RM</div>
-            <div class="booking-info"><div class="name">Ravindu Manoj</div><div class="date">Studio · Jul 2026</div></div>
-            <div class="booking-status status-upcoming">Reserved</div>
-          </div>
+          <p style="color:var(--gray-400);font-size:13px;padding:8px 0;">Loading...</p>
         </div>
 
-        <!-- Quick stats per listing -->
-        <div class="bookings-panel">
+        <!-- My Listings sidebar (owner only) -->
+        <div class="bookings-panel" id="dash-listings-panel" style="display:none;">
           <h3 style="margin-bottom:16px;">My Listings</h3>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div style="font-weight:600;font-size:14px;">Sunset View</div>
-                <span class="badge badge-available">Active</span>
-              </div>
-              <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">2 vacancies · LKR 18,000</div>
-              <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">⭐ 4.8 · 32 reviews</div>
-            </div>
-            <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div style="font-weight:600;font-size:14px;">Annex No. 2</div>
-                <span class="badge badge-available">Active</span>
-              </div>
-              <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">0 vacancies · LKR 14,500</div>
-              <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">⭐ 4.6 · 18 reviews</div>
-            </div>
-            <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div style="font-weight:600;font-size:14px;">Galle Face Rooms</div>
-                <span class="badge badge-soon">Unavailable</span>
-              </div>
-              <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">Renovation in progress</div>
-            </div>
+          <div id="dash-listings-sidebar-content">
+            <p style="color:var(--gray-400);font-size:13px;">Loading...</p>
           </div>
         </div>
       </div>
@@ -1484,6 +1437,19 @@
       </div>
       <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="al-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking, Laundry, Security"></div>
       <div class="form-group"><label>Description</label><textarea id="al-description" placeholder="Describe your property for students..."></textarea></div>
+      <div class="form-group">
+        <label>📋 House Rules <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;" id="al-rules-grid">
+          <label class="check-item"><input type="checkbox" value="No smoking inside" class="al-rule"> 🚭 No smoking inside</label>
+          <label class="check-item"><input type="checkbox" value="Guests until 9 PM" class="al-rule"> 🕘 Guests until 9 PM</label>
+          <label class="check-item"><input type="checkbox" value="Quiet hours 10 PM–6 AM" class="al-rule"> 🔇 Quiet hours 10 PM–6 AM</label>
+          <label class="check-item"><input type="checkbox" value="No parties" class="al-rule"> 🎉 No parties</label>
+          <label class="check-item"><input type="checkbox" value="Cooking allowed" class="al-rule"> 🍳 Cooking allowed</label>
+          <label class="check-item"><input type="checkbox" value="Pets not allowed" class="al-rule"> 🐾 Pets not allowed</label>
+          <label class="check-item"><input type="checkbox" value="No alcohol" class="al-rule"> 🍺 No alcohol</label>
+          <label class="check-item"><input type="checkbox" value="Keep common areas clean" class="al-rule"> 🧹 Keep common areas clean</label>
+        </div>
+      </div>
 
       <!-- Media Upload Section -->
       <div class="form-group">
@@ -1508,6 +1474,45 @@
     </div>
   </div>
   <footer style="margin-top:60px;background:var(--gray-900);color:var(--gray-400);text-align:center;padding:24px;font-size:13px;"><strong style="color:white">Smart Boarding Finder</strong> · © 2026</footer>
+</div>
+
+<!-- ════════════ MANAGE MEDIA MODAL ════════════ -->
+<div id="media-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:var(--radius-xl);width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--gray-200);">
+      <div>
+        <div style="font-weight:700;font-size:17px;">📸 Manage Media</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-top:2px;" id="media-modal-listing-name"></div>
+      </div>
+      <button onclick="closeMediaModal()" style="border:none;background:none;font-size:22px;cursor:pointer;color:var(--gray-500);line-height:1;">✕</button>
+    </div>
+    <div style="padding:20px 24px;">
+      <!-- Existing media -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Current Photos & Videos</div>
+        <div class="media-preview-grid" id="modal-existing-media">
+          <p style="color:var(--gray-400);font-size:13px;">No media yet.</p>
+        </div>
+      </div>
+      <!-- Upload new -->
+      <div style="font-size:13px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Add New Photos / Videos</div>
+      <div class="media-upload-area" id="modal-drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event,'modal')">
+        <input type="file" id="modal-media-input" multiple accept="image/*,video/*" onchange="handleFileSelect(this,'modal')">
+        <div style="font-size:28px;margin-bottom:6px;">📷</div>
+        <p style="font-weight:600;color:var(--gray-700);margin-bottom:3px;font-size:14px;">Drag & drop or click to browse</p>
+        <p style="font-size:12px;color:var(--gray-400);">JPG, PNG, MP4, MOV · Max 20MB each</p>
+      </div>
+      <div class="upload-progress" id="modal-upload-progress" style="margin-top:8px;">
+        <div class="upload-progress-bar" id="modal-progress-bar" style="width:0%"></div>
+      </div>
+      <div class="media-preview-grid" id="modal-preview-grid" style="margin-top:10px;"></div>
+      <div id="modal-upload-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);margin-top:12px;font-size:14px;font-weight:600;"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button onclick="uploadModalMedia()" class="btn btn-primary" style="flex:1;justify-content:center;">⬆️ Upload Selected</button>
+        <button onclick="closeMediaModal()" class="btn btn-ghost">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ════════════ GALLERY LIGHTBOX ════════════ -->
@@ -2216,6 +2221,18 @@ async function openDetail(id) {
     facGrid.innerHTML = l.amenities.map(a => `<div class="facility-chip"><span class="facility-icon">${em[a]||'✨'}</span> ${a}</div>`).join('');
   }
 
+  // House Rules — show only if owner set them
+  const rulesSection = document.getElementById('detail-rules-section');
+  const rulesGrid    = document.getElementById('detail-rules-grid');
+  if (rulesSection && rulesGrid) {
+    if (l.rules && l.rules.length) {
+      rulesGrid.innerHTML = l.rules.map(r => `<div>✅ ${r}</div>`).join('');
+      rulesSection.style.display = '';
+    } else {
+      rulesSection.style.display = 'none';
+    }
+  }
+
   // Room type card
   const roomGrid = document.querySelector('#page-detail .room-types-grid');
   if (roomGrid) {
@@ -2634,12 +2651,13 @@ async function submitListing() {
   const available   = document.getElementById('al-available')?.value === 'true';
   const deposit     = Number(document.getElementById('al-deposit')?.value) || 0;
   const advance     = Number(document.getElementById('al-advance')?.value) || 0;
+  const rules       = [...document.querySelectorAll('.al-rule:checked')].map(c => c.value);
 
   if (!title||!city||!price) return showMsg(msg,'⚠️ Title, City and Price are required.','error');
   showMsg(msg,'⏳ Creating listing...','info');
 
   try {
-    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available,deposit,advance})});
+    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available,deposit,advance,rules})});
     const data = await res.json();
     if (!data.listing) return showMsg(msg,'❌ '+(data.error||'Failed to create listing.'),'error');
 
@@ -2654,6 +2672,7 @@ async function submitListing() {
 
     showMsg(msg,'✅ Listing added successfully!','success');
     ['al-title','al-city','al-price','al-amenities','al-description','al-deposit','al-advance'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.querySelectorAll('.al-rule').forEach(c => c.checked = false);
     alSelectedFiles = [];
     renderPreviewGrid('al-preview-grid', [], 'al');
     allListings = [];
@@ -2822,18 +2841,18 @@ async function loadDashboard() {
     if (sbEl) sbEl.textContent = Array.isArray(bookings)?bookings.length:'—';
     if (spEl) spEl.textContent = Array.isArray(bookings)?bookings.filter(b=>b.status==='pending').length:'—';
 
-    const bPanel = document.querySelector('#page-dashboard .bookings-panel:first-child');
+    const bPanel = document.getElementById('dash-bookings-panel');
     if (bPanel && Array.isArray(bookings)) {
-      const existingItems = bPanel.querySelectorAll('.booking-item');
-      existingItems.forEach(i=>i.remove());
+      // Clear old items except the header
+      bPanel.querySelectorAll('.booking-item, p').forEach(i => i.remove());
       if (!bookings.length) {
         bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
       } else {
         bookings.slice(0,5).forEach(b => {
-          const name = localStorage.getItem('userName')||'Student';
-          const init = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-          const sc   = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
-          const date = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+          const bname = b.listing?.title || localStorage.getItem('userName') || 'Student';
+          const init  = bname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const sc    = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
+          const date  = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
           bPanel.insertAdjacentHTML('beforeend',`
             <div class="booking-item">
               <div class="booking-avatar">${init}</div>
@@ -2847,16 +2866,28 @@ async function loadDashboard() {
       }
     }
 
-    const lPanel = document.querySelector('#page-dashboard .bookings-panel:last-child');
-    if (lPanel && role!=='landlord' && Array.isArray(bookings)) {
-      lPanel.innerHTML = `<h3 style="margin-bottom:16px;">My Bookings</h3>
-        ${bookings.length?bookings.slice(0,5).map(b=>`
-          <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);margin-bottom:8px;">
-            <div style="font-weight:600;font-size:14px;">${b.listing?.title||'Listing'}</div>
-            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo</div>
-            <div style="margin-top:6px;"><span class="badge ${b.status==='confirmed'?'badge-available':b.status==='cancelled'?'badge-soon':'badge-verified'}">${b.status||'pending'}</span></div>
-          </div>`).join(''):'<p style="color:var(--gray-400);font-size:13px;">No bookings yet.</p>'}`;
+    // Sidebar listings panel — owner only
+    const lPanelWrap    = document.getElementById('dash-listings-panel');
+    const lPanelContent = document.getElementById('dash-listings-sidebar-content');
+    if (role === 'landlord' && lPanelWrap && lPanelContent) {
+      lPanelWrap.style.display = '';
+      if (!myListings.length) {
+        lPanelContent.innerHTML = '<p style="color:var(--gray-400);font-size:13px;">No listings yet.</p>';
+      } else {
+        lPanelContent.innerHTML = myListings.map(l => `
+          <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);margin-bottom:8px;cursor:pointer;" onclick="openDetail('${l._id}')">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-weight:600;font-size:14px;">${l.title}</div>
+              <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'Active':'Unavailable'}</span>
+            </div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo</div>
+            <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
+          </div>`).join('');
+      }
+    } else if (lPanelWrap) {
+      lPanelWrap.style.display = 'none';
     }
+
   } catch(e) { console.log('Dashboard error:',e); }
 }
 

@@ -2082,7 +2082,8 @@ function iconFor(id) { const n=parseInt(id.slice(-4),16)%ICONS.length; return IC
 function firstImage(l) {
   if (l.media && l.media.length) {
     const img = l.media.find(m => m.type === 'image');
-    if (img) return `${API.replace('/api','')}${img.url}`;
+    // Cloudinary URLs are full https:// URLs — no need to prepend API base
+    if (img) return img.url.startsWith('http') ? img.url : `${API.replace('/api','')}${img.url}`;
   }
   return null;
 }
@@ -2279,12 +2280,15 @@ function buildGallery(media) {
   }
 
   const baseUrl = API.replace('/api', '');
+  // Cloudinary URLs are full https:// — use directly; local /uploads URLs need base prepended
+  function resolveUrl(url) { return url.startsWith('http') ? url : baseUrl + url; }
+
   media.forEach(m => {
-    lightboxMedia.push({ url: baseUrl + m.url, isVideo: m.type === 'video' });
+    lightboxMedia.push({ url: resolveUrl(m.url), isVideo: m.type === 'video' });
   });
 
   const cells = media.slice(0, 5).map((m, i) => {
-    const url     = baseUrl + m.url;
+    const url     = resolveUrl(m.url);
     const isVideo = m.type === 'video';
     const isMain  = i === 0;
     const hasMore = i === 4 && media.length > 5;
@@ -2931,8 +2935,9 @@ function renderExistingMedia(listing) {
     return;
   }
   const baseUrl = API.replace('/api','');
+  const resolveMediaUrl = (url) => url.startsWith('http') ? url : baseUrl + url;
   container.innerHTML = media.map((m, i) => {
-    const url     = baseUrl + m.url;
+    const url     = resolveMediaUrl(m.url);
     const isVideo = m.type === 'video';
     return `
       <div class="media-thumb">

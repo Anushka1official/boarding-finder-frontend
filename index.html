@@ -1621,93 +1621,7 @@
 </div>
 
 
-<!-- ════════════ PHONE VERIFY PAGE ════════════ -->
-<div class="page" id="page-verify">
-  <div class="auth-page">
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <div class="auth-logo">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-          </div>
-          <h2>Verify Your Phone</h2>
-          <p>Become a Verified Owner — trusted by students</p>
-        </div>
-        <div class="auth-body">
 
-          <!-- Step 1: Enter phone -->
-          <div class="verify-step active" id="verify-step-1">
-            <div style="text-align:center;margin-bottom:22px;">
-              <div style="font-size:44px;margin-bottom:10px;">📱</div>
-              <div style="font-size:15px;font-weight:600;color:var(--gray-800);margin-bottom:6px;">Enter Your Phone Number</div>
-              <div style="font-size:13px;color:var(--gray-500);">We'll send a 6-digit OTP to verify your identity as a property owner.</div>
-            </div>
-            <div class="auth-field">
-              <label>Mobile Number (International Format)</label>
-              <div class="input-icon-wrap">
-                <span class="input-icon">📱</span>
-                <input id="verify-phone-input" type="tel" placeholder="+94 77 123 4567" style="padding-left:40px;">
-              </div>
-              <div style="font-size:12px;color:var(--gray-400);margin-top:5px;">Example: +94771234567 &nbsp;·&nbsp; Include country code</div>
-            </div>
-            <div id="verify-step1-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:14px;font-size:14px;font-weight:500;"></div>
-            <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="sendOtp()">
-              📤 Send OTP
-            </button>
-            <div class="auth-footer" style="margin-top:16px;">
-              <a onclick="showPage('dashboard')">← Back to Dashboard</a>
-            </div>
-          </div>
-
-          <!-- Step 2: Enter OTP -->
-          <div class="verify-step" id="verify-step-2">
-            <div style="text-align:center;margin-bottom:22px;">
-              <div style="font-size:44px;margin-bottom:10px;">🔢</div>
-              <div style="font-size:15px;font-weight:600;color:var(--gray-800);margin-bottom:6px;">Enter the OTP</div>
-              <div style="font-size:13px;color:var(--gray-500);">A 6-digit code was sent to <strong id="verify-phone-display">your phone</strong>.</div>
-            </div>
-            <div class="otp-inputs">
-              <input id="otp-0" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,0)" onkeydown="otpKeydown(event,0)">
-              <input id="otp-1" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,1)" onkeydown="otpKeydown(event,1)">
-              <input id="otp-2" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,2)" onkeydown="otpKeydown(event,2)">
-              <input id="otp-3" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,3)" onkeydown="otpKeydown(event,3)">
-              <input id="otp-4" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,4)" onkeydown="otpKeydown(event,4)">
-              <input id="otp-5" type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,5)" onkeydown="otpKeydown(event,5)">
-            </div>
-            <div id="verify-step2-msg" style="display:none;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:14px;font-size:14px;font-weight:500;"></div>
-            <div style="text-align:center;font-size:13px;color:var(--gray-500);margin-bottom:14px;" id="otp-timer">Code valid for 10 minutes</div>
-            <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="verifyOtp()">
-              ✅ Verify OTP
-            </button>
-            <div style="text-align:center;margin-top:14px;font-size:13px;">
-              <span style="color:var(--gray-500);">Didn't get it?</span>
-              <a style="color:var(--brand);font-weight:600;cursor:pointer;margin-left:6px;" onclick="goToVerifyStep1()">Change number / Resend</a>
-            </div>
-          </div>
-
-          <!-- Step 3: Success -->
-          <div class="verify-step" id="verify-step-3">
-            <div style="text-align:center;padding:10px 0 20px;">
-              <div class="verified-ring">✅</div>
-              <div style="font-size:20px;font-weight:700;color:var(--gray-900);margin-bottom:8px;">You're Verified! 🎉</div>
-              <div style="font-size:14px;color:var(--gray-500);margin-bottom:20px;">Your phone number has been confirmed. You now show as a <strong>Verified Owner</strong> to all students.</div>
-              <span class="phone-verified-badge">✅ Verified Owner</span>
-            </div>
-            <button class="btn btn-success btn-lg" style="width:100%;justify-content:center;margin-top:24px;" onclick="showPage('dashboard')">
-              🏠 Go to Dashboard
-            </button>
-          </div>
-
-        </div>
-      </div>
-      <div style="display:flex;justify-content:center;gap:24px;margin-top:20px;flex-wrap:wrap;">
-        <div style="font-size:12px;color:var(--gray-500);">🔒 SSL Secured</div>
-        <div style="font-size:12px;color:var(--gray-500);">✅ Verified Platform</div>
-        <div style="font-size:12px;color:var(--gray-500);">🇱🇰 Made for Sri Lanka</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ════════════ LOGIN PAGE ════════════ -->
 <div class="page" id="page-login">
@@ -1931,16 +1845,7 @@ function showPage(id) {
   }
   if (id === 'reviews' && currentListing) loadReviewsPage();
   if (id === 'saved')     loadSavedPage();
-  if (id === 'verify') {
-    if (!isLoggedIn()) { showToast('Please sign in first','warning'); showPage('login'); return; }
-    if (getUserRole() !== 'landlord') { showToast('Only owners can verify their phone','warning'); showPage('home'); return; }
-    if (localStorage.getItem('phoneVerified') === '1') {
-      document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
-      document.getElementById('verify-step-3').classList.add('active');
-    } else {
-      goToVerifyStep1();
-    }
-  }
+
 }
 
 function selectRoom(el) {
@@ -2991,18 +2896,7 @@ async function loadDashboard() {
   if (dashTitle) dashTitle.textContent = role==='landlord' ? 'Owner Dashboard' : 'My Bookings Dashboard';
   if (dashBadge) {
     if (role === 'landlord') {
-      const isVerified = localStorage.getItem('phoneVerified') === '1';
-      if (isVerified) {
-        dashBadge.textContent = '✅ Verified Owner';
-        dashBadge.style.background = '';
-        dashBadge.style.color = '';
-        dashBadge.style.display = '';
-      } else {
-        dashBadge.textContent = '⚠️ Unverified';
-        dashBadge.style.background = '#FEF3C7';
-        dashBadge.style.color = '#92400E';
-        dashBadge.style.display = '';
-      }
+      dashBadge.style.display = 'none';
     } else {
       dashBadge.textContent = '🎓 Student Account';
       dashBadge.style.background = '#D1FAE5';
@@ -3012,48 +2906,12 @@ async function loadDashboard() {
   // Hide "Add New Listing" button for students
   if (addBtn) addBtn.style.display = role==='landlord' ? '' : 'none';
 
-  // ── Phone verification banner & header actions ──
-  const isPhoneVerified = localStorage.getItem('phoneVerified') === '1';
-  const headerActions   = document.getElementById('dash-header-actions');
+  // ── Header actions ──
+  const headerActions = document.getElementById('dash-header-actions');
   if (headerActions && role === 'landlord') {
-    if (isPhoneVerified) {
-      headerActions.innerHTML = `
-        <span class="badge badge-verified" style="font-size:13px;padding:6px 14px;">✅ Verified Owner</span>
-        <button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>`;
-    } else {
-      headerActions.innerHTML = `
-        <span class="badge" style="font-size:13px;padding:6px 14px;background:#FEF3C7;color:#92400E;">⚠️ Phone Not Verified</span>
-        <button class="btn btn-outline" onclick="showPage('verify')" style="border-color:#F59E0B;color:#92400E;">📱 Verify Phone</button>
-        <button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>`;
-    }
+    headerActions.innerHTML = `<button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>`;
   } else if (headerActions && role !== 'landlord') {
     headerActions.innerHTML = `<span class="badge" style="font-size:13px;padding:6px 14px;background:#D1FAE5;color:#065F46;">🎓 Student Account</span>`;
-  }
-
-  // ── Show/hide verify-phone banner inside the dashboard body ──
-  let existingBanner = document.getElementById('phone-verify-banner');
-  if (role === 'landlord' && !isPhoneVerified) {
-    if (!existingBanner) {
-      const dashWrap = document.querySelector('#page-dashboard .dashboard-wrap');
-      const dashGrid = document.querySelector('#page-dashboard .dashboard-grid');
-      const banner = document.createElement('div');
-      banner.id = 'phone-verify-banner';
-      banner.style.cssText = 'background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:1.5px solid #F59E0B;border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;';
-      banner.innerHTML = `
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="font-size:32px;">📱</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;color:#92400E;">Verify Your Phone Number</div>
-            <div style="font-size:13px;color:#A16207;margin-top:2px;">Verified owners get a <strong>✅ badge</strong> on all listings, building student trust.</div>
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="showPage('verify')" style="background:#D97706;border:none;white-space:nowrap;">📱 Verify Now</button>`;
-      if (dashWrap && dashGrid) {
-        dashWrap.insertBefore(banner, dashGrid);
-      }
-    }
-  } else {
-    if (existingBanner) existingBanner.remove();
   }
 
   // Update stat labels based on role
@@ -3377,140 +3235,7 @@ async function loadSavedPage() {
 }
 
 
-// ══════════════════════════════════════════════════
-//  PHONE VERIFICATION (OTP) — OWNER FLOW
-// ══════════════════════════════════════════════════
 
-function goToVerifyStep1() {
-  document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('verify-step-1').classList.add('active');
-  const msgEl = document.getElementById('verify-step1-msg');
-  if (msgEl) msgEl.style.display = 'none';
-  // Pre-fill if we already have a phone stored
-  const existingPhone = localStorage.getItem('userPhone');
-  const input = document.getElementById('verify-phone-input');
-  if (input && existingPhone) input.value = existingPhone;
-}
-
-async function sendOtp() {
-  if (!isLoggedIn()) { showToast('Please sign in first', 'warning'); showPage('login'); return; }
-  const phone = document.getElementById('verify-phone-input')?.value.trim();
-  const msgEl = document.getElementById('verify-step1-msg');
-  if (!phone) { showMsg(msgEl, '⚠️ Please enter your phone number.', 'error'); return; }
-
-  showMsg(msgEl, '⏳ Sending OTP...', 'info');
-  const btn = document.querySelector('#verify-step-1 .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = '📤 Sending...'; }
-
-  try {
-    const res  = await fetch(`${API}/auth/send-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
-      body: JSON.stringify({ phone })
-    });
-    const data = await res.json();
-    if (data.message) {
-      localStorage.setItem('userPhone', phone);
-      showMsg(msgEl, '✅ OTP sent! Check your phone.', 'success');
-      setTimeout(() => {
-        document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
-        document.getElementById('verify-step-2').classList.add('active');
-        const dispEl = document.getElementById('verify-phone-display');
-        if (dispEl) dispEl.textContent = phone;
-        // Clear OTP boxes
-        for (let i = 0; i < 6; i++) {
-          const box = document.getElementById('otp-' + i);
-          if (box) box.value = '';
-        }
-        document.getElementById('otp-0')?.focus();
-        startOtpTimer();
-      }, 800);
-    } else {
-      showMsg(msgEl, '❌ ' + (data.error || 'Failed to send OTP.'), 'error');
-    }
-  } catch {
-    showMsg(msgEl, '❌ Connection error. Is the server running?', 'error');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '📤 Send OTP'; }
-  }
-}
-
-// OTP input: auto-advance to next box
-function otpInput(input, index) {
-  const val = input.value.replace(/\D/g, '');
-  input.value = val ? val[0] : '';
-  if (val && index < 5) {
-    document.getElementById('otp-' + (index + 1))?.focus();
-  }
-}
-
-// OTP backspace: go back to previous box
-function otpKeydown(event, index) {
-  if (event.key === 'Backspace' && !event.target.value && index > 0) {
-    document.getElementById('otp-' + (index - 1))?.focus();
-  }
-}
-
-// Countdown timer
-let otpTimerInterval = null;
-function startOtpTimer() {
-  const timerEl = document.getElementById('otp-timer');
-  let seconds = 600; // 10 min
-  if (otpTimerInterval) clearInterval(otpTimerInterval);
-  otpTimerInterval = setInterval(() => {
-    seconds--;
-    if (timerEl) {
-      const m = Math.floor(seconds / 60);
-      const s = seconds % 60;
-      timerEl.textContent = `Code expires in ${m}:${s.toString().padStart(2,'0')}`;
-    }
-    if (seconds <= 0) {
-      clearInterval(otpTimerInterval);
-      if (timerEl) timerEl.textContent = '⏰ Code expired. Please request a new one.';
-    }
-  }, 1000);
-}
-
-async function verifyOtp() {
-  const otp = [0,1,2,3,4,5].map(i => document.getElementById('otp-' + i)?.value || '').join('');
-  const msgEl = document.getElementById('verify-step2-msg');
-  if (otp.length < 6) { showMsg(msgEl, '⚠️ Please enter all 6 digits.', 'error'); return; }
-
-  showMsg(msgEl, '⏳ Verifying...', 'info');
-  const btn = document.querySelector('#verify-step-2 .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Verifying...'; }
-
-  try {
-    const res  = await fetch(`${API}/auth/verify-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
-      body: JSON.stringify({ otp })
-    });
-    const data = await res.json();
-    if (data.message) {
-      if (otpTimerInterval) clearInterval(otpTimerInterval);
-      // Mark verified in localStorage
-      localStorage.setItem('phoneVerified', '1');
-      // Show success step
-      document.querySelectorAll('.verify-step').forEach(s => s.classList.remove('active'));
-      document.getElementById('verify-step-3').classList.add('active');
-      showToast('🎉 Phone verified! You are now a Verified Owner.', 'success');
-    } else {
-      showMsg(msgEl, '❌ ' + (data.error || 'Incorrect OTP.'), 'error');
-      // Shake the OTP boxes
-      const otpWrap = document.querySelector('.otp-inputs');
-      if (otpWrap) {
-        otpWrap.style.animation = 'none';
-        otpWrap.style.transform = 'translateX(-8px)';
-        setTimeout(() => { otpWrap.style.transform = ''; }, 150);
-      }
-    }
-  } catch {
-    showMsg(msgEl, '❌ Connection error.', 'error');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '✅ Verify OTP'; }
-  }
-}
 
 // ── Init ──────────────────────────────────────────
 updateNav();

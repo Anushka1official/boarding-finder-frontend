@@ -475,7 +475,7 @@
 <div class="page active" id="page-home">
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-badge"><span class="dot"></span> 1,240+ Verified Listings Near Campus</div>
+    
     <h1>Find Your Perfect<br><em>Home Away</em> from Home</h1>
     <p>Discover affordable, verified boarding places near Moratuwa university. Book now or reserve for future semester.</p>
     <div class="search-card">
@@ -495,7 +495,7 @@
             <option value="">Any Type</option>
             <option value="Single Room">Single Room</option>
             <option value="Shared Room">Shared Room</option>
-            <option value="Studio">Studio</option>
+            
           </select>
         </div>
         <button class="btn btn-primary btn-lg" onclick="doHomeSearch()" style="white-space:nowrap">
@@ -656,7 +656,7 @@
           <option value="">Any Price</option><option value="15000">Under LKR 15,000</option><option value="25000">LKR 15–25k</option><option value="40000">LKR 25–40k</option>
         </select>
         <select id="search-room" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
-          <option value="">Any Room</option><option value="Single Room">Single</option><option value="Shared Room">Shared</option><option value="Studio">Studio</option>
+          <option value="">Any Room</option><option value="Single Room">Single</option><option value="Shared Room">Shared</option>
         </select>
         <button class="btn btn-primary" onclick="applyFilters()">🔍 Search</button>
       </div>
@@ -684,7 +684,7 @@
           <label class="radio-item"><input type="radio" name="room" value="Single Room" onchange="applyFilters()"> Single Room</label>
           <label class="radio-item"><input type="radio" name="room" value="Shared Room" onchange="applyFilters()"> Shared Room (2 pax)</label>
           <label class="radio-item"><input type="radio" name="room" value="Shared Room" onchange="applyFilters()"> Shared Room (3+ pax)</label>
-          <label class="radio-item"><input type="radio" name="room" value="Studio" onchange="applyFilters()"> Studio / Annex</label>
+          
         </div>
       </div>
       <div class="filter-group">
@@ -693,7 +693,7 @@
           <label class="radio-item"><input type="radio" name="gender" checked> Any</label>
           <label class="radio-item"><input type="radio" name="gender"> Ladies Only</label>
           <label class="radio-item"><input type="radio" name="gender"> Gents Only</label>
-          <label class="radio-item"><input type="radio" name="gender"> Mixed</label>
+          
         </div>
       </div>
       <div class="filter-group">
@@ -706,7 +706,7 @@
           <label class="check-item"><input type="checkbox" value="AC" onchange="applyFilters()"> ❄️ Air Conditioning</label>
           <label class="check-item"><input type="checkbox" value="Security" onchange="applyFilters()"> 🛡 24h Security</label>
           <label class="check-item"><input type="checkbox" value="Meals" onchange="applyFilters()"> 🍽 Meals Included</label>
-          <label class="check-item"><input type="checkbox" value="TV Room" onchange="applyFilters()"> 📺 TV Room</label>
+          
         </div>
       </div>
       <div class="filter-group">
@@ -719,10 +719,8 @@
         </div>
       </div>
       <div class="filter-group">
-        <h4>Trust Level</h4>
-        <div class="check-list">
-          <label class="check-item"><input type="checkbox"> ✅ Verified Owner Only</label>
-        </div>
+       
+        
       </div>
       <button class="btn btn-outline" style="width:100%;margin-top:8px;justify-content:center;" onclick="resetFilters()">Reset Filters</button>
     </aside>
@@ -811,7 +809,7 @@
                 <div>
                   <div style="display:flex;gap:6px;margin-bottom:6px;">
                     <span class="badge badge-available">✓ Available Now</span>
-                    <span class="badge badge-verified">✅ Verified</span>
+                    
                   </div>
                   <div class="result-title">Mahaweli Heights Annex</div>
                 </div>
@@ -1449,7 +1447,21 @@
         <div class="form-group"><label>Security Deposit (LKR)</label><input id="al-deposit" type="number" placeholder="e.g. 18000"></div>
         <div class="form-group"><label>Advance Payment (LKR)</label><input id="al-advance" type="number" placeholder="e.g. 5000"></div>
       </div>
-      <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="al-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking, Laundry, Security"></div>
+      <div class="form-group">
+        <label>Facilities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;" id="al-amenities-grid">
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="WiFi"> 📶 WiFi</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="Kitchen"> 🍳 Cooking Allowed</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="Parking"> 🚗 Parking</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="Laundry"> 🧺 Laundry</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="AC"> ❄️ Air Conditioning</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="Security"> 🛡 24h Security</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="Meals"> 🍽 Meals Included</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="TV Room"> 📺 TV Room</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="Garden"> 🌿 Garden</label>
+          <label class="check-item"><input type="checkbox" class="al-amenity" value="Attached Bath"> 🚿 Attached Bath</label>
+        </div>
+      </div>
       <div class="form-group"><label>Description</label><textarea id="al-description" placeholder="Describe your property for students..."></textarea></div>
       <div class="form-group">
         <label>📋 House Rules <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
@@ -1564,7 +1576,21 @@
         <div class="form-group"><label>Security Deposit (LKR)</label><input id="el-deposit" type="number" placeholder="e.g. 18000"></div>
         <div class="form-group"><label>Advance Payment (LKR)</label><input id="el-advance" type="number" placeholder="e.g. 5000"></div>
       </div>
-      <div class="form-group"><label>Amenities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(comma separated)</span></label><input id="el-amenities" type="text" placeholder="e.g. WiFi, Kitchen, Parking"></div>
+      <div class="form-group">
+        <label>Facilities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;" id="el-amenities-grid">
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="WiFi"> 📶 WiFi</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="Kitchen"> 🍳 Cooking Allowed</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="Parking"> 🚗 Parking</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="Laundry"> 🧺 Laundry</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="AC"> ❄️ Air Conditioning</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="Security"> 🛡 24h Security</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="Meals"> 🍽 Meals Included</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="TV Room"> 📺 TV Room</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="Garden"> 🌿 Garden</label>
+          <label class="check-item"><input type="checkbox" class="el-amenity" value="Attached Bath"> 🚿 Attached Bath</label>
+        </div>
+      </div>
       <div class="form-group"><label>Description</label><textarea id="el-description" placeholder="Describe your property..." style="height:80px;resize:vertical;"></textarea></div>
       <div class="form-group">
         <label>📋 House Rules</label>
@@ -2769,7 +2795,7 @@ async function submitListing() {
   const city        = document.getElementById('al-city')?.value.trim();
   const price       = Number(document.getElementById('al-price')?.value);
   const roomType    = document.getElementById('al-roomtype')?.value;
-  const amenities   = document.getElementById('al-amenities')?.value.split(',').map(a=>a.trim()).filter(Boolean)||[];
+  const amenities   = [...document.querySelectorAll('.al-amenity:checked')].map(c => c.value);
   const description = document.getElementById('al-description')?.value.trim();
   const available   = document.getElementById('al-available')?.value === 'true';
   const deposit     = Number(document.getElementById('al-deposit')?.value) || 0;
@@ -2794,7 +2820,8 @@ async function submitListing() {
     }
 
     showMsg(msg,'✅ Listing added successfully!','success');
-    ['al-title','al-city','al-price','al-amenities','al-description','al-deposit','al-advance'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    ['al-title','al-city','al-price','al-description','al-deposit','al-advance'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.querySelectorAll('.al-amenity').forEach(cb => cb.checked = false);
     document.querySelectorAll('.al-rule').forEach(c => c.checked = false);
     alSelectedFiles = [];
     renderPreviewGrid('al-preview-grid', [], 'al');
@@ -3038,7 +3065,10 @@ function openEditListing(id) {
   set('el-price',       listing.price);
   set('el-deposit',     listing.deposit || '');
   set('el-advance',     listing.advance || '');
-  set('el-amenities',   (listing.amenities || []).join(', '));
+  // Pre-check amenity boxes that match saved listing
+  document.querySelectorAll('.el-amenity').forEach(cb => {
+    cb.checked = (listing.amenities || []).includes(cb.value);
+  });
   set('el-description', listing.description || '');
 
   // Room type
@@ -3084,7 +3114,7 @@ async function saveEditListing() {
   const available   = document.getElementById('el-available')?.value === 'true';
   const deposit     = Number(document.getElementById('el-deposit')?.value) || 0;
   const advance     = Number(document.getElementById('el-advance')?.value) || 0;
-  const amenities   = document.getElementById('el-amenities')?.value.split(',').map(a => a.trim()).filter(Boolean) || [];
+  const amenities   = [...document.querySelectorAll('.el-amenity:checked')].map(c => c.value);
   const description = document.getElementById('el-description')?.value.trim();
   const rules       = [...document.querySelectorAll('.el-rule:checked')].map(c => c.value);
 

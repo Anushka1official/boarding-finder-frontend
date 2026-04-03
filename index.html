@@ -508,7 +508,7 @@
       <div class="quick-feat" onclick="quickFilter('available')" style="cursor:pointer"><span class="icon">⚡</span> Available Now</div>
       <div class="quick-feat" onclick="quickFilter('future')" style="cursor:pointer"><span class="icon">📅</span> Future Vacancies</div>
       <div class="quick-feat" onclick="quickFilter('groups')" style="cursor:pointer"><span class="icon">👥</span> Best for Groups</div>
-  
+      
     </div>
   </section>
 
@@ -900,7 +900,7 @@
           <div>
             <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
               <span class="badge badge-available" style="font-size:12px;padding:5px 12px">✓ Available Now</span>
-              
+         
               <span class="badge badge-group" style="font-size:12px;padding:5px 12px">👥 Best for Groups</span>
             </div>
             <div class="detail-title" id="detail-title">Sunset View Boarding House</div>
@@ -978,7 +978,7 @@
           <div class="price-big">LKR 18,000</div>
           <div class="price-sub">per month · Single Room · Bills included</div>
           <div class="avail-badge"><span class="dot"></span> Available Now · 2 slots remaining</div>
-     
+          <div style="background:#CCF0EF;color:#92400E;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-bottom:16px;">📅 Future vacancy: July 2026 · 3 more slots</div>
           <div style="border-top:1px solid var(--gray-100);padding-top:16px;">
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
               <span>Monthly rent</span><span id="panel-monthly-rent" style="font-weight:600;color:var(--gray-800);">—</span>
@@ -1270,7 +1270,7 @@
         <div class="bookings-panel" id="dash-bookings-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <h3>Recent Bookings</h3>
-            <a style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;" onclick="openAllBookings()">View all</a>
+            <a style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">View all</a>
           </div>
           <p style="color:var(--gray-400);font-size:13px;padding:8px 0;">Loading...</p>
         </div>
@@ -1283,39 +1283,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
-    <strong style="color:white">Smart Boarding Finder</strong> · © 2026
-  </footer>
-</div>
-
-<!-- ════════════ ALL BOOKINGS PAGE ════════════ -->
-<div class="page" id="page-allbookings">
-  <div style="max-width:900px;margin:0 auto;padding:32px 24px;">
-    <div class="breadcrumb">
-      <a onclick="showPage('dashboard')">Dashboard</a><span class="sep">›</span>
-      <span id="allbookings-breadcrumb">All Bookings</span>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
-      <div>
-        <h1 style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;" id="allbookings-title">All Bookings</h1>
-        <p style="font-size:14px;color:var(--gray-500);margin-top:4px;" id="allbookings-subtitle">Loading...</p>
-      </div>
-      <button class="btn btn-ghost" onclick="showPage('dashboard')">← Back to Dashboard</button>
-    </div>
-
-    <!-- Filter tabs -->
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;" id="allbookings-tabs">
-      <button class="btn btn-primary btn-sm" id="abt-all"       onclick="filterAllBookings('all')">All</button>
-      <button class="btn btn-ghost  btn-sm" id="abt-pending"    onclick="filterAllBookings('pending')">⏳ Pending</button>
-      <button class="btn btn-ghost  btn-sm" id="abt-confirmed"  onclick="filterAllBookings('confirmed')">✅ Confirmed</button>
-      <button class="btn btn-ghost  btn-sm" id="abt-cancelled"  onclick="filterAllBookings('cancelled')">❌ Cancelled</button>
-    </div>
-
-    <!-- Bookings list -->
-    <div id="allbookings-list">
-      <div style="text-align:center;padding:40px;color:var(--gray-400);">Loading bookings...</div>
     </div>
   </div>
   <footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
@@ -1889,7 +1856,7 @@ function showPage(id) {
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
   const navMap = { home:'nav-home', results:'nav-results', dashboard:'nav-dashboard',
     detail:'nav-results', booking:'nav-results', reviews:'nav-results',
-    'add-listing':'nav-dashboard', saved:null, login:null, signup:null, verify:null, allbookings:'nav-dashboard' };
+    'add-listing':'nav-dashboard', saved:null, login:null, signup:null, verify:null };
   const el = document.getElementById(navMap[id]);
   if (el) el.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
@@ -2075,7 +2042,7 @@ function homeCardHTML(l) {
       ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<div class="card-img-placeholder">${iconFor(l._id)}</div>`}
       <div class="card-badges">
         <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
-        
+       
         ${l.media&&l.media.length?`<span class="badge" style="background:rgba(0,0,0,.5);color:white;">📷 ${l.media.length}</span>`:''}
       </div>
       <button class="fav-btn ${saved?'active':''}" onclick="event.stopPropagation();toggleSave('${l._id}',this)">${saved?'♥':'♡'}</button>
@@ -2197,6 +2164,8 @@ async function applyFilters() {
   const sort     = document.getElementById('sort-select')?.value||'newest';
 
   let filtered = allListings.filter(l => {
+    // ── Always hide booked listings from search — they are only visible to the student/owner ──
+    if (!l.available) return false;
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
     // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
     if (l.price < priceMin || l.price > priceMax) return false;
@@ -2457,12 +2426,12 @@ async function openDetail(id) {
   const ownerWrap = document.querySelector('#page-detail .booking-panel > div:last-child > div:last-child');
   if (ownerWrap) {
     const verifiedBadge = l.ownerVerified
-      ? '<div style="font-size:12px;color:var(--success);font-weight:600;">✅ Verified Owner</div>'
-      : '<div style="font-size:12px;color:var(--gray-400);">Owner</div>';
+      
+       '<div style="font-size:12px;color:var(--gray-400);">Owner</div>';
     ownerWrap.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">🏠</div>
-        <div><div style="font-weight:600;font-size:14px;">Property Owner</div>${verifiedBadge}</div>
+        
       </div>`;
   }
 
@@ -3022,11 +2991,7 @@ async function loadDashboard() {
   }
 
   try {
-    // Students fetch their own bookings; landlords fetch bookings ON their listings
-    const bookingUrl = role === 'landlord'
-      ? `${API}/bookings/landlord`
-      : `${API}/bookings/user/me`;
-    const res      = await fetch(bookingUrl, {headers:{'Authorization':'Bearer '+getToken()}});
+    const res      = await fetch(`${API}/bookings/user/me`,{headers:{'Authorization':'Bearer '+getToken()}});
     const bookings = await res.json();
     const sbEl = document.getElementById('dash-stat-bookings');
     const spEl = document.getElementById('dash-stat-pending');
@@ -3041,22 +3006,16 @@ async function loadDashboard() {
         bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
       } else {
         bookings.slice(0,5).forEach(b => {
-          // Owner sees student name; student sees listing name
-          const displayName = role === 'landlord'
-            ? (b.student?.name || 'Student')
-            : (b.listing?.title || 'Listing');
-          const init  = displayName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const bname = b.listing?.title || localStorage.getItem('userName') || 'Student';
+          const init  = bname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
           const sc    = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
           const date  = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
-          const sub   = role === 'landlord'
-            ? `${b.listing?.title||'Listing'} · ${date}`
-            : `${b.roomType||'Room'} · ${date}`;
           bPanel.insertAdjacentHTML('beforeend',`
-            <div class="booking-item" style="cursor:pointer;" onclick="openAllBookings()">
+            <div class="booking-item">
               <div class="booking-avatar">${init}</div>
               <div class="booking-info">
-                <div class="name">${displayName}</div>
-                <div class="date">${sub}</div>
+                <div class="name">${b.listing?.title||'Listing'}</div>
+                <div class="date">${b.roomType||'Room'} · ${date}</div>
               </div>
               <div class="booking-status ${sc}">${b.status||'pending'}</div>
             </div>`);
@@ -3087,125 +3046,6 @@ async function loadDashboard() {
     }
 
   } catch(e) { console.log('Dashboard error:',e); }
-}
-
-// ── All Bookings Page ─────────────────────────────
-let _allBookingsCache = [];
-
-async function openAllBookings() {
-  showPage('allbookings');
-  const role = localStorage.getItem('userRole');
-  const titleEl    = document.getElementById('allbookings-title');
-  const subtitleEl = document.getElementById('allbookings-subtitle');
-  const bcEl       = document.getElementById('allbookings-breadcrumb');
-  const listEl     = document.getElementById('allbookings-list');
-
-  if (titleEl) titleEl.textContent    = role === 'landlord' ? 'All Bookings on My Listings' : 'My Bookings';
-  if (bcEl)   bcEl.textContent        = role === 'landlord' ? 'All Bookings' : 'My Bookings';
-  if (listEl) listEl.innerHTML        = '<div style="text-align:center;padding:40px;color:var(--gray-400);">Loading bookings...</div>';
-
-  try {
-    const url = role === 'landlord'
-      ? `${API}/bookings/landlord`
-      : `${API}/bookings/user/me`;
-    const res      = await fetch(url, { headers:{ 'Authorization':'Bearer '+getToken() } });
-    const bookings = await res.json();
-    if (!Array.isArray(bookings)) throw new Error('Bad response');
-    _allBookingsCache = bookings;
-    if (subtitleEl) subtitleEl.textContent = `${bookings.length} booking${bookings.length!==1?'s':''} total`;
-    renderAllBookings(bookings, role);
-    // Reset filter tabs
-    filterAllBookings('all');
-  } catch(e) {
-    if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);">Could not load bookings. Please try again.</div>';
-  }
-}
-
-function filterAllBookings(status) {
-  // Update tab styles
-  ['all','pending','confirmed','cancelled'].forEach(s => {
-    const btn = document.getElementById('abt-'+s);
-    if (!btn) return;
-    btn.className = s === status ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
-  });
-  const role     = localStorage.getItem('userRole');
-  const filtered = status === 'all' ? _allBookingsCache : _allBookingsCache.filter(b => b.status === status);
-  renderAllBookings(filtered, role);
-}
-
-function renderAllBookings(bookings, role) {
-  const listEl = document.getElementById('allbookings-list');
-  if (!listEl) return;
-  if (!bookings.length) {
-    listEl.innerHTML = `
-      <div style="text-align:center;padding:60px 24px;">
-        <div style="font-size:48px;margin-bottom:16px;">📋</div>
-        <div style="font-size:16px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">No bookings found</div>
-        <div style="font-size:14px;color:var(--gray-400);">No bookings match this filter.</div>
-      </div>`;
-    return;
-  }
-
-  listEl.innerHTML = bookings.map(b => {
-    const sc       = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
-    const date     = b.moveInDate ? new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '—';
-    const created  = b.createdAt  ? new Date(b.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
-
-    // Owner card: show student info + listing
-    if (role === 'landlord') {
-      const studentName  = b.student?.name  || 'Student';
-      const studentEmail = b.student?.email || '';
-      const init         = studentName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-      return `
-        <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="booking-avatar" style="width:44px;height:44px;font-size:15px;">${init}</div>
-              <div>
-                <div style="font-weight:700;font-size:15px;">${studentName}</div>
-                <div style="font-size:12px;color:var(--gray-400);">${studentEmail}</div>
-              </div>
-            </div>
-            <div class="booking-status ${sc}" style="padding:5px 14px;font-size:12px;">${b.status||'pending'}</div>
-          </div>
-          <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
-            <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🏠 ${b.listing?.title||'Listing'}</div>
-            <div style="font-size:13px;color:var(--gray-500);">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo · 🛏 ${b.roomType||b.listing?.roomType||'—'}</div>
-          </div>
-          <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
-            <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>
-            <span>🕐 Booked on: <strong style="color:var(--gray-800);">${created}</strong></span>
-          </div>
-          ${b.message ? `<div style="margin-top:10px;font-size:13px;color:var(--gray-600);background:var(--brand-light);padding:10px 14px;border-radius:var(--radius-sm);">💬 "${b.message}"</div>` : ''}
-        </div>`;
-    } else {
-      // Student card: show listing info
-      const init = (b.listing?.title||'L').slice(0,2).toUpperCase();
-      return `
-        <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div style="width:44px;height:44px;border-radius:50%;background:${gradFor(b.listing?._id||'0')};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${iconFor(b.listing?._id||'0')}</div>
-              <div>
-                <div style="font-weight:700;font-size:15px;">${b.listing?.title||'Listing'}</div>
-                <div style="font-size:12px;color:var(--gray-400);">📍 ${b.listing?.city||'—'}</div>
-              </div>
-            </div>
-            <div class="booking-status ${sc}" style="padding:5px 14px;font-size:12px;">${b.status||'pending'}</div>
-          </div>
-          <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
-            <div style="font-size:13px;color:var(--gray-600);">🛏 Room: <strong>${b.roomType||b.listing?.roomType||'—'}</strong> · 💰 LKR <strong>${b.listing?.price?.toLocaleString()||'—'}/mo</strong></div>
-          </div>
-          <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
-            <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>
-            <span>🕐 Booked on: <strong style="color:var(--gray-800);">${created}</strong></span>
-          </div>
-          <div style="margin-top:12px;">
-            <button class="btn btn-ghost btn-sm" onclick="openDetail('${b.listing?._id}')">👁 View Listing</button>
-          </div>
-        </div>`;
-    }
-  }).join('');
 }
 
 // ── Edit Listing Modal ────────────────────────────
@@ -3405,15 +3245,17 @@ async function loadSavedPage() {
 
   if (!allListings.length) await fetchListings();
 
-  const saved = allListings.filter(l => savedIds.has(l._id));
+  // Only show saved listings that are still available (not booked)
+  const saved = allListings.filter(l => savedIds.has(l._id) && l.available);
 
   if (!saved.length) {
-    // IDs in localStorage but listings may have been deleted
+    // IDs in localStorage but listings may have been deleted or are now booked
     grid.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:60px 24px;">
         <div style="font-size:48px;margin-bottom:16px;">🏚️</div>
         <div style="font-size:17px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">Saved listings no longer available</div>
-        <button class="btn btn-primary" onclick="showPage('results')">🔍 Browse Boardings</button>
+        <div style="font-size:14px;color:var(--gray-400);margin-bottom:20px;">These boardings may have been booked by someone else.</div>
+        <button class="btn btn-primary" onclick="showPage('results')">🔍 Browse Available Boardings</button>
       </div>`;
     return;
   }

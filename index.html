@@ -1270,7 +1270,7 @@
         <div class="bookings-panel" id="dash-bookings-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <h3>Recent Bookings</h3>
-            <a style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">View all</a>
+            <a onclick="showAllBookings()" style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">View all</a>
           </div>
           <p style="color:var(--gray-400);font-size:13px;padding:8px 0;">Loading...</p>
         </div>
@@ -1645,6 +1645,28 @@
 
 
 
+
+<!-- ════════════ ALL BOOKINGS PAGE ════════════ -->
+<div class="page" id="page-all-bookings">
+  <div style="max-width:800px;margin:0 auto;padding:32px 24px;">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">Home</a><span class="sep">›</span>
+      <a onclick="showPage('dashboard')">Dashboard</a><span class="sep">›</span>
+      <span id="all-bookings-breadcrumb">All Bookings</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <h1 style="font-family:'Fraunces',serif;font-size:28px;font-weight:600;" id="all-bookings-title">All Bookings</h1>
+      <button onclick="showPage('dashboard')" class="btn btn-ghost btn-sm">← Back to Dashboard</button>
+    </div>
+    <div id="all-bookings-list" style="display:flex;flex-direction:column;gap:14px;">
+      <p style="color:var(--gray-400);text-align:center;padding:40px;">Loading bookings...</p>
+    </div>
+  </div>
+  <footer style="margin-top:60px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+    <strong style="color:white">Smart Boarding Finder</strong> · © 2026
+  </footer>
+</div>
+
 <!-- ════════════ LOGIN PAGE ════════════ -->
 <div class="page" id="page-login">
   <div class="auth-page">
@@ -1856,7 +1878,7 @@ function showPage(id) {
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
   const navMap = { home:'nav-home', results:'nav-results', dashboard:'nav-dashboard',
     detail:'nav-results', booking:'nav-results', reviews:'nav-results',
-    'add-listing':'nav-dashboard', saved:null, login:null, signup:null, verify:null };
+    'add-listing':'nav-dashboard', 'all-bookings':null, saved:null, login:null, signup:null, verify:null };
   const el = document.getElementById(navMap[id]);
   if (el) el.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
@@ -2989,31 +3011,46 @@ async function loadDashboard() {
   }
 
   try {
-    const res      = await fetch(`${API}/bookings/user/me`,{headers:{'Authorization':'Bearer '+getToken()}});
+    // Students: fetch their own bookings
+    // Owners:   fetch bookings received for their listings
+    const endpoint = role === 'landlord'
+      ? `${API}/bookings/owner/me`
+      : `${API}/bookings/user/me`;
+
+    const res      = await fetch(endpoint, {headers:{'Authorization':'Bearer '+getToken()}});
     const bookings = await res.json();
     const sbEl = document.getElementById('dash-stat-bookings');
     const spEl = document.getElementById('dash-stat-pending');
     if (sbEl) sbEl.textContent = Array.isArray(bookings)?bookings.length:'—';
     if (spEl) spEl.textContent = Array.isArray(bookings)?bookings.filter(b=>b.status==='pending').length:'—';
 
+    // Cache bookings so View All can use them
+    window._dashBookings = Array.isArray(bookings) ? bookings : [];
+    window._dashRole     = role;
+
     const bPanel = document.getElementById('dash-bookings-panel');
     if (bPanel && Array.isArray(bookings)) {
-      // Clear old items except the header
       bPanel.querySelectorAll('.booking-item, p').forEach(i => i.remove());
       if (!bookings.length) {
         bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
       } else {
         bookings.slice(0,5).forEach(b => {
-          const bname = b.listing?.title || localStorage.getItem('userName') || 'Student';
-          const init  = bname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-          const sc    = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
-          const date  = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+          // For owner: show student name + listing. For student: show listing name.
+          const displayName = role === 'landlord'
+            ? (b.studentName || b.listing?.title || 'Student')
+            : (b.listing?.title || 'Listing');
+          const init = displayName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const sc   = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
+          const date = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+          const sub  = role === 'landlord'
+            ? `${b.listing?.title||'Listing'} · ${date}`
+            : `${b.roomType||'Room'} · ${date}`;
           bPanel.insertAdjacentHTML('beforeend',`
             <div class="booking-item">
               <div class="booking-avatar">${init}</div>
               <div class="booking-info">
-                <div class="name">${b.listing?.title||'Listing'}</div>
-                <div class="date">${b.roomType||'Room'} · ${date}</div>
+                <div class="name">${displayName}</div>
+                <div class="date">${sub}</div>
               </div>
               <div class="booking-status ${sc}">${b.status||'pending'}</div>
             </div>`);
@@ -3264,6 +3301,99 @@ async function loadSavedPage() {
 
 
 // ── Init ──────────────────────────────────────────
+// ── ALL BOOKINGS PAGE ─────────────────────────────
+function showAllBookings() {
+  const role = localStorage.getItem('userRole');
+  const titleEl = document.getElementById('all-bookings-title');
+  const breadEl = document.getElementById('all-bookings-breadcrumb');
+  if (titleEl) titleEl.textContent = role === 'landlord' ? 'Bookings Received' : 'My Bookings';
+  if (breadEl) breadEl.textContent = role === 'landlord' ? 'Bookings Received' : 'My Bookings';
+  showPage('all-bookings');
+  loadAllBookingsPage();
+}
+
+async function loadAllBookingsPage() {
+  const role     = localStorage.getItem('userRole');
+  const listEl   = document.getElementById('all-bookings-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:40px;">Loading...</p>';
+
+  try {
+    const endpoint = role === 'landlord'
+      ? `${API}/bookings/owner/me`
+      : `${API}/bookings/user/me`;
+    const res      = await fetch(endpoint, {headers:{'Authorization':'Bearer '+getToken()}});
+    const bookings = await res.json();
+
+    if (!Array.isArray(bookings) || !bookings.length) {
+      listEl.innerHTML = `
+        <div style="text-align:center;padding:60px 24px;">
+          <div style="font-size:48px;margin-bottom:16px;">📋</div>
+          <p style="font-weight:600;font-size:16px;color:var(--gray-700);margin-bottom:8px;">No bookings yet</p>
+          <p style="color:var(--gray-400);font-size:14px;">${role==='landlord'?'No students have booked your listings yet.':'You haven't booked any boarding places yet.'}</p>
+          ${role!=='landlord'?'<button onclick="showPage('results')" class="btn btn-primary" style="margin-top:16px;">🔍 Browse Boardings</button>':''}
+        </div>`;
+      return;
+    }
+
+    listEl.innerHTML = bookings.map(b => {
+      const sc      = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
+      const scBg    = b.status==='confirmed'?'#D1FAE5':b.status==='cancelled'?'#FEE2E2':'#FEF3C7';
+      const scColor = b.status==='confirmed'?'#065F46':b.status==='cancelled'?'#DC2626':'#92400E';
+      const date    = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'—';
+      const created = b.createdAt?new Date(b.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
+
+      if (role === 'landlord') {
+        // Owner view: show student details + listing
+        const sname = b.studentName || 'Student';
+        const sinit = sname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+        return `
+          <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);">
+            <div style="padding:16px 20px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+              <div style="width:48px;height:48px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;">${sinit}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:15px;margin-bottom:2px;">${sname}</div>
+                <div style="font-size:13px;color:var(--gray-500);">🏠 ${b.listing?.title||'Listing'} · 📍 ${b.listing?.city||'—'}</div>
+                <div style="font-size:13px;color:var(--gray-500);margin-top:2px;">🛏 ${b.roomType||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo</div>
+                <div style="font-size:13px;color:var(--gray-600);margin-top:4px;">📅 Move-in: ${date}</div>
+                <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">Booked on: ${created}</div>
+              </div>
+              <span style="padding:5px 14px;border-radius:100px;font-size:12px;font-weight:700;background:${scBg};color:${scColor};">${b.status||'pending'}</span>
+            </div>
+            ${b.message?`<div style="padding:10px 20px;background:var(--gray-50);border-top:1px solid var(--gray-100);font-size:13px;color:var(--gray-600);">💬 ${b.message}</div>`:''}
+          </div>`;
+      } else {
+        // Student view: show listing details + status
+        const lgrad = b.listing ? gradFor(b.listing._id||'x') : 'var(--gray-100)';
+        return `
+          <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);">
+            <div style="padding:16px 20px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+              <div style="width:64px;height:64px;border-radius:var(--radius-md);background:${lgrad};display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🏠</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:15px;margin-bottom:2px;">${b.listing?.title||'Boarding Place'}</div>
+                <div style="font-size:13px;color:var(--gray-500);">📍 ${b.listing?.city||'—'}</div>
+                <div style="font-size:13px;color:var(--gray-500);margin-top:2px;">🛏 ${b.roomType||'Room'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo</div>
+                <div style="font-size:13px;color:var(--gray-600);margin-top:4px;">📅 Move-in: ${date}</div>
+                <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">Booked on: ${created}</div>
+              </div>
+              <span style="padding:5px 14px;border-radius:100px;font-size:12px;font-weight:700;background:${scBg};color:${scColor};">${b.status||'pending'}</span>
+            </div>
+            <div style="background:var(--gray-50);border-top:1px solid var(--gray-100);padding:10px 20px;display:flex;gap:8px;align-items:center;">
+              ${b.listing?`<button onclick="openDetail('${b.listing._id}')" class="btn btn-ghost btn-sm">👁 View Listing</button>`:''}
+              ${b.status==='pending'?'<span style="font-size:12px;color:var(--gray-400);">⏳ Awaiting owner confirmation</span>':''}
+              ${b.status==='confirmed'?'<span style="font-size:12px;color:var(--success);font-weight:600;">✅ Confirmed!</span>':''}
+            </div>
+          </div>`;
+      }
+    }).join('');
+
+  } catch(e) {
+    listEl.innerHTML = '<p style="color:var(--danger);text-align:center;padding:40px;">❌ Could not load bookings. Is the server running?</p>';
+    console.error('All bookings error:', e);
+  }
+}
+
+
 updateNav();
 loadHomeListings();
 loadHomeStats();

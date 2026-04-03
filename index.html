@@ -508,7 +508,7 @@
       <div class="quick-feat" onclick="quickFilter('available')" style="cursor:pointer"><span class="icon">⚡</span> Available Now</div>
       <div class="quick-feat" onclick="quickFilter('future')" style="cursor:pointer"><span class="icon">📅</span> Future Vacancies</div>
       <div class="quick-feat" onclick="quickFilter('groups')" style="cursor:pointer"><span class="icon">👥</span> Best for Groups</div>
-      
+      <div class="quick-feat" onclick="quickFilter('verified')" style="cursor:pointer"><span class="icon">✅</span> Verified Only</div>
     </div>
   </section>
 
@@ -517,7 +517,7 @@
     <div class="stats-row">
       <div class="stat-item"><span class="stat-num" id="home-stat-listings">—</span><div class="stat-label">Active Listings</div></div>
       <div class="stat-item"><span class="stat-num" id="home-stat-students">—</span><div class="stat-label">Students Housed</div></div>
-      
+      <div class="stat-item"><span class="stat-num" id="home-stat-owners">—</span><div class="stat-label">Verified Owners</div></div>
       <div class="stat-item"><span class="stat-num" id="home-stat-rating">—</span><div class="stat-label">Avg. Rating</div></div>
     </div>
   </div>
@@ -549,7 +549,7 @@
           <div class="card-img-placeholder">🏘️</div>
           <div class="card-badges">
             <span class="badge badge-available">✓ Available Now</span>
-           
+            <span class="badge badge-verified">✅ Verified</span>
           </div>
           <button class="fav-btn" onclick="event.stopPropagation();this.classList.toggle('active')">♡</button>
         </div>
@@ -747,7 +747,7 @@
                 <div>
                   <div style="display:flex;gap:6px;margin-bottom:6px;">
                     <span class="badge badge-available">✓ Available Now</span>
-                    
+                    <span class="badge badge-verified">✅ Verified</span>
                     <span class="badge badge-group">👥 Groups OK</span>
                   </div>
                   <div class="result-title">Sunset View Boarding House</div>
@@ -900,7 +900,7 @@
           <div>
             <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
               <span class="badge badge-available" style="font-size:12px;padding:5px 12px">✓ Available Now</span>
-         
+              <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified Owner</span>
               <span class="badge badge-group" style="font-size:12px;padding:5px 12px">👥 Best for Groups</span>
             </div>
             <div class="detail-title" id="detail-title">Sunset View Boarding House</div>
@@ -1004,7 +1004,7 @@
               <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">NP</div>
               <div>
                 <div style="font-weight:600;font-size:14px;">Nalini Perera</div>
-                
+                <div style="font-size:12px;color:var(--success);">✅ Verified Owner · Responds in 2h</div>
               </div>
             </div>
           </div>
@@ -1034,7 +1034,7 @@
           <div>
             <div style="font-weight:700;font-size:15px;">Sunset View Boarding House</div>
             <div style="font-size:13px;color:var(--gray-600);">Single Room · Piliyandala Road, Katubedda</div>
-            <div style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-available">✓ Available Now</span></div>
+            <div style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-available">✓ Available Now</span><span class="badge badge-verified">✅ Verified</span></div>
           </div>
           <div style="margin-left:auto;text-align:right;">
             <div style="font-size:20px;font-weight:800;color:var(--brand);">LKR 18,000</div>
@@ -1148,7 +1148,7 @@
         <h1>Owner Dashboard</h1>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;" id="dash-header-actions">
-       
+        <span class="badge badge-verified" style="font-size:13px;padding:6px 14px;">✅ Verified Owner</span>
         <button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>
       </div>
     </div>
@@ -2042,7 +2042,7 @@ function homeCardHTML(l) {
       ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<div class="card-img-placeholder">${iconFor(l._id)}</div>`}
       <div class="card-badges">
         <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
-       
+        ${l.ownerVerified?'<span class="badge badge-verified">✅ Verified</span>':''}
         ${l.media&&l.media.length?`<span class="badge" style="background:rgba(0,0,0,.5);color:white;">📷 ${l.media.length}</span>`:''}
       </div>
       <button class="fav-btn ${saved?'active':''}" onclick="event.stopPropagation();toggleSave('${l._id}',this)">${saved?'♥':'♡'}</button>
@@ -2073,7 +2073,7 @@ function resultCardHTML(l) {
           <div>
             <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
               <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
-             
+              ${l.ownerVerified?'<span class="badge badge-verified">✅ Verified Owner</span>':''}
               ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🛏 ${l.roomType}</span>`:''}
               ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
             </div>
@@ -2333,7 +2333,7 @@ async function openDetail(id) {
   if (badgesDiv) {
     badgesDiv.innerHTML = `
       <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
-      
+      <span class="badge badge-verified" style="font-size:12px;padding:5px 12px">✅ Verified</span>
       ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">📷 ${l.media.length} photos</span>`:''}`;
   }
 
@@ -2426,12 +2426,12 @@ async function openDetail(id) {
   const ownerWrap = document.querySelector('#page-detail .booking-panel > div:last-child > div:last-child');
   if (ownerWrap) {
     const verifiedBadge = l.ownerVerified
-      
-       '<div style="font-size:12px;color:var(--gray-400);">Owner</div>';
+      ? '<div style="font-size:12px;color:var(--success);font-weight:600;">✅ Verified Owner</div>'
+      : '<div style="font-size:12px;color:var(--gray-400);">Owner</div>';
     ownerWrap.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">🏠</div>
-        
+        <div><div style="font-weight:600;font-size:14px;">Property Owner</div>${verifiedBadge}</div>
       </div>`;
   }
 

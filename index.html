@@ -2115,6 +2115,11 @@ function isActivelyBookedListing(listing) {
   return !!listing && !listing.available && !isFutureVacancy(listing);
 }
 
+
+function isActiveBookingRecord(booking) {
+  return !!booking && booking.status !== 'released';
+}
+
 function hydrateBookingPage(listing = currentListing) {
   if (!listing) return;
   const meta = availabilityMeta(listing);
@@ -3174,7 +3179,7 @@ async function loadDashboard() {
       : `${API}/bookings/user/me`;
     const res      = await fetch(bookingUrl, {headers:{'Authorization':'Bearer '+getToken()}});
     const bookings = await res.json();
-    const activeBookings = Array.isArray(bookings) ? bookings.filter(b => isActivelyBookedListing(b.listing)) : [];
+    const activeBookings = Array.isArray(bookings) ? bookings.filter(b => isActiveBookingRecord(b) && isActivelyBookedListing(b.listing)) : [];
     const sbEl = document.getElementById('dash-stat-bookings');
     if (sbEl) sbEl.textContent = Array.isArray(bookings) ? activeBookings.length : '—';
 
@@ -3273,7 +3278,7 @@ async function openAllBookings() {
     const res      = await fetch(url, { headers:{ 'Authorization':'Bearer '+getToken() } });
     const bookings = await res.json();
     if (!Array.isArray(bookings)) throw new Error('Bad response');
-    const activeBookings = bookings.filter(b => isActivelyBookedListing(b.listing));
+    const activeBookings = bookings.filter(b => isActiveBookingRecord(b) && isActivelyBookedListing(b.listing));
     _allBookingsCache = activeBookings;
     const futureCount = activeBookings.filter(b => b.bookingType === 'future').length;
     const normalCount = activeBookings.length - futureCount;

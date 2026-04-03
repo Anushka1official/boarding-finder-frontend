@@ -1886,8 +1886,25 @@ let allListings    = [];
 let currentListing = null;
 let currentRating  = 0;
 let reviewsOffset  = 0;
-let savedIds       = new Set(JSON.parse(localStorage.getItem('saved') || '[]'));
+let savedIds       = new Set();
 let signupRole     = 'student';
+
+function getSavedStorageKey() {
+  const role = localStorage.getItem('userRole') || '';
+  const userId = localStorage.getItem('userId') || '';
+  if (role === 'student' && userId) return `saved_${userId}`;
+  return 'saved_guest';
+}
+function loadSavedIdsFromStorage() {
+  try {
+    savedIds = new Set(JSON.parse(localStorage.getItem(getSavedStorageKey()) || '[]'));
+  } catch {
+    savedIds = new Set();
+  }
+}
+function persistSavedIds() {
+  localStorage.setItem(getSavedStorageKey(), JSON.stringify([...savedIds]));
+}
 
 // Media state
 let alSelectedFiles    = [];   // files chosen in Add Listing form
@@ -2052,6 +2069,7 @@ async function loginUser() {
       localStorage.setItem('userId',        data.userId||'');
       localStorage.setItem('phoneVerified', data.phoneVerified ? '1' : '0');
       localStorage.setItem('userPhone',     data.phone || '');
+      loadSavedIdsFromStorage();
       updateNav();
       showToast(`Welcome back, ${data.name}! 👋`, 'success');
       setTimeout(() => { showPage('home'); loadHomeListings(); }, 800);
@@ -2061,6 +2079,7 @@ async function loginUser() {
 
 function logoutUser() {
   ['token','userName','userRole','userId','phoneVerified','userPhone'].forEach(k => localStorage.removeItem(k));
+  loadSavedIdsFromStorage();
   allListings = [];
   updateNav();
   showToast('Signed out successfully', 'success');
@@ -2258,7 +2277,7 @@ function toggleSave(id, btn) {
     savedIds.add(id);
     if (btn) { btn.textContent = btn.classList.contains('fav-btn')?'♥':'♥ Saved'; btn.classList.add('active'); }
   }
-  localStorage.setItem('saved', JSON.stringify([...savedIds]));
+  persistSavedIds();
   // If saved page is currently open, refresh it
   const savedPage = document.getElementById('page-saved');
   if (savedPage && savedPage.classList.contains('active')) loadSavedPage();
@@ -3636,6 +3655,7 @@ async function loadSavedPage() {
 // ── Init ──────────────────────────────────────────
 toggleFutureVacancyFields('al');
 toggleFutureVacancyFields('el');
+loadSavedIdsFromStorage();
 updateNav();
 loadHomeListings();
 loadHomeStats();

@@ -1113,8 +1113,8 @@
         <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:14px;margin-top:14px;font-size:13px;color:var(--gray-600);">
           <strong style="color:var(--gray-800);">📌 What happens next?</strong>
           <ol style="margin-top:8px;margin-left:16px;display:flex;flex-direction:column;gap:5px;">
-            <li>Owner confirms within 2 hours</li>
-            <li>You receive booking confirmation by email</li>
+            <li>Your booking is confirmed instantly</li>
+            <li>The listing is now marked as booked</li>
             <li>Move in on your selected date</li>
           </ol>
         </div>
@@ -1141,21 +1141,11 @@
     </div>
 
     <!-- Stats -->
-    <div class="dashboard-grid">
-      <div class="dash-stat">
-        <div class="stat-icon">🏠</div>
-        <div class="stat-val" id="dash-stat-listings">—</div>
-        <div class="stat-desc">My Listings</div>
-      </div>
+    <div class="dashboard-grid" style="grid-template-columns:repeat(2,1fr);">
       <div class="dash-stat">
         <div class="stat-icon">📅</div>
         <div class="stat-val" id="dash-stat-bookings">—</div>
-        <div class="stat-desc">My Bookings</div>
-      </div>
-      <div class="dash-stat">
-        <div class="stat-icon">⏳</div>
-        <div class="stat-val" id="dash-stat-pending">—</div>
-        <div class="stat-desc">Pending</div>
+        <div class="stat-desc" id="dash-stat-bookings-label">Total Bookings</div>
       </div>
       <div class="dash-stat">
         <div class="stat-icon">👤</div>
@@ -1292,13 +1282,7 @@
       <button class="btn btn-ghost" onclick="showPage('dashboard')">← Back to Dashboard</button>
     </div>
 
-    <!-- Filter tabs -->
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;" id="allbookings-tabs">
-      <button class="btn btn-primary btn-sm" id="abt-all"       onclick="filterAllBookings('all')">All</button>
-      <button class="btn btn-ghost  btn-sm" id="abt-pending"    onclick="filterAllBookings('pending')">⏳ Pending</button>
-      <button class="btn btn-ghost  btn-sm" id="abt-confirmed"  onclick="filterAllBookings('confirmed')">✅ Confirmed</button>
-      <button class="btn btn-ghost  btn-sm" id="abt-cancelled"  onclick="filterAllBookings('cancelled')">❌ Cancelled</button>
-    </div>
+    <!-- No filter tabs needed — all bookings shown -->
 
     <!-- Bookings list -->
     <div id="allbookings-list">
@@ -2959,10 +2943,8 @@ async function loadDashboard() {
   }
 
   // Update stat labels based on role
-  const statDescs = document.querySelectorAll('#page-dashboard .dash-stat .stat-desc');
-  if (statDescs[0]) statDescs[0].textContent = role==='landlord' ? 'My Listings' : 'Total Bookings';
-  if (statDescs[1]) statDescs[1].textContent = role==='landlord' ? 'My Bookings' : 'Confirmed';
-  if (statDescs[2]) statDescs[2].textContent = 'Pending';
+  const bookingsLabelEl = document.getElementById('dash-stat-bookings-label');
+  if (bookingsLabelEl) bookingsLabelEl.textContent = role==='landlord' ? 'Total Bookings Received' : 'Total Bookings';
 
   if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); return; }
 
@@ -3017,26 +2999,21 @@ async function loadDashboard() {
     const res      = await fetch(bookingUrl, {headers:{'Authorization':'Bearer '+getToken()}});
     const bookings = await res.json();
     const sbEl = document.getElementById('dash-stat-bookings');
-    const spEl = document.getElementById('dash-stat-pending');
     if (sbEl) sbEl.textContent = Array.isArray(bookings)?bookings.length:'—';
-    if (spEl) spEl.textContent = Array.isArray(bookings)?bookings.filter(b=>b.status==='pending').length:'—';
 
     const bPanel = document.getElementById('dash-bookings-panel');
     if (bPanel && Array.isArray(bookings)) {
-      // Clear old items except the header
       bPanel.querySelectorAll('.booking-item, p').forEach(i => i.remove());
       if (!bookings.length) {
         bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
       } else {
         bookings.slice(0,5).forEach(b => {
-          // Owner sees student name; student sees listing name
           const displayName = role === 'landlord'
             ? (b.student?.name || 'Student')
             : (b.listing?.title || 'Listing');
-          const init  = displayName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-          const sc    = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
-          const date  = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
-          const sub   = role === 'landlord'
+          const init = displayName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          const date = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+          const sub  = role === 'landlord'
             ? `${b.listing?.title||'Listing'} · ${date}`
             : `${b.roomType||'Room'} · ${date}`;
           bPanel.insertAdjacentHTML('beforeend',`
@@ -3046,7 +3023,7 @@ async function loadDashboard() {
                 <div class="name">${displayName}</div>
                 <div class="date">${sub}</div>
               </div>
-              <div class="booking-status ${sc}">${b.status||'pending'}</div>
+              <div class="booking-status status-confirmed">Booked</div>
             </div>`);
         });
       }
@@ -3102,24 +3079,12 @@ async function openAllBookings() {
     _allBookingsCache = bookings;
     if (subtitleEl) subtitleEl.textContent = `${bookings.length} booking${bookings.length!==1?'s':''} total`;
     renderAllBookings(bookings, role);
-    // Reset filter tabs
-    filterAllBookings('all');
   } catch(e) {
     if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);">Could not load bookings. Please try again.</div>';
   }
 }
 
-function filterAllBookings(status) {
-  // Update tab styles
-  ['all','pending','confirmed','cancelled'].forEach(s => {
-    const btn = document.getElementById('abt-'+s);
-    if (!btn) return;
-    btn.className = s === status ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
-  });
-  const role     = localStorage.getItem('userRole');
-  const filtered = status === 'all' ? _allBookingsCache : _allBookingsCache.filter(b => b.status === status);
-  renderAllBookings(filtered, role);
-}
+// filterAllBookings removed — no status filtering needed
 
 function renderAllBookings(bookings, role) {
   const listEl = document.getElementById('allbookings-list');
@@ -3135,7 +3100,6 @@ function renderAllBookings(bookings, role) {
   }
 
   listEl.innerHTML = bookings.map(b => {
-    const sc       = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
     const date     = b.moveInDate ? new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '—';
     const created  = b.createdAt  ? new Date(b.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
 
@@ -3154,7 +3118,7 @@ function renderAllBookings(bookings, role) {
                 <div style="font-size:12px;color:var(--gray-400);">${studentEmail}</div>
               </div>
             </div>
-            <div class="booking-status ${sc}" style="padding:5px 14px;font-size:12px;">${b.status||'pending'}</div>
+            <div class="booking-status status-confirmed" style="padding:5px 14px;font-size:12px;">Booked</div>
           </div>
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
             <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🏠 ${b.listing?.title||'Listing'}</div>
@@ -3179,7 +3143,7 @@ function renderAllBookings(bookings, role) {
                 <div style="font-size:12px;color:var(--gray-400);">📍 ${b.listing?.city||'—'}</div>
               </div>
             </div>
-            <div class="booking-status ${sc}" style="padding:5px 14px;font-size:12px;">${b.status||'pending'}</div>
+            <div class="booking-status status-confirmed" style="padding:5px 14px;font-size:12px;">Booked</div>
           </div>
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
             <div style="font-size:13px;color:var(--gray-600);">🛏 Room: <strong>${b.roomType||b.listing?.roomType||'—'}</strong> · 💰 LKR <strong>${b.listing?.price?.toLocaleString()||'—'}/mo</strong></div>

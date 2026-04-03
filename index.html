@@ -2164,8 +2164,6 @@ async function applyFilters() {
   const sort     = document.getElementById('sort-select')?.value||'newest';
 
   let filtered = allListings.filter(l => {
-    // ── Always hide booked listings from search — they are only visible to the student/owner ──
-    if (!l.available) return false;
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
     // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
     if (l.price < priceMin || l.price > priceMax) return false;
@@ -2991,7 +2989,11 @@ async function loadDashboard() {
   }
 
   try {
-    const res      = await fetch(`${API}/bookings/user/me`,{headers:{'Authorization':'Bearer '+getToken()}});
+    // Students fetch their own bookings; landlords fetch bookings ON their listings
+    const bookingUrl = role === 'landlord'
+      ? `${API}/bookings/landlord`
+      : `${API}/bookings/user/me`;
+    const res      = await fetch(bookingUrl, {headers:{'Authorization':'Bearer '+getToken()}});
     const bookings = await res.json();
     const sbEl = document.getElementById('dash-stat-bookings');
     const spEl = document.getElementById('dash-stat-pending');
@@ -3006,16 +3008,22 @@ async function loadDashboard() {
         bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
       } else {
         bookings.slice(0,5).forEach(b => {
-          const bname = b.listing?.title || localStorage.getItem('userName') || 'Student';
-          const init  = bname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          // Owner sees student name; student sees listing name
+          const displayName = role === 'landlord'
+            ? (b.student?.name || 'Student')
+            : (b.listing?.title || 'Listing');
+          const init  = displayName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
           const sc    = b.status==='confirmed'?'status-confirmed':b.status==='cancelled'?'status-upcoming':'status-pending';
           const date  = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+          const sub   = role === 'landlord'
+            ? `${b.listing?.title||'Listing'} · ${date}`
+            : `${b.roomType||'Room'} · ${date}`;
           bPanel.insertAdjacentHTML('beforeend',`
             <div class="booking-item">
               <div class="booking-avatar">${init}</div>
               <div class="booking-info">
-                <div class="name">${b.listing?.title||'Listing'}</div>
-                <div class="date">${b.roomType||'Room'} · ${date}</div>
+                <div class="name">${displayName}</div>
+                <div class="date">${sub}</div>
               </div>
               <div class="booking-status ${sc}">${b.status||'pending'}</div>
             </div>`);
@@ -3245,17 +3253,15 @@ async function loadSavedPage() {
 
   if (!allListings.length) await fetchListings();
 
-  // Only show saved listings that are still available (not booked)
-  const saved = allListings.filter(l => savedIds.has(l._id) && l.available);
+  const saved = allListings.filter(l => savedIds.has(l._id));
 
   if (!saved.length) {
-    // IDs in localStorage but listings may have been deleted or are now booked
+    // IDs in localStorage but listings may have been deleted
     grid.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:60px 24px;">
         <div style="font-size:48px;margin-bottom:16px;">🏚️</div>
         <div style="font-size:17px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">Saved listings no longer available</div>
-        <div style="font-size:14px;color:var(--gray-400);margin-bottom:20px;">These boardings may have been booked by someone else.</div>
-        <button class="btn btn-primary" onclick="showPage('results')">🔍 Browse Available Boardings</button>
+        <button class="btn btn-primary" onclick="showPage('results')">🔍 Browse Boardings</button>
       </div>`;
     return;
   }

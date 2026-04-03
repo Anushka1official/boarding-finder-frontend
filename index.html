@@ -98,7 +98,7 @@
     padding:28px; max-width:780px; margin:0 auto 20px;
     border:1px solid var(--gray-200);
   }
-  .search-grid { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:12px; align-items:end; }
+  .search-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr auto; gap:12px; align-items:end; }
   @media(max-width:680px){ .search-grid { grid-template-columns:1fr; } }
   .field { display:flex; flex-direction:column; gap:6px; }
   .field label { font-size:12px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.6px; }
@@ -492,7 +492,14 @@
             <option value="">Any Type</option>
             <option value="Single Room">Single Room</option>
             <option value="Shared Room">Shared Room</option>
-            
+          </select>
+        </div>
+        <div class="field">
+          <label>🚻 For</label>
+          <select id="home-gender">
+            <option value="">Anyone</option>
+            <option value="Ladies Only">Ladies Only</option>
+            <option value="Gents Only">Gents Only</option>
           </select>
         </div>
         <button class="btn btn-primary btn-lg" onclick="doHomeSearch()" style="white-space:nowrap">
@@ -655,6 +662,9 @@
         <select id="search-room" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
           <option value="">Any Room</option><option value="Single Room">Single</option><option value="Shared Room">Shared</option>
         </select>
+        <select id="search-gender" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+          <option value="">Anyone</option><option value="Ladies Only">Ladies Only</option><option value="Gents Only">Gents Only</option>
+        </select>
         <button class="btn btn-primary" onclick="applyFilters()">🔍 Search</button>
       </div>
     </div>
@@ -669,18 +679,15 @@
         <div class="radio-list">
           <label class="radio-item"><input type="radio" name="room" value="" checked onchange="applyFilters()"> Any Type</label>
           <label class="radio-item"><input type="radio" name="room" value="Single Room" onchange="applyFilters()"> Single Room</label>
-          <label class="radio-item"><input type="radio" name="room" value="Shared Room" onchange="applyFilters()"> Shared Room (2 pax)</label>
-          <label class="radio-item"><input type="radio" name="room" value="Shared Room" onchange="applyFilters()"> Shared Room (3+ pax)</label>
-          
+          <label class="radio-item"><input type="radio" name="room" value="Shared Room" onchange="applyFilters()"> Shared Room</label>
         </div>
       </div>
       <div class="filter-group">
         <h4>For</h4>
         <div class="radio-list">
-          <label class="radio-item"><input type="radio" name="gender" checked> Any</label>
-          <label class="radio-item"><input type="radio" name="gender"> Ladies Only</label>
-          <label class="radio-item"><input type="radio" name="gender"> Gents Only</label>
-          
+          <label class="radio-item"><input type="radio" name="gender" value="" checked onchange="applyFilters()"> Any</label>
+          <label class="radio-item"><input type="radio" name="gender" value="Ladies Only" onchange="applyFilters()"> Ladies Only</label>
+          <label class="radio-item"><input type="radio" name="gender" value="Gents Only" onchange="applyFilters()"> Gents Only</label>
         </div>
       </div>
       <div class="filter-group">
@@ -1430,12 +1437,19 @@
       <div class="form-group"><label>Property Name</label><input id="al-title" type="text" placeholder="e.g. Sunset View Boarding House"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div class="form-group"><label>City / Area</label><input id="al-city" type="text" placeholder="e.g. Katubedda, Moratuwa"></div>
-        <div class="form-group"><label>Room Type</label>
-          <select id="al-roomtype">
-            <option value="Single Room">Single Room</option>
-            <option value="Shared Room">Shared Room</option>
-            <option value="Studio">Studio / Annex</option>
-          </select>
+        <div class="form-group">
+          <label>Room Type</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;" id="al-roomtype-group">
+            <label class="check-item"><input type="checkbox" class="al-roomtype" value="Single Room" onchange="toggleExclusiveCheckbox(this,'.al-roomtype')"> 🛏 Single Room</label>
+            <label class="check-item"><input type="checkbox" class="al-roomtype" value="Shared Room" onchange="toggleExclusiveCheckbox(this,'.al-roomtype')"> 👥 Shared Room</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Boarding For</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;" id="al-gender-group">
+          <label class="check-item"><input type="checkbox" class="al-boardingfor" value="Ladies Only" onchange="toggleExclusiveCheckbox(this,'.al-boardingfor')"> 👩 Ladies Only</label>
+          <label class="check-item"><input type="checkbox" class="al-boardingfor" value="Gents Only" onchange="toggleExclusiveCheckbox(this,'.al-boardingfor')"> 👨 Gents Only</label>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
@@ -1557,12 +1571,19 @@
       <div class="form-group"><label>Property Name</label><input id="el-title" type="text" placeholder="e.g. Sunset View Boarding House"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div class="form-group"><label>City / Area</label><input id="el-city" type="text" placeholder="e.g. Katubedda, Moratuwa"></div>
-        <div class="form-group"><label>Room Type</label>
-          <select id="el-roomtype">
-            <option value="Single Room">Single Room</option>
-            <option value="Shared Room">Shared Room</option>
-            <option value="Studio">Studio / Annex</option>
-          </select>
+        <div class="form-group">
+          <label>Room Type</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;" id="el-roomtype-group">
+            <label class="check-item"><input type="checkbox" class="el-roomtype" value="Single Room" onchange="toggleExclusiveCheckbox(this,'.el-roomtype')"> 🛏 Single Room</label>
+            <label class="check-item"><input type="checkbox" class="el-roomtype" value="Shared Room" onchange="toggleExclusiveCheckbox(this,'.el-roomtype')"> 👥 Shared Room</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Boarding For</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;" id="el-gender-group">
+          <label class="check-item"><input type="checkbox" class="el-boardingfor" value="Ladies Only" onchange="toggleExclusiveCheckbox(this,'.el-boardingfor')"> 👩 Ladies Only</label>
+          <label class="check-item"><input type="checkbox" class="el-boardingfor" value="Gents Only" onchange="toggleExclusiveCheckbox(this,'.el-boardingfor')"> 👨 Gents Only</label>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
@@ -2053,7 +2074,7 @@ function homeCardHTML(l) {
     </div>
     <div class="card-body">
       <div class="card-title">${l.title}</div>
-      <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}</div>
+      <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}${l.boardingFor?' · '+l.boardingFor:''}</div>
       <div class="card-meta">
         <div class="card-price">LKR ${Number(l.price).toLocaleString()}<span>/mo</span></div>
         ${l.available?'<div class="card-dist" style="background:#C0EDED;color:#065F46;">✓ Now</div>':'<div class="card-dist">🕐 Soon</div>'}
@@ -2079,6 +2100,7 @@ function resultCardHTML(l) {
               <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
              
               ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🛏 ${l.roomType}</span>`:''}
+              ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🚻 ${l.boardingFor}</span>`:''}
               ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
             </div>
             <div class="result-title">${l.title}</div>
@@ -2121,11 +2143,24 @@ function toggleSave(id, btn) {
 
 // ── Home search ───────────────────────────────────
 function doHomeSearch() {
-  const price = document.getElementById('home-price')?.value||'';
-  const room  = document.getElementById('home-room')?.value||'';
-  if (price) { const el=document.getElementById('search-price'); if(el) el.value=price; }
-  if (room)  { const el=document.getElementById('search-room');  if(el) el.value=room; }
+  const price  = document.getElementById('home-price')?.value || '';
+  const room   = document.getElementById('home-room')?.value || '';
+  const gender = document.getElementById('home-gender')?.value || '';
+
+  const priceEl  = document.getElementById('search-price');
+  const roomEl   = document.getElementById('search-room');
+  const genderEl = document.getElementById('search-gender');
+  if (priceEl)  priceEl.value  = price;
+  if (roomEl)   roomEl.value   = room;
+  if (genderEl) genderEl.value = gender;
+
+  const roomRadio = document.querySelector(`input[name="room"][value="${room}"]`) || document.querySelector('input[name="room"][value=""]');
+  const genderRadio = document.querySelector(`input[name="gender"][value="${gender}"]`) || document.querySelector('input[name="gender"][value=""]');
+  if (roomRadio) roomRadio.checked = true;
+  if (genderRadio) genderRadio.checked = true;
+
   showPage('results');
+  applyFilters();
 }
 function quickFilter(type) {
   resetFilters(true);
@@ -2134,11 +2169,12 @@ function quickFilter(type) {
   showPage('results');
 }
 function resetFilters(silent) {
-  ['search-city','search-price','search-room'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['search-city','search-price','search-room','search-gender'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
   const fp = document.getElementById('filter-price');
   if (fp) { fp.value=60000; const d=document.getElementById('price-display'); if(d) d.textContent='Any Price'; }
   document.querySelectorAll('input[name="avail"]').forEach(r => r.checked = r.value==='');
   document.querySelectorAll('input[name="room"]').forEach(r  => r.checked = r.value==='');
+  document.querySelectorAll('input[name="gender"]').forEach(r => r.checked = r.value==='');
   document.querySelectorAll('#facilities-filter input').forEach(c => c.checked=false);
   if (!silent) applyFilters();
 }
@@ -2162,8 +2198,9 @@ async function applyFilters() {
   const priceMin = dropVal ? dropMin : 0;
   const priceMax = dropVal ? Math.min(dropMax, sliderMax) : sliderMax;
 
-  const roomSel  = document.querySelector('input[name="room"]:checked')?.value || document.getElementById('search-room')?.value||'';
-  const availSel = document.querySelector('input[name="avail"]:checked')?.value||'';
+  const roomSel   = document.getElementById('search-room')?.value || document.querySelector('input[name="room"]:checked')?.value || '';
+  const genderSel = document.getElementById('search-gender')?.value || document.querySelector('input[name="gender"]:checked')?.value || '';
+  const availSel  = document.querySelector('input[name="avail"]:checked')?.value||'';
   const amenReq  = [...document.querySelectorAll('#facilities-filter input:checked')].map(c=>c.value.toLowerCase());
   const sort     = document.getElementById('sort-select')?.value||'newest';
 
@@ -2172,7 +2209,8 @@ async function applyFilters() {
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
     // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
     if (l.price < priceMin || l.price > priceMax) return false;
-    if (roomSel && l.roomType && l.roomType!==roomSel) return false;
+    if (roomSel && l.roomType !== roomSel) return false;
+    if (genderSel && l.boardingFor !== genderSel) return false;
     if (availSel==='now'    && !l.available) return false;
     if (availSel==='future' &&  l.available) return false;
     if (amenReq.length) {
@@ -2324,7 +2362,7 @@ async function openDetail(id) {
   const distEl   = document.getElementById('detail-dist');
   const ratingEl = document.getElementById('detail-rating');
   if (cityEl)   cityEl.innerHTML   = `📍 ${l.city}`;
-  if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'} · LKR ${Number(l.price).toLocaleString()}/mo`;
+  if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''} · LKR ${Number(l.price).toLocaleString()}/mo`;
   if (ratingEl) ratingEl.innerHTML = `<span class="rating-stars">★★★★☆</span> Loading...`;
 
   // Description
@@ -2336,7 +2374,8 @@ async function openDetail(id) {
   if (badgesDiv) {
     badgesDiv.innerHTML = `
       <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
-      
+      ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🛏 ${l.roomType}</span>`:''}
+      ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🚻 ${l.boardingFor}</span>`:''}
       ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">📷 ${l.media.length} photos</span>`:''}`;
   }
 
@@ -2395,7 +2434,7 @@ async function openDetail(id) {
   const priceSub   = document.querySelector('#page-detail .price-sub');
   const availBadge = document.querySelector('#page-detail .avail-badge');
   if (priceBig) priceBig.textContent = `LKR ${Number(l.price).toLocaleString()}`;
-  if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'} · Bills may vary`;
+  if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'}${l.boardingFor ? ' · '+l.boardingFor : ''} · Bills may vary`;
   if (availBadge) {
     availBadge.style.background = l.available?'#D1FAE5':'#FEF3C7';
     availBadge.style.color      = l.available?'#065F46':'#92400E';
@@ -2771,6 +2810,13 @@ async function deleteMedia(listingId, mediaIndex) {
   } catch { showToast('Connection error','error'); }
 }
 
+function toggleExclusiveCheckbox(clicked, selector) {
+  if (!clicked.checked) return;
+  document.querySelectorAll(selector).forEach(cb => {
+    if (cb !== clicked) cb.checked = false;
+  });
+}
+
 // ── Add Listing with media ────────────────────────
 function goToAddListing() {
   if (!isLoggedIn()) { showPage('login'); return; }
@@ -2795,7 +2841,8 @@ async function submitListing() {
   const title       = document.getElementById('al-title')?.value.trim();
   const city        = document.getElementById('al-city')?.value.trim();
   const price       = Number(document.getElementById('al-price')?.value);
-  const roomType    = document.getElementById('al-roomtype')?.value;
+  const roomType    = document.querySelector('.al-roomtype:checked')?.value;
+  const boardingFor = document.querySelector('.al-boardingfor:checked')?.value;
   const amenities   = [...document.querySelectorAll('.al-amenity:checked')].map(c => c.value);
   const description = document.getElementById('al-description')?.value.trim();
   const available   = document.getElementById('al-available')?.value === 'true';
@@ -2804,10 +2851,12 @@ async function submitListing() {
   const rules       = [...document.querySelectorAll('.al-rule:checked')].map(c => c.value);
 
   if (!title||!city||!price) return showMsg(msg,'⚠️ Title, City and Price are required.','error');
+  if (!roomType) return showMsg(msg,'⚠️ Please select Single Room or Shared Room.','error');
+  if (!boardingFor) return showMsg(msg,'⚠️ Please select Ladies Only or Gents Only.','error');
   showMsg(msg,'⏳ Creating listing...','info');
 
   try {
-    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,amenities,description,available,deposit,advance,rules})});
+    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,boardingFor,amenities,description,available,deposit,advance,rules})});
     const data = await res.json();
     if (!data.listing) return showMsg(msg,'❌ '+(data.error||'Failed to create listing.'),'error');
 
@@ -2822,8 +2871,7 @@ async function submitListing() {
 
     showMsg(msg,'✅ Listing added successfully!','success');
     ['al-title','al-city','al-price','al-description','al-deposit','al-advance'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-    document.querySelectorAll('.al-amenity').forEach(cb => cb.checked = false);
-    document.querySelectorAll('.al-rule').forEach(c => c.checked = false);
+    document.querySelectorAll('.al-amenity, .al-roomtype, .al-boardingfor, .al-rule').forEach(cb => cb.checked = false);
     alSelectedFiles = [];
     renderPreviewGrid('al-preview-grid', [], 'al');
     allListings = [];
@@ -2971,7 +3019,7 @@ async function loadDashboard() {
                     `<div style="width:60px;height:60px;border-radius:var(--radius-sm);background:${gradFor(l._id)};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${iconFor(l._id)}</div>`}
               <div style="flex:1;min-width:0;">
                 <div style="font-weight:700;font-size:15px;">${l.title}</div>
-                <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}</div>
+                <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''}</div>
                 <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
                 <div style="margin-top:6px;"><span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available':'🚫 Booked'}</span></div>
               </div>
@@ -3182,8 +3230,12 @@ function openEditListing(id) {
   set('el-description', listing.description || '');
 
   // Room type
-  const rtEl = document.getElementById('el-roomtype');
-  if (rtEl) rtEl.value = listing.roomType || 'Single Room';
+  document.querySelectorAll('.el-roomtype').forEach(cb => {
+    cb.checked = cb.value === (listing.roomType || 'Single Room');
+  });
+  document.querySelectorAll('.el-boardingfor').forEach(cb => {
+    cb.checked = cb.value === (listing.boardingFor || 'Ladies Only');
+  });
 
   // Availability
   const avEl = document.getElementById('el-available');
@@ -3220,7 +3272,8 @@ async function saveEditListing() {
   const title       = document.getElementById('el-title')?.value.trim();
   const city        = document.getElementById('el-city')?.value.trim();
   const price       = Number(document.getElementById('el-price')?.value);
-  const roomType    = document.getElementById('el-roomtype')?.value;
+  const roomType    = document.querySelector('.el-roomtype:checked')?.value;
+  const boardingFor = document.querySelector('.el-boardingfor:checked')?.value;
   const available   = document.getElementById('el-available')?.value === 'true';
   const deposit     = Number(document.getElementById('el-deposit')?.value) || 0;
   const advance     = Number(document.getElementById('el-advance')?.value) || 0;
@@ -3232,13 +3285,21 @@ async function saveEditListing() {
     showMsg(msgEl, '⚠️ Title, City and Price are required.', 'error');
     return;
   }
+  if (!roomType) {
+    showMsg(msgEl, '⚠️ Please select Single Room or Shared Room.', 'error');
+    return;
+  }
+  if (!boardingFor) {
+    showMsg(msgEl, '⚠️ Please select Ladies Only or Gents Only.', 'error');
+    return;
+  }
   showMsg(msgEl, '⏳ Saving changes...', 'info');
 
   try {
     const res  = await fetch(`${API}/listings/${editListingId}`, {
       method:  'PATCH',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
-      body:    JSON.stringify({ title, city, price, roomType, available, deposit, advance, amenities, description, rules })
+      body:    JSON.stringify({ title, city, price, roomType, boardingFor, available, deposit, advance, amenities, description, rules })
     });
     const data = await res.json();
     if (data.listing) {

@@ -1048,14 +1048,14 @@
       <div style="display:flex;flex-direction:column;gap:18px;">
         <!-- Selected room summary -->
         <div style="background:var(--brand-light);border:1.5px solid var(--brand-mid);border-radius:var(--radius-lg);padding:16px;display:flex;gap:16px;align-items:center;">
-          <div style="width:64px;height:64px;border-radius:var(--radius-md);background:linear-gradient(135deg,#80DBD9,#5CCFCD);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🏘️</div>
+          <div id="bk-card-media" style="width:64px;height:64px;border-radius:var(--radius-md);background:linear-gradient(135deg,#80DBD9,#5CCFCD);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🏘️</div>
           <div>
-            <div style="font-weight:700;font-size:15px;">Sunset View Boarding House</div>
-            <div style="font-size:13px;color:var(--gray-600);">Single Room · Piliyandala Road, Katubedda</div>
-            <div style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-available">✓ Available Now</span></div>
+            <div id="bk-card-title" style="font-weight:700;font-size:15px;">—</div>
+            <div id="bk-card-sub" style="font-size:13px;color:var(--gray-600);">—</div>
+            <div id="bk-card-badges" style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-available">—</span></div>
           </div>
           <div style="margin-left:auto;text-align:right;">
-            <div style="font-size:20px;font-weight:800;color:var(--brand);">LKR 18,000</div>
+            <div id="bk-card-price" style="font-size:20px;font-weight:800;color:var(--brand);">LKR —</div>
             <div style="font-size:12px;color:var(--gray-400);">/month</div>
           </div>
         </div>
@@ -1132,8 +1132,7 @@
           <div class="summary-item"><span>Advance payment</span><span id="bk-sum-advance">LKR —</span></div>
           <div class="summary-item"><span>Security deposit</span><span id="bk-sum-deposit">LKR —</span></div>
           <div class="summary-item"><span>First month rent</span><span id="bk-sum-rent">LKR —</span></div>
-          <div class="summary-item" style="color:var(--success);"><span>🎉 First-time discount</span><span>- LKR 1,000</span></div>
-          <div class="summary-total"><span>Total Due Now</span><span id="bk-sum-total" style="color:var(--brand);">LKR —</span></div>
+                    <div class="summary-total"><span>Total Due Now</span><span id="bk-sum-total" style="color:var(--brand);">LKR —</span></div>
           <button class="btn btn-success btn-lg" onclick="submitBooking()" style="width:100%;justify-content:center;margin-top:20px;font-size:15px;">
             🔒 Pay Advance & Reserve
           </button>
@@ -1277,7 +1276,7 @@
         <!-- Recent Bookings -->
         <div class="bookings-panel" id="dash-bookings-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-            <h3>Recent Bookings</h3>
+            <h3>Bookings</h3>
             <a style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;" onclick="openAllBookings()">View all</a>
           </div>
           <p style="color:var(--gray-400);font-size:13px;padding:8px 0;">Loading...</p>
@@ -2102,11 +2101,64 @@ function availabilityMeta(l) {
   if (l.available) return { badgeClass:'badge-available', badgeText:'✓ Available Now', shortText:'✓ Now', footerText:'✅ Available Now', detailText:'Available Now' };
   if (isFutureVacancy(l)) {
     const months = Number(l.futureVacancyMonths || 0);
-    const label = months === 1 ? '1 Month' : `${months} Months`;
+    const label = months === 1 ? '1 month' : `${months} months`;
     return { badgeClass:'badge-soon', badgeText:`📅 Coming Soon · ${label}`, shortText:'📅 Soon', footerText:`📅 Future Vacancy in ${label}`, detailText:`Coming Soon · Available in ${label}` };
   }
-  return { badgeClass:'badge-soon', badgeText:'🚫 Booked', shortText:'🚫 Booked', footerText:'🚫 Booked', detailText:'Currently Unavailable' };
+  return { badgeClass:'badge-soon', badgeText:'🚫 Booked', shortText:'🚫 Booked', footerText:'🚫 Booked', detailText:'Booked' };
 }
+
+function isActivelyBookedListing(listing) {
+  return !!listing && !listing.available && !isFutureVacancy(listing);
+}
+
+function hydrateBookingPage(listing = currentListing) {
+  if (!listing) return;
+  const meta = availabilityMeta(listing);
+  const img = firstImage(listing);
+  const mediaEl = document.getElementById('bk-card-media');
+  const titleEl = document.getElementById('bk-card-title');
+  const subEl = document.getElementById('bk-card-sub');
+  const badgesEl = document.getElementById('bk-card-badges');
+  const priceEl = document.getElementById('bk-card-price');
+  const crumbEl = document.querySelector('#page-booking .breadcrumb a:nth-of-type(2)');
+
+  if (crumbEl) crumbEl.textContent = listing.title || 'Listing';
+  if (mediaEl) {
+    if (img) {
+      mediaEl.style.background = 'transparent';
+      mediaEl.innerHTML = `<img src="${img}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" onerror="this.parentElement.style.background='linear-gradient(135deg,#80DBD9,#5CCFCD)';this.parentElement.textContent='🏘️'">`;
+    } else {
+      mediaEl.style.background = gradFor(listing._id || '0');
+      mediaEl.textContent = iconFor(listing._id || '0');
+    }
+  }
+  if (titleEl) titleEl.textContent = listing.title || '—';
+  if (subEl) subEl.textContent = `${listing.roomType || 'Room'} · ${listing.city || '—'}${listing.boardingFor ? ' · ' + listing.boardingFor : ''}`;
+  if (badgesEl) badgesEl.innerHTML = `<span class="badge ${meta.badgeClass}">${meta.badgeText}</span>`;
+  if (priceEl) priceEl.textContent = `LKR ${Number(listing.price || 0).toLocaleString()}`;
+
+  const sumTitle = document.getElementById('bk-sum-title');
+  const sumRoom = document.getElementById('bk-sum-room');
+  const sumDep = document.getElementById('bk-sum-deposit');
+  const sumRent = document.getElementById('bk-sum-rent');
+  const sumAdv = document.getElementById('bk-sum-advance');
+  const sumTotal = document.getElementById('bk-sum-total');
+  const dep = Number(listing.deposit || 0);
+  const rent = Number(listing.price || 0);
+  const adv = Number(listing.advance || 0);
+  if (sumTitle) sumTitle.textContent = listing.title || '—';
+  if (sumRoom) {
+    const futureText = isFutureVacancy(listing)
+      ? ` · ${Number(listing.futureVacancyMonths || 0)} month${Number(listing.futureVacancyMonths || 0) === 1 ? '' : 's'} ahead`
+      : ' · Available now';
+    sumRoom.textContent = `${listing.roomType || 'Room'}${futureText}`;
+  }
+  if (sumDep) sumDep.textContent = `LKR ${dep.toLocaleString()}`;
+  if (sumRent) sumRent.textContent = `LKR ${rent.toLocaleString()}`;
+  if (sumAdv) sumAdv.textContent = `LKR ${adv.toLocaleString()}`;
+  if (sumTotal) sumTotal.textContent = `LKR ${adv.toLocaleString()}`;
+}
+
 function toggleFutureVacancyFields(prefix) {
   const mode = document.getElementById(`${prefix}-available`)?.value;
   const wrap = document.getElementById(`${prefix}-future-wrap`);
@@ -2559,21 +2611,7 @@ async function openDetail(id) {
   const saveBtn = document.getElementById('detail-save-btn');
   if (saveBtn) saveBtn.textContent = savedIds.has(l._id)?'♥ Saved':'♡ Save';
 
-  // Booking summary
-  const sumTitle  = document.getElementById('bk-sum-title');
-  const sumRoom   = document.getElementById('bk-sum-room');
-  const sumDep    = document.getElementById('bk-sum-deposit');
-  const sumRent   = document.getElementById('bk-sum-rent');
-  const sumAdv    = document.getElementById('bk-sum-advance');
-  const sumTotal  = document.getElementById('bk-sum-total');
-  if (sumTitle) sumTitle.textContent = l.title;
-  if (sumRoom)  sumRoom.textContent  = `${l.roomType||'Room'}${isFutureVacancy(l) ? ' · Future Vacancy' : ' · 12 months'}`;
-  const _dep = l.deposit || l.price;
-  const _adv = l.advance || 5000;
-  if (sumDep)   sumDep.textContent   = `LKR ${Number(_dep).toLocaleString()}`;
-  if (sumRent)  sumRent.textContent  = `LKR ${Number(l.price).toLocaleString()}`;
-  if (sumAdv)   sumAdv.textContent   = `LKR ${Number(_adv).toLocaleString()}`;
-  if (sumTotal) sumTotal.textContent = `LKR ${(Number(_adv) + Number(l.price) + Number(_dep) - 1000).toLocaleString()}`;
+  hydrateBookingPage(l);
 
   await loadReviewsPreview();
   reviewsOffset = 0;
@@ -2746,6 +2784,7 @@ function goToBooking() {
   if (!isLoggedIn()) { showToast('Please sign in to make a booking','warning'); showPage('login'); return; }
   if (!currentListing) return;
   if (!(currentListing.available || isFutureVacancy(currentListing))) { showToast('This listing is currently unavailable','error'); return; }
+  hydrateBookingPage(currentListing);
   showPage('booking');
 }
 
@@ -3111,6 +3150,7 @@ async function loadDashboard() {
               <button onclick="openEditListing('${l._id}')" class="btn btn-ghost btn-sm">✏️ Edit</button>
               <button onclick="openManageMedia('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-ghost btn-sm">📸 Media</button>
               <button onclick="toggleAvailability('${l._id}',${l.available},${Number('${l.futureVacancyMonths || 0}')})" class="btn btn-sm ${(l.available || isFutureVacancy(l))?'btn-outline':'btn-success'}">${(l.available || isFutureVacancy(l))?'🔒 Mark Booked':'✅ Mark Available'}</button>
+              <button onclick="markListingComingSoon('${l._id}','${l.title.replace(/'/g,"\\'")}',${Number(l.futureVacancyMonths || 0)})" class="btn btn-ghost btn-sm">📅 Coming Soon</button>
               <button onclick="deleteListing('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:1px solid #018790;">🗑 Delete</button>
             </div>
           </div>`;
@@ -3134,8 +3174,9 @@ async function loadDashboard() {
     const bPanel = document.getElementById('dash-bookings-panel');
     if (bPanel && Array.isArray(bookings)) {
       bPanel.querySelectorAll('.booking-item, p').forEach(i => i.remove());
-      if (!bookings.length) {
-        bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
+      const activeBookings = bookings.filter(b => isActivelyBookedListing(b.listing));
+      if (!activeBookings.length) {
+        bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No active bookings yet.</p>');
       } else {
         const renderBookingItem = (b) => {
           const displayName = role === 'landlord'
@@ -3159,8 +3200,8 @@ async function loadDashboard() {
         };
 
         if (role === 'landlord') {
-          const futureBookings = bookings.filter(b => b.bookingType === 'future').slice(0,3);
-          const regularBookings = bookings.filter(b => b.bookingType !== 'future').slice(0,3);
+          const futureBookings = activeBookings.filter(b => b.bookingType === 'future').slice(0,3);
+          const regularBookings = activeBookings.filter(b => b.bookingType !== 'future').slice(0,3);
           if (futureBookings.length) {
             bPanel.insertAdjacentHTML('beforeend', '<div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 8px;">Booked Future Vacancies</div>');
             futureBookings.forEach(b => bPanel.insertAdjacentHTML('beforeend', renderBookingItem(b)));
@@ -3170,7 +3211,7 @@ async function loadDashboard() {
             regularBookings.forEach(b => bPanel.insertAdjacentHTML('beforeend', renderBookingItem(b)));
           }
         } else {
-          bookings.slice(0,5).forEach(b => bPanel.insertAdjacentHTML('beforeend', renderBookingItem(b)));
+          activeBookings.slice(0,5).forEach(b => bPanel.insertAdjacentHTML('beforeend', renderBookingItem(b)));
         }
       }
     }
@@ -3187,7 +3228,7 @@ async function loadDashboard() {
           <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-200);margin-bottom:8px;cursor:pointer;" onclick="openDetail('${l._id}')">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div style="font-weight:600;font-size:14px;">${l.title}</div>
-              <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'Active':'Unavailable'}</span>
+              <span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).detailText}</span>
             </div>
             <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo</div>
             <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
@@ -3211,8 +3252,8 @@ async function openAllBookings() {
   const bcEl       = document.getElementById('allbookings-breadcrumb');
   const listEl     = document.getElementById('allbookings-list');
 
-  if (titleEl) titleEl.textContent    = role === 'landlord' ? 'All Bookings on My Listings' : 'My Bookings';
-  if (bcEl)   bcEl.textContent        = role === 'landlord' ? 'All Bookings' : 'My Bookings';
+  if (titleEl) titleEl.textContent    = role === 'landlord' ? 'Active Bookings on My Listings' : 'My Active Bookings';
+  if (bcEl)   bcEl.textContent        = role === 'landlord' ? 'Active Bookings' : 'My Active Bookings';
   if (listEl) listEl.innerHTML        = '<div style="text-align:center;padding:40px;color:var(--gray-400);">Loading bookings...</div>';
 
   try {
@@ -3222,11 +3263,12 @@ async function openAllBookings() {
     const res      = await fetch(url, { headers:{ 'Authorization':'Bearer '+getToken() } });
     const bookings = await res.json();
     if (!Array.isArray(bookings)) throw new Error('Bad response');
-    _allBookingsCache = bookings;
-    const futureCount = bookings.filter(b => b.bookingType === 'future').length;
-    const normalCount = bookings.length - futureCount;
-    if (subtitleEl) subtitleEl.textContent = `${bookings.length} booking${bookings.length!==1?'s':''} total · ${normalCount} booked · ${futureCount} booked future vacancies`;
-    renderAllBookings(bookings, role);
+    const activeBookings = bookings.filter(b => isActivelyBookedListing(b.listing));
+    _allBookingsCache = activeBookings;
+    const futureCount = activeBookings.filter(b => b.bookingType === 'future').length;
+    const normalCount = activeBookings.length - futureCount;
+    if (subtitleEl) subtitleEl.textContent = `${activeBookings.length} active booking${activeBookings.length!==1?'s':''} · ${normalCount} booked · ${futureCount} booked future vacancies`;
+    renderAllBookings(activeBookings, role);
   } catch(e) {
     if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);">Could not load bookings. Please try again.</div>';
   }
@@ -3241,7 +3283,7 @@ function renderAllBookings(bookings, role) {
     listEl.innerHTML = `
       <div style="text-align:center;padding:60px 24px;">
         <div style="font-size:48px;margin-bottom:16px;">📋</div>
-        <div style="font-size:16px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">No bookings found</div>
+        <div style="font-size:16px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">No active bookings found</div>
         <div style="font-size:14px;color:var(--gray-400);">No bookings match this filter.</div>
       </div>`;
     return;
@@ -3455,9 +3497,35 @@ async function toggleAvailability(id, currentlyAvailable, currentFutureMonths) {
     if (data.listing) {
       showToast((currentlyAvailable || Number(currentFutureMonths || 0))?'🔒 Marked as booked':'✅ Marked as available','success');
       allListings = allListings.map(l => l._id===id?{...l,...data.listing}:l);
+      if (currentListing && currentListing._id === id) currentListing = { ...currentListing, ...data.listing };
       loadDashboard();
     } else { showToast('Could not update listing','error'); }
   } catch { showToast('Connection error','error'); }
+}
+
+async function markListingComingSoon(id, title, currentFutureMonths = 0) {
+  const entered = prompt(`Set coming soon duration in months for "${title}" (1-12):`, currentFutureMonths || 1);
+  if (entered === null) return;
+  const months = Math.max(1, Math.min(12, parseInt(entered, 10) || 0));
+  if (!months) { showToast('Please enter a valid month count between 1 and 12', 'error'); return; }
+  try {
+    const res = await fetch(`${API}/listings/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + getToken() },
+      body: JSON.stringify({ available:false, futureVacancyMonths:months })
+    });
+    const data = await res.json();
+    if (data.listing) {
+      showToast(`📅 Marked as coming soon for ${months} month${months === 1 ? '' : 's'}`, 'success');
+      allListings = allListings.map(l => l._id === id ? { ...l, ...data.listing } : l);
+      if (currentListing && currentListing._id === id) currentListing = { ...currentListing, ...data.listing };
+      loadDashboard();
+    } else {
+      showToast(data.error || 'Could not update listing', 'error');
+    }
+  } catch {
+    showToast('Connection error', 'error');
+  }
 }
 
 // ── Home Stats (dynamic) ──────────────────────────

@@ -177,9 +177,6 @@
   .filter-group { margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--gray-100); }
   .filter-group:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
   .filter-group h4 { font-size:13px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; }
-  .range-row { display:flex; justify-content:space-between; font-size:13px; color:var(--gray-500); margin-bottom:8px; }
-  .range-row strong { color:var(--gray-800); font-weight:700; }
-  input[type=range] { width:100%; accent-color:var(--brand); }
   .check-list { display:flex; flex-direction:column; gap:9px; }
   .check-item { display:flex; align-items:center; gap:10px; font-size:14px; color:var(--gray-700); cursor:pointer; }
   .check-item input[type=checkbox] { width:16px;height:16px;accent-color:var(--brand); cursor:pointer; }
@@ -667,16 +664,6 @@
     <!-- Filters -->
     <aside class="filters-panel">
       <h3>🎛 Filters</h3>
-      <div class="filter-group">
-        <h4>Price Range (Monthly)</h4>
-        <div class="range-row"><span>LKR 5,000</span><strong id="price-display">Any Price</strong></div>
-        <input type="range" id="filter-price" min="5000" max="60000" value="60000" oninput="document.getElementById('price-display').textContent='LKR '+parseInt(this.value).toLocaleString();applyFilters()">
-      </div>
-      <div class="filter-group">
-        <h4>Distance to University</h4>
-        <div class="range-row"><span>0 km</span><strong id="dist-display">5 km</strong></div>
-        <input type="range" min="0" max="10" value="5" step="0.5" oninput="document.getElementById('dist-display').textContent=parseFloat(this.value).toFixed(1)+' km'">
-      </div>
       <div class="filter-group">
         <h4>Room Type</h4>
         <div class="radio-list">

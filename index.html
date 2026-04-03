@@ -2197,6 +2197,7 @@ async function applyFilters() {
   const sort     = document.getElementById('sort-select')?.value||'newest';
 
   let filtered = allListings.filter(l => {
+    if (!l.available) return false;   // ← hide booked listings from search
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
     // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
     if (l.price < priceMin || l.price > priceMax) return false;

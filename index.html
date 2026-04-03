@@ -1938,6 +1938,10 @@ function showPage(id) {
     if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); showPage('login'); return; }
     loadDashboard();
   }
+  if (id === 'home') {
+    loadHomeListings();
+    loadHomeStats();
+  }
   if (id === 'reviews' && currentListing) loadReviewsPage();
   if (id === 'saved')     loadSavedPage();
 
@@ -2806,6 +2810,8 @@ async function submitBooking() {
       currentListing.available = false;
       currentListing.futureVacancyMonths = 0;
       allListings = allListings.map(l => l._id===currentListing._id?{...l,available:false,futureVacancyMonths:0}:l);
+      loadHomeListings();
+      loadHomeStats();
       setTimeout(() => showPage('dashboard'), 2000);
     } else { showToast(data.error||'Booking failed','error'); }
   } catch { showToast('Connection error — is the server running?','error'); }
@@ -3113,7 +3119,7 @@ async function loadDashboard() {
 
   // Update stat labels based on role
   const bookingsLabelEl = document.getElementById('dash-stat-bookings-label');
-  if (bookingsLabelEl) bookingsLabelEl.textContent = role==='landlord' ? 'Total Bookings Received' : 'Total Bookings';
+  if (bookingsLabelEl) bookingsLabelEl.textContent = 'Total Bookings';
 
   if (!isLoggedIn()) { showToast('Please sign in to view your dashboard','warning'); return; }
 
@@ -3168,13 +3174,17 @@ async function loadDashboard() {
       : `${API}/bookings/user/me`;
     const res      = await fetch(bookingUrl, {headers:{'Authorization':'Bearer '+getToken()}});
     const bookings = await res.json();
+    const activeBookings = Array.isArray(bookings) ? bookings.filter(b => isActivelyBookedListing(b.listing)) : [];
     const sbEl = document.getElementById('dash-stat-bookings');
-    if (sbEl) sbEl.textContent = Array.isArray(bookings)?bookings.length:'—';
+    if (sbEl) sbEl.textContent = Array.isArray(bookings) ? activeBookings.length : '—';
 
     const bPanel = document.getElementById('dash-bookings-panel');
     if (bPanel && Array.isArray(bookings)) {
-      bPanel.querySelectorAll('.booking-item, p').forEach(i => i.remove());
-      const activeBookings = bookings.filter(b => isActivelyBookedListing(b.listing));
+      bPanel.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <h3>Bookings</h3>
+          <a style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;" onclick="openAllBookings()">View all</a>
+        </div>`;
       if (!activeBookings.length) {
         bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No active bookings yet.</p>');
       } else {
@@ -3483,6 +3493,8 @@ async function deleteListing(id, title) {
       allListings = allListings.filter(l => l._id !== id);
       if (currentListing && currentListing._id === id) currentListing = null;
       loadDashboard();
+      loadHomeListings();
+      loadHomeStats();
     } else { showToast(data.error || 'Could not delete listing', 'error'); }
   } catch { showToast('Connection error', 'error'); }
 }
@@ -3499,6 +3511,8 @@ async function toggleAvailability(id, currentlyAvailable, currentFutureMonths) {
       allListings = allListings.map(l => l._id===id?{...l,...data.listing}:l);
       if (currentListing && currentListing._id === id) currentListing = { ...currentListing, ...data.listing };
       loadDashboard();
+      loadHomeListings();
+      loadHomeStats();
     } else { showToast('Could not update listing','error'); }
   } catch { showToast('Connection error','error'); }
 }
@@ -3520,6 +3534,8 @@ async function markListingComingSoon(id, title, currentFutureMonths = 0) {
       allListings = allListings.map(l => l._id === id ? { ...l, ...data.listing } : l);
       if (currentListing && currentListing._id === id) currentListing = { ...currentListing, ...data.listing };
       loadDashboard();
+      loadHomeListings();
+      loadHomeStats();
     } else {
       showToast(data.error || 'Could not update listing', 'error');
     }
@@ -3533,8 +3549,8 @@ async function loadHomeStats() {
   try {
     if (!allListings.length) await fetchListings();
 
-    // Active listings = total listings
-    const totalListings = allListings.length;
+    // Active listings = visible listings that are still open to students
+    const totalListings = allListings.filter(l => l.available || isFutureVacancy(l)).length;
 
     // Unique owners (unique owner IDs)
     const ownerSet = new Set(allListings.map(l => l.owner?.toString()).filter(Boolean));

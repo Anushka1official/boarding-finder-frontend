@@ -1472,7 +1472,7 @@
         <div class="form-group"><label>Availability</label>
           <select id="al-available">
             <option value="true">✅ Available Now</option>
-            <option value="false">🕐 Coming Soon</option>
+            
           </select>
         </div>
       </div>
@@ -1599,7 +1599,7 @@
         <div class="form-group"><label>Availability</label>
           <select id="el-available">
             <option value="true">✅ Available Now</option>
-            <option value="false">🕐 Coming Soon</option>
+            
           </select>
         </div>
       </div>
@@ -2074,7 +2074,7 @@ function homeCardHTML(l) {
     <div class="card-img" style="background:${gradFor(l._id)};">
       ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<div class="card-img-placeholder">${iconFor(l._id)}</div>`}
       <div class="card-badges">
-        <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
+        <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':''}</span>
         
         ${l.media&&l.media.length?`<span class="badge" style="background:rgba(0,0,0,.5);color:white;">📷 ${l.media.length}</span>`:''}
       </div>

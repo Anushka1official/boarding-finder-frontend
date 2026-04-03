@@ -502,6 +502,17 @@
             <option value="Gents Only">Gents Only</option>
           </select>
         </div>
+        <div class="field">
+          <label>📅 Future Vacancy</label>
+          <select id="home-future">
+            <option value="">Any Time</option>
+            <option value="1">Within 1 Month</option>
+            <option value="2">Within 2 Months</option>
+            <option value="3">Within 3 Months</option>
+            <option value="6">Within 6 Months</option>
+            <option value="12">Within 12 Months</option>
+          </select>
+        </div>
         <button class="btn btn-primary btn-lg" onclick="doHomeSearch()" style="white-space:nowrap">
           🔍 Search
         </button>
@@ -665,6 +676,9 @@
         <select id="search-gender" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
           <option value="">Anyone</option><option value="Ladies Only">Ladies Only</option><option value="Gents Only">Gents Only</option>
         </select>
+        <select id="search-future" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+          <option value="">Any Future Vacancy</option><option value="1">1 Month</option><option value="2">2 Months</option><option value="3">3 Months</option><option value="6">6 Months</option><option value="12">12 Months</option>
+        </select>
         <button class="btn btn-primary" onclick="applyFilters()">🔍 Search</button>
       </div>
     </div>
@@ -688,6 +702,16 @@
           <label class="radio-item"><input type="radio" name="gender" value="" checked onchange="applyFilters()"> Any</label>
           <label class="radio-item"><input type="radio" name="gender" value="Ladies Only" onchange="applyFilters()"> Ladies Only</label>
           <label class="radio-item"><input type="radio" name="gender" value="Gents Only" onchange="applyFilters()"> Gents Only</label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <h4>Future Vacancy</h4>
+        <div class="radio-list">
+          <label class="radio-item"><input type="radio" name="future" value="" checked onchange="applyFilters()"> Any</label>
+          <label class="radio-item"><input type="radio" name="future" value="1" onchange="applyFilters()"> Within 1 Month</label>
+          <label class="radio-item"><input type="radio" name="future" value="2" onchange="applyFilters()"> Within 2 Months</label>
+          <label class="radio-item"><input type="radio" name="future" value="3" onchange="applyFilters()"> Within 3 Months</label>
+          <label class="radio-item"><input type="radio" name="future" value="6" onchange="applyFilters()"> Within 6 Months</label>
         </div>
       </div>
       <div class="filter-group">
@@ -1455,11 +1479,23 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div class="form-group"><label>Monthly Price (LKR)</label><input id="al-price" type="number" placeholder="18000"></div>
         <div class="form-group"><label>Availability</label>
-          <select id="al-available">
+          <select id="al-available" onchange="toggleFutureVacancyFields('al')">
             <option value="true">✅ Available Now</option>
-            
+            <option value="future">📅 Future Vacancy</option>
           </select>
         </div>
+      </div>
+      <div id="al-future-wrap" class="form-group" style="display:none;">
+        <label>Future Vacancy In</label>
+        <select id="al-future-months">
+          <option value="1">1 Month</option>
+          <option value="2">2 Months</option>
+          <option value="3">3 Months</option>
+          <option value="4">4 Months</option>
+          <option value="5">5 Months</option>
+          <option value="6">6 Months</option>
+          <option value="12">12 Months</option>
+        </select>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div class="form-group"><label>Security Deposit (LKR)</label><input id="al-deposit" type="number" placeholder="e.g. 18000"></div>
@@ -1589,11 +1625,24 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div class="form-group"><label>Monthly Price (LKR)</label><input id="el-price" type="number" placeholder="18000"></div>
         <div class="form-group"><label>Availability</label>
-          <select id="el-available">
+          <select id="el-available" onchange="toggleFutureVacancyFields('el')">
             <option value="true">✅ Available Now</option>
-            
+            <option value="future">📅 Future Vacancy</option>
+            <option value="false">🚫 Booked / Unavailable</option>
           </select>
         </div>
+      </div>
+      <div id="el-future-wrap" class="form-group" style="display:none;">
+        <label>Future Vacancy In</label>
+        <select id="el-future-months">
+          <option value="1">1 Month</option>
+          <option value="2">2 Months</option>
+          <option value="3">3 Months</option>
+          <option value="4">4 Months</option>
+          <option value="5">5 Months</option>
+          <option value="6">6 Months</option>
+          <option value="12">12 Months</option>
+        </select>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div class="form-group"><label>Security Deposit (LKR)</label><input id="el-deposit" type="number" placeholder="e.g. 18000"></div>
@@ -2019,7 +2068,8 @@ function logoutUser() {
 // ── Listings ──────────────────────────────────────
 async function fetchListings() {
   try {
-    const res = await fetch(`${API}/listings`);
+    const headers = getToken() ? { 'Authorization':'Bearer '+getToken() } : {};
+    const res = await fetch(`${API}/listings`, { headers });
     allListings = await res.json();
     if (!Array.isArray(allListings)) allListings = [];
   } catch { allListings = []; }
@@ -2046,11 +2096,28 @@ function mediaThumb(l, size='100%') {
   return iconFor(l._id);
 }
 
+function isFutureVacancy(l) { return !l.available && Number(l.futureVacancyMonths || 0) > 0; }
+function isBookedListing(l) { return !l.available && !isFutureVacancy(l); }
+function availabilityMeta(l) {
+  if (l.available) return { badgeClass:'badge-available', badgeText:'✓ Available Now', shortText:'✓ Now', footerText:'✅ Available Now', detailText:'Available Now' };
+  if (isFutureVacancy(l)) {
+    const months = Number(l.futureVacancyMonths || 0);
+    const label = months === 1 ? '1 Month' : `${months} Months`;
+    return { badgeClass:'badge-soon', badgeText:`📅 Coming Soon · ${label}`, shortText:'📅 Soon', footerText:`📅 Future Vacancy in ${label}`, detailText:`Coming Soon · Available in ${label}` };
+  }
+  return { badgeClass:'badge-soon', badgeText:'🚫 Booked', shortText:'🚫 Booked', footerText:'🚫 Booked', detailText:'Currently Unavailable' };
+}
+function toggleFutureVacancyFields(prefix) {
+  const mode = document.getElementById(`${prefix}-available`)?.value;
+  const wrap = document.getElementById(`${prefix}-future-wrap`);
+  if (wrap) wrap.style.display = mode === 'future' ? 'block' : 'none';
+}
+
 async function loadHomeListings() {
   if (!allListings.length) await fetchListings();
   const grid = document.getElementById('home-listings-grid');
   if (!grid) return;
-  const available = allListings.filter(l => l.available).slice(0, 6);
+  const available = allListings.filter(l => l.available || isFutureVacancy(l)).slice(0, 6);
   if (!available.length) {
     grid.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:40px;grid-column:1/-1;">No listings yet. Be the first to add one!</p>';
     return;
@@ -2061,13 +2128,13 @@ async function loadHomeListings() {
 function homeCardHTML(l) {
   const saved = savedIds.has(l._id);
   const img   = firstImage(l);
+  const meta  = availabilityMeta(l);
   return `
   <div class="boarding-card" onclick="openDetail('${l._id}')" style="cursor:pointer;">
     <div class="card-img" style="background:${gradFor(l._id)};">
       ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<div class="card-img-placeholder">${iconFor(l._id)}</div>`}
       <div class="card-badges">
-        <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':''}</span>
-        
+        <span class="badge ${meta.badgeClass}">${meta.badgeText}</span>
         ${l.media&&l.media.length?`<span class="badge" style="background:rgba(0,0,0,.5);color:white;">📷 ${l.media.length}</span>`:''}
       </div>
       <button class="fav-btn ${saved?'active':''}" onclick="event.stopPropagation();toggleSave('${l._id}',this)">${saved?'♥':'♡'}</button>
@@ -2077,7 +2144,7 @@ function homeCardHTML(l) {
       <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}${l.boardingFor?' · '+l.boardingFor:''}</div>
       <div class="card-meta">
         <div class="card-price">LKR ${Number(l.price).toLocaleString()}<span>/mo</span></div>
-        ${l.available?'<div class="card-dist" style="background:#C0EDED;color:#065F46;">✓ Now</div>':'<div class="card-dist">🕐 Soon</div>'}
+        <div class="card-dist" ${l.available? 'style="background:#C0EDED;color:#065F46;"' : ''}>${meta.shortText}</div>
       </div>
       <div class="card-tags">${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
     </div>
@@ -2087,6 +2154,7 @@ function homeCardHTML(l) {
 function resultCardHTML(l) {
   const saved = savedIds.has(l._id);
   const img   = firstImage(l);
+  const meta  = availabilityMeta(l);
   return `
   <div class="result-card" onclick="openDetail('${l._id}')" style="cursor:pointer;">
     <div class="result-img" style="background:${gradFor(l._id)};overflow:hidden;">
@@ -2097,8 +2165,7 @@ function resultCardHTML(l) {
         <div class="result-header">
           <div>
             <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
-              <span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available Now':'📅 Coming Soon'}</span>
-             
+              <span class="badge ${meta.badgeClass}">${meta.badgeText}</span>
               ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🛏 ${l.roomType}</span>`:''}
               ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🚻 ${l.boardingFor}</span>`:''}
               ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
@@ -2111,7 +2178,7 @@ function resultCardHTML(l) {
         <div class="result-tags">${(l.amenities||[]).slice(0,5).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
       </div>
       <div class="result-footer">
-        <div style="font-size:13px;color:var(--gray-400);">${l.available?'✅ Available Now':'🕐 Coming Soon'}</div>
+        <div style="font-size:13px;color:var(--gray-400);">${meta.footerText}</div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();toggleSave('${l._id}',this)" id="save-res-${l._id}">${saved?'♥ Saved':'♡ Save'}</button>
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openDetail('${l._id}')">View Details</button>
@@ -2146,18 +2213,23 @@ function doHomeSearch() {
   const price  = document.getElementById('home-price')?.value || '';
   const room   = document.getElementById('home-room')?.value || '';
   const gender = document.getElementById('home-gender')?.value || '';
+  const future = document.getElementById('home-future')?.value || '';
 
   const priceEl  = document.getElementById('search-price');
   const roomEl   = document.getElementById('search-room');
   const genderEl = document.getElementById('search-gender');
+  const futureEl = document.getElementById('search-future');
   if (priceEl)  priceEl.value  = price;
   if (roomEl)   roomEl.value   = room;
   if (genderEl) genderEl.value = gender;
+  if (futureEl) futureEl.value = future;
 
   const roomRadio = document.querySelector(`input[name="room"][value="${room}"]`) || document.querySelector('input[name="room"][value=""]');
   const genderRadio = document.querySelector(`input[name="gender"][value="${gender}"]`) || document.querySelector('input[name="gender"][value=""]');
+  const futureRadio = document.querySelector(`input[name="future"][value="${future}"]`) || document.querySelector('input[name="future"][value=""]');
   if (roomRadio) roomRadio.checked = true;
   if (genderRadio) genderRadio.checked = true;
+  if (futureRadio) futureRadio.checked = true;
 
   showPage('results');
   applyFilters();
@@ -2169,12 +2241,13 @@ function quickFilter(type) {
   showPage('results');
 }
 function resetFilters(silent) {
-  ['search-city','search-price','search-room','search-gender'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['search-city','search-price','search-room','search-gender','search-future'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
   const fp = document.getElementById('filter-price');
   if (fp) { fp.value=60000; const d=document.getElementById('price-display'); if(d) d.textContent='Any Price'; }
   document.querySelectorAll('input[name="avail"]').forEach(r => r.checked = r.value==='');
   document.querySelectorAll('input[name="room"]').forEach(r  => r.checked = r.value==='');
   document.querySelectorAll('input[name="gender"]').forEach(r => r.checked = r.value==='');
+  document.querySelectorAll('input[name="future"]').forEach(r => r.checked = r.value==='');
   document.querySelectorAll('#facilities-filter input').forEach(c => c.checked=false);
   if (!silent) applyFilters();
 }
@@ -2200,19 +2273,21 @@ async function applyFilters() {
 
   const roomSel   = document.getElementById('search-room')?.value || document.querySelector('input[name="room"]:checked')?.value || '';
   const genderSel = document.getElementById('search-gender')?.value || document.querySelector('input[name="gender"]:checked')?.value || '';
+  const futureSel = document.getElementById('search-future')?.value || document.querySelector('input[name="future"]:checked')?.value || '';
   const availSel  = document.querySelector('input[name="avail"]:checked')?.value||'';
   const amenReq  = [...document.querySelectorAll('#facilities-filter input:checked')].map(c=>c.value.toLowerCase());
   const sort     = document.getElementById('sort-select')?.value||'newest';
 
   let filtered = allListings.filter(l => {
-    if (!l.available) return false;   // ← hide booked listings from search
+    if (isBookedListing(l)) return false;
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
     // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
     if (l.price < priceMin || l.price > priceMax) return false;
     if (roomSel && l.roomType !== roomSel) return false;
     if (genderSel && l.boardingFor !== genderSel) return false;
+    if (futureSel && Number(l.futureVacancyMonths || 0) !== Number(futureSel)) return false;
     if (availSel==='now'    && !l.available) return false;
-    if (availSel==='future' &&  l.available) return false;
+    if (availSel==='future' && !isFutureVacancy(l)) return false;
     if (amenReq.length) {
       const lAm = (l.amenities||[]).map(a=>a.toLowerCase());
       if (!amenReq.every(req => lAm.some(a=>a.includes(req)))) return false;
@@ -2343,7 +2418,8 @@ document.addEventListener('keydown', e => {
 // ── Detail page ───────────────────────────────────
 async function openDetail(id) {
   try {
-    const res = await fetch(`${API}/listings/${id}`);
+    const headers = getToken() ? { 'Authorization':'Bearer '+getToken() } : {};
+    const res = await fetch(`${API}/listings/${id}`, { headers });
     currentListing = await res.json();
   } catch { showToast('Could not load listing details', 'error'); return; }
 
@@ -2436,9 +2512,10 @@ async function openDetail(id) {
   if (priceBig) priceBig.textContent = `LKR ${Number(l.price).toLocaleString()}`;
   if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'}${l.boardingFor ? ' · '+l.boardingFor : ''} · Bills may vary`;
   if (availBadge) {
-    availBadge.style.background = l.available?'#D1FAE5':'#FEF3C7';
-    availBadge.style.color      = l.available?'#065F46':'#92400E';
-    availBadge.innerHTML = l.available?'<span class="dot"></span> Available Now':'🕐 Currently Unavailable';
+    const meta = availabilityMeta(l);
+    availBadge.style.background = l.available ? '#D1FAE5' : '#FEF3C7';
+    availBadge.style.color      = l.available ? '#065F46' : '#92400E';
+    availBadge.innerHTML = l.available ? '<span class="dot"></span> Available Now' : meta.detailText;
   }
 
   // Booking panel price breakdown — use owner-set values if available
@@ -2458,10 +2535,11 @@ async function openDetail(id) {
   // Book Now button
   const bookBtn = document.getElementById('book-now-btn');
   if (bookBtn) {
-    bookBtn.disabled    = !l.available;
-    bookBtn.textContent = l.available?'🏠 Book Now':'🚫 Not Available';
-    bookBtn.style.opacity = l.available?'1':'0.5';
-    bookBtn.style.cursor  = l.available?'pointer':'not-allowed';
+    const canBook = l.available || isFutureVacancy(l);
+    bookBtn.disabled    = !canBook;
+    bookBtn.textContent = canBook ? (isFutureVacancy(l) ? '📅 Book Future Vacancy' : '🏠 Book Now') : '🚫 Not Available';
+    bookBtn.style.opacity = canBook ? '1' : '0.5';
+    bookBtn.style.cursor  = canBook ? 'pointer' : 'not-allowed';
   }
 
   // Owner details — show verified status from listing data
@@ -2489,7 +2567,7 @@ async function openDetail(id) {
   const sumAdv    = document.getElementById('bk-sum-advance');
   const sumTotal  = document.getElementById('bk-sum-total');
   if (sumTitle) sumTitle.textContent = l.title;
-  if (sumRoom)  sumRoom.textContent  = `${l.roomType||'Room'} · 12 months`;
+  if (sumRoom)  sumRoom.textContent  = `${l.roomType||'Room'}${isFutureVacancy(l) ? ' · Future Vacancy' : ' · 12 months'}`;
   const _dep = l.deposit || l.price;
   const _adv = l.advance || 5000;
   if (sumDep)   sumDep.textContent   = `LKR ${Number(_dep).toLocaleString()}`;
@@ -2667,7 +2745,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function goToBooking() {
   if (!isLoggedIn()) { showToast('Please sign in to make a booking','warning'); showPage('login'); return; }
   if (!currentListing) return;
-  if (!currentListing.available) { showToast('This listing is currently unavailable','error'); return; }
+  if (!(currentListing.available || isFutureVacancy(currentListing))) { showToast('This listing is currently unavailable','error'); return; }
   showPage('booking');
 }
 
@@ -2685,9 +2763,10 @@ async function submitBooking() {
     const res  = await fetch(`${API}/bookings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({listing:currentListing._id,moveInDate:date,roomType:currentListing.roomType||'Room',duration,message:`${fname} ${lname} | ${email} | ${phone}`})});
     const data = await res.json();
     if (data.booking) {
-      showToast('🎉 Booking submitted! Listing marked as unavailable.','success');
+      showToast('🎉 Booking submitted! Listing marked as booked.','success');
       currentListing.available = false;
-      allListings = allListings.map(l => l._id===currentListing._id?{...l,available:false}:l);
+      currentListing.futureVacancyMonths = 0;
+      allListings = allListings.map(l => l._id===currentListing._id?{...l,available:false,futureVacancyMonths:0}:l);
       setTimeout(() => showPage('dashboard'), 2000);
     } else { showToast(data.error||'Booking failed','error'); }
   } catch { showToast('Connection error — is the server running?','error'); }
@@ -2845,7 +2924,9 @@ async function submitListing() {
   const boardingFor = document.querySelector('.al-boardingfor:checked')?.value;
   const amenities   = [...document.querySelectorAll('.al-amenity:checked')].map(c => c.value);
   const description = document.getElementById('al-description')?.value.trim();
-  const available   = document.getElementById('al-available')?.value === 'true';
+  const availabilityMode = document.getElementById('al-available')?.value || 'true';
+  const available   = availabilityMode === 'true';
+  const futureVacancyMonths = availabilityMode === 'future' ? Number(document.getElementById('al-future-months')?.value || 1) : 0;
   const deposit     = Number(document.getElementById('al-deposit')?.value) || 0;
   const advance     = Number(document.getElementById('al-advance')?.value) || 0;
   const rules       = [...document.querySelectorAll('.al-rule:checked')].map(c => c.value);
@@ -2853,10 +2934,11 @@ async function submitListing() {
   if (!title||!city||!price) return showMsg(msg,'⚠️ Title, City and Price are required.','error');
   if (!roomType) return showMsg(msg,'⚠️ Please select Single Room or Shared Room.','error');
   if (!boardingFor) return showMsg(msg,'⚠️ Please select Ladies Only or Gents Only.','error');
+  if (availabilityMode === 'future' && !futureVacancyMonths) return showMsg(msg,'⚠️ Please select future vacancy months.','error');
   showMsg(msg,'⏳ Creating listing...','info');
 
   try {
-    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,boardingFor,amenities,description,available,deposit,advance,rules})});
+    const res  = await fetch(`${API}/listings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,city,price,roomType,boardingFor,amenities,description,available,deposit,advance,rules,futureVacancyMonths})});
     const data = await res.json();
     if (!data.listing) return showMsg(msg,'❌ '+(data.error||'Failed to create listing.'),'error');
 
@@ -3021,14 +3103,14 @@ async function loadDashboard() {
                 <div style="font-weight:700;font-size:15px;">${l.title}</div>
                 <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''}</div>
                 <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
-                <div style="margin-top:6px;"><span class="badge ${l.available?'badge-available':'badge-soon'}">${l.available?'✓ Available':'🚫 Booked'}</span></div>
+                <div style="margin-top:6px;"><span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).badgeText}</span></div>
               </div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
               <button onclick="openDetail('${l._id}')" class="btn btn-ghost btn-sm">👁 View</button>
               <button onclick="openEditListing('${l._id}')" class="btn btn-ghost btn-sm">✏️ Edit</button>
               <button onclick="openManageMedia('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-ghost btn-sm">📸 Media</button>
-              <button onclick="toggleAvailability('${l._id}',${l.available})" class="btn btn-sm ${l.available?'btn-outline':'btn-success'}">${l.available?'🔒 Mark Booked':'✅ Mark Available'}</button>
+              <button onclick="toggleAvailability('${l._id}',${l.available},${Number('${l.futureVacancyMonths || 0}')})" class="btn btn-sm ${(l.available || isFutureVacancy(l))?'btn-outline':'btn-success'}">${(l.available || isFutureVacancy(l))?'🔒 Mark Booked':'✅ Mark Available'}</button>
               <button onclick="deleteListing('${l._id}','${l.title.replace(/'/g,"\\'")}')" class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:1px solid #018790;">🗑 Delete</button>
             </div>
           </div>`;
@@ -3055,25 +3137,41 @@ async function loadDashboard() {
       if (!bookings.length) {
         bPanel.insertAdjacentHTML('beforeend','<p style="color:var(--gray-400);font-size:13px;padding:8px 0;">No bookings yet.</p>');
       } else {
-        bookings.slice(0,5).forEach(b => {
+        const renderBookingItem = (b) => {
           const displayName = role === 'landlord'
             ? (b.student?.name || 'Student')
             : (b.listing?.title || 'Listing');
           const init = displayName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
           const date = b.moveInDate?new Date(b.moveInDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+          const typeLabel = b.bookingType === 'future' ? `Future Vacancy${b.futureVacancyMonths ? ' · '+b.futureVacancyMonths+' mo' : ''}` : 'Available Vacancy';
           const sub  = role === 'landlord'
-            ? `${b.listing?.title||'Listing'} · ${date}`
-            : `${b.roomType||'Room'} · ${date}`;
-          bPanel.insertAdjacentHTML('beforeend',`
+            ? `${b.listing?.title||'Listing'} · ${typeLabel} · ${date}`
+            : `${b.roomType||'Room'} · ${typeLabel} · ${date}`;
+          return `
             <div class="booking-item" style="cursor:pointer;" onclick="openAllBookings()">
               <div class="booking-avatar">${init}</div>
               <div class="booking-info">
                 <div class="name">${displayName}</div>
                 <div class="date">${sub}</div>
               </div>
-              <div class="booking-status status-confirmed">Booked</div>
-            </div>`);
-        });
+              <div class="booking-status status-confirmed">${b.bookingType === 'future' ? 'Booked Future Vacancy' : 'Booked'}</div>
+            </div>`;
+        };
+
+        if (role === 'landlord') {
+          const futureBookings = bookings.filter(b => b.bookingType === 'future').slice(0,3);
+          const regularBookings = bookings.filter(b => b.bookingType !== 'future').slice(0,3);
+          if (futureBookings.length) {
+            bPanel.insertAdjacentHTML('beforeend', '<div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 8px;">Booked Future Vacancies</div>');
+            futureBookings.forEach(b => bPanel.insertAdjacentHTML('beforeend', renderBookingItem(b)));
+          }
+          if (regularBookings.length) {
+            bPanel.insertAdjacentHTML('beforeend', '<div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 8px;">Booked Listings</div>');
+            regularBookings.forEach(b => bPanel.insertAdjacentHTML('beforeend', renderBookingItem(b)));
+          }
+        } else {
+          bookings.slice(0,5).forEach(b => bPanel.insertAdjacentHTML('beforeend', renderBookingItem(b)));
+        }
       }
     }
 
@@ -3125,7 +3223,9 @@ async function openAllBookings() {
     const bookings = await res.json();
     if (!Array.isArray(bookings)) throw new Error('Bad response');
     _allBookingsCache = bookings;
-    if (subtitleEl) subtitleEl.textContent = `${bookings.length} booking${bookings.length!==1?'s':''} total`;
+    const futureCount = bookings.filter(b => b.bookingType === 'future').length;
+    const normalCount = bookings.length - futureCount;
+    if (subtitleEl) subtitleEl.textContent = `${bookings.length} booking${bookings.length!==1?'s':''} total · ${normalCount} booked · ${futureCount} booked future vacancies`;
     renderAllBookings(bookings, role);
   } catch(e) {
     if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);">Could not load bookings. Please try again.</div>';
@@ -3166,11 +3266,11 @@ function renderAllBookings(bookings, role) {
                 <div style="font-size:12px;color:var(--gray-400);">${studentEmail}</div>
               </div>
             </div>
-            <div class="booking-status status-confirmed" style="padding:5px 14px;font-size:12px;">Booked</div>
+            <div class="booking-status status-confirmed" style="padding:5px 14px;font-size:12px;">${b.bookingType === 'future' ? 'Booked Future Vacancy' : 'Booked'}</div>
           </div>
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
             <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🏠 ${b.listing?.title||'Listing'}</div>
-            <div style="font-size:13px;color:var(--gray-500);">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo · 🛏 ${b.roomType||b.listing?.roomType||'—'}</div>
+            <div style="font-size:13px;color:var(--gray-500);">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo · 🛏 ${b.roomType||b.listing?.roomType||'—'} · ${b.bookingType === 'future' ? '📅 Future Vacancy' : '✅ Available Vacancy'}</div>
           </div>
           <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
             <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>
@@ -3191,10 +3291,10 @@ function renderAllBookings(bookings, role) {
                 <div style="font-size:12px;color:var(--gray-400);">📍 ${b.listing?.city||'—'}</div>
               </div>
             </div>
-            <div class="booking-status status-confirmed" style="padding:5px 14px;font-size:12px;">Booked</div>
+            <div class="booking-status status-confirmed" style="padding:5px 14px;font-size:12px;">${b.bookingType === 'future' ? 'Booked Future Vacancy' : 'Booked'}</div>
           </div>
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
-            <div style="font-size:13px;color:var(--gray-600);">🛏 Room: <strong>${b.roomType||b.listing?.roomType||'—'}</strong> · 💰 LKR <strong>${b.listing?.price?.toLocaleString()||'—'}/mo</strong></div>
+            <div style="font-size:13px;color:var(--gray-600);">🛏 Room: <strong>${b.roomType||b.listing?.roomType||'—'}</strong> · 💰 LKR <strong>${b.listing?.price?.toLocaleString()||'—'}/mo</strong> · ${b.bookingType === 'future' ? '📅 Future Vacancy' : '✅ Available Vacancy'}</div>
           </div>
           <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
             <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>
@@ -3239,7 +3339,10 @@ function openEditListing(id) {
 
   // Availability
   const avEl = document.getElementById('el-available');
-  if (avEl) avEl.value = listing.available ? 'true' : 'false';
+  const futureEl = document.getElementById('el-future-months');
+  if (futureEl) futureEl.value = String(listing.futureVacancyMonths || 1);
+  if (avEl) avEl.value = listing.available ? 'true' : ((listing.futureVacancyMonths || 0) > 0 ? 'future' : 'false');
+  toggleFutureVacancyFields('el');
 
   // House rules — check matching boxes
   document.querySelectorAll('.el-rule').forEach(cb => {
@@ -3274,7 +3377,9 @@ async function saveEditListing() {
   const price       = Number(document.getElementById('el-price')?.value);
   const roomType    = document.querySelector('.el-roomtype:checked')?.value;
   const boardingFor = document.querySelector('.el-boardingfor:checked')?.value;
-  const available   = document.getElementById('el-available')?.value === 'true';
+  const availabilityMode = document.getElementById('el-available')?.value || 'true';
+  const available   = availabilityMode === 'true';
+  const futureVacancyMonths = availabilityMode === 'future' ? Number(document.getElementById('el-future-months')?.value || 1) : 0;
   const deposit     = Number(document.getElementById('el-deposit')?.value) || 0;
   const advance     = Number(document.getElementById('el-advance')?.value) || 0;
   const amenities   = [...document.querySelectorAll('.el-amenity:checked')].map(c => c.value);
@@ -3293,13 +3398,17 @@ async function saveEditListing() {
     showMsg(msgEl, '⚠️ Please select Ladies Only or Gents Only.', 'error');
     return;
   }
+  if (availabilityMode === 'future' && !futureVacancyMonths) {
+    showMsg(msgEl, '⚠️ Please select future vacancy months.', 'error');
+    return;
+  }
   showMsg(msgEl, '⏳ Saving changes...', 'info');
 
   try {
     const res  = await fetch(`${API}/listings/${editListingId}`, {
       method:  'PATCH',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
-      body:    JSON.stringify({ title, city, price, roomType, boardingFor, available, deposit, advance, amenities, description, rules })
+      body:    JSON.stringify({ title, city, price, roomType, boardingFor, available, futureVacancyMonths, deposit, advance, amenities, description, rules })
     });
     const data = await res.json();
     if (data.listing) {
@@ -3337,13 +3446,15 @@ async function deleteListing(id, title) {
 }
 
 // ── Toggle availability ───────────────────────────
-async function toggleAvailability(id, currentlyAvailable) {
+async function toggleAvailability(id, currentlyAvailable, currentFutureMonths) {
   try {
-    const res  = await fetch(`${API}/listings/${id}`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({available:!currentlyAvailable})});
+    const makingAvailable = !currentlyAvailable && !Number(currentFutureMonths || 0);
+    const payload = makingAvailable ? { available:true, futureVacancyMonths:0 } : { available:false, futureVacancyMonths:0 };
+    const res  = await fetch(`${API}/listings/${id}`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify(payload)});
     const data = await res.json();
     if (data.listing) {
-      showToast(currentlyAvailable?'🔒 Marked as booked':'✅ Marked as available','success');
-      allListings = allListings.map(l => l._id===id?{...l,available:!currentlyAvailable}:l);
+      showToast((currentlyAvailable || Number(currentFutureMonths || 0))?'🔒 Marked as booked':'✅ Marked as available','success');
+      allListings = allListings.map(l => l._id===id?{...l,...data.listing}:l);
       loadDashboard();
     } else { showToast('Could not update listing','error'); }
   } catch { showToast('Connection error','error'); }
@@ -3439,6 +3550,8 @@ async function loadSavedPage() {
 
 
 // ── Init ──────────────────────────────────────────
+toggleFutureVacancyFields('al');
+toggleFutureVacancyFields('el');
 updateNav();
 loadHomeListings();
 loadHomeStats();

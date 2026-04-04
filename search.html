@@ -298,6 +298,7 @@
 <button class="btn btn-ghost" id="detail-save-btn" onclick="toggleSave(currentListing?._id, this)" style="gap:6px">♡ Save</button>
 </div>
 <p style="color:var(--gray-600);font-size:15px;line-height:1.7;margin-bottom:20px;">A comfortable and secure boarding facility designed specifically for university students. Located just minutes from the University of Moratuwa, offering clean rooms, reliable WiFi, and a supportive community environment. All rooms are furnished and bills included.</p>
+<div id="detail-owner-inline" class="detail-owner-inline"></div>
 <div class="divider"></div>
 <h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">🏠 Choose Your Room</h3>
 <div class="room-types-grid">
@@ -378,15 +379,6 @@
 <button class="btn btn-outline btn-lg" onclick="goToBooking()" style="justify-content:center">📅 Reserve for Future</button>
 </div>
 <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--gray-400);">🔒 Secure payment · Free cancellation within 24h</div>
-<div style="border-top:1px solid var(--gray-100);margin-top:16px;padding-top:14px;">
-<div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">Owner Details</div>
-<div style="display:flex;align-items:center;gap:10px;">
-<div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">NP</div>
-<div>
-<div style="font-weight:600;font-size:14px;">Nalini Perera</div>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -508,66 +500,64 @@
 <footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
 <strong style="color:white">Smart Boarding Finder</strong> · © 2026
   </footer>
-</div></div></div><div class="page-overlay-shell" id="overlay-reviews" onclick="if(event.target===this) closeSearchModal()"><div class="page-overlay-panel"><button class="page-overlay-close" onclick="closeSearchModal()">✕</button><div class="page active" id="page-reviews">
-<div class="reviews-wrap">
-<div class="breadcrumb">
-<a onclick="showPage('home')">Home</a><span class="sep">›</span>
-<a onclick="showPage('detail')">Sunset View Boarding</a><span class="sep">›</span>
-<span>Reviews</span>
-</div>
-<h1 id="reviews-title">Student Reviews</h1>
-<p id="reviews-sub" style="color:var(--gray-500);margin-bottom:24px;">Sunset View Boarding House · Molpe Road, Moratuwa</p>
-<!-- Overall rating -->
-<div class="overall-rating">
-<div class="rating-big">
-<div class="num" id="reviews-avg-num">4.8</div>
-<div class="stars" id="reviews-avg-stars">★★★★★</div>
-<div class="count" id="reviews-total-count">32 reviews</div>
-</div>
-<div class="rating-bars">
-<div class="rating-bar-row">
-<span style="min-width:14px;">5</span>
-<div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
-<span style="min-width:30px;color:var(--gray-500);">26</span>
-</div>
-<div class="rating-bar-row">
-<span style="min-width:14px;">4</span>
-<div class="bar-track"><div class="bar-fill" style="width:15%"></div></div>
-<span style="min-width:30px;color:var(--gray-500);">5</span>
-</div>
-<div class="rating-bar-row">
-<span style="min-width:14px;">3</span>
-<div class="bar-track"><div class="bar-fill" style="width:5%"></div></div>
-<span style="min-width:30px;color:var(--gray-500);">1</span>
-</div>
-<div class="rating-bar-row">
-<span style="min-width:14px;">2</span>
-<div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
-<span style="min-width:30px;color:var(--gray-500);">0</span>
-</div>
-<div class="rating-bar-row">
-<span style="min-width:14px;">1</span>
-<div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
-<span style="min-width:30px;color:var(--gray-500);">0</span>
-</div>
-</div>
-</div>
-<!-- Write review CTA -->
-<div class="write-review">
-<div style="font-size:28px;margin-bottom:8px;">✍️</div>
-<p>Share your experience</p>
-<div style="font-size:13px;color:var(--brand);margin-top:4px;font-weight:400;">Help fellow students make informed decisions</div>
-<div id="reviews-write-stars" style="display:flex;justify-content:center;gap:6px;margin:14px 0 10px;font-size:28px;cursor:pointer;">
-<span onclick="setReviewsPageRating(1)" style="color:#9CA3AF;">☆</span>
-<span onclick="setReviewsPageRating(2)" style="color:#9CA3AF;">☆</span>
-<span onclick="setReviewsPageRating(3)" style="color:#9CA3AF;">☆</span>
-<span onclick="setReviewsPageRating(4)" style="color:#9CA3AF;">☆</span>
-<span onclick="setReviewsPageRating(5)" style="color:#9CA3AF;">☆</span>
-</div>
-<textarea id="reviews-write-comment" placeholder="Write your review here..." style="width:100%;max-width:540px;margin:0 auto;display:block;padding:12px 14px;border:1.5px solid var(--brand-mid);border-radius:14px;font-size:14px;font-family:inherit;resize:vertical;min-height:96px;background:rgba(255,255,255,.96);box-sizing:border-box;"></textarea>
-<div id="reviews-write-msg" style="display:none;max-width:540px;margin:10px auto 0;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;"></div>
-<button class="btn btn-primary" onclick="submitReviewsPageReview()" style="margin-top:14px;">Write a Review</button>
-</div>
-<!-- Reviews list -->
-<div class="reviews-list" id="reviews-dynamic-list">
+</div></div></div>
+<div class="page-overlay-shell" id="overlay-reviews" onclick="if(event.target===this) closeSearchModal()">
+  <div class="page-overlay-panel">
+    <button class="page-overlay-close" onclick="closeSearchModal()">✕</button>
+    <div class="page active" id="page-reviews">
+      <div class="reviews-wrap">
+        <div class="breadcrumb">
+          <a onclick="showPage('home')">Home</a><span class="sep">›</span>
+          <a onclick="showPage('detail')">Selected Listing</a><span class="sep">›</span>
+          <span>Reviews</span>
+        </div>
+        <h1 id="reviews-title">Student Reviews</h1>
+        <p id="reviews-sub" style="color:var(--gray-500);margin-bottom:24px;">Boarding House · City</p>
 
+        <div class="overall-rating">
+          <div class="rating-big">
+            <div class="num" id="reviews-avg-num">—</div>
+            <div class="stars" id="reviews-avg-stars">☆☆☆☆☆</div>
+            <div class="count" id="reviews-total-count">0 reviews</div>
+          </div>
+          <div class="rating-bars">
+            <div class="rating-bar-row"><span style="min-width:14px;">5</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span style="min-width:30px;color:var(--gray-500);">0</span></div>
+            <div class="rating-bar-row"><span style="min-width:14px;">4</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span style="min-width:30px;color:var(--gray-500);">0</span></div>
+            <div class="rating-bar-row"><span style="min-width:14px;">3</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span style="min-width:30px;color:var(--gray-500);">0</span></div>
+            <div class="rating-bar-row"><span style="min-width:14px;">2</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span style="min-width:30px;color:var(--gray-500);">0</span></div>
+            <div class="rating-bar-row"><span style="min-width:14px;">1</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span style="min-width:30px;color:var(--gray-500);">0</span></div>
+          </div>
+        </div>
+
+        <div class="write-review">
+          <div style="font-size:28px;margin-bottom:8px;">✍️</div>
+          <p>Share your experience</p>
+          <div style="font-size:13px;color:var(--brand);margin-top:4px;font-weight:400;">Help fellow students make informed decisions</div>
+          <div id="reviews-write-stars" style="display:flex;justify-content:center;gap:6px;margin:14px 0 10px;font-size:28px;cursor:pointer;">
+            <span onclick="setReviewsPageRating(1)" style="color:#9CA3AF;">☆</span>
+            <span onclick="setReviewsPageRating(2)" style="color:#9CA3AF;">☆</span>
+            <span onclick="setReviewsPageRating(3)" style="color:#9CA3AF;">☆</span>
+            <span onclick="setReviewsPageRating(4)" style="color:#9CA3AF;">☆</span>
+            <span onclick="setReviewsPageRating(5)" style="color:#9CA3AF;">☆</span>
+          </div>
+          <textarea id="reviews-write-comment" placeholder="Write your review here..." style="width:100%;max-width:540px;margin:0 auto;display:block;padding:12px 14px;border:1.5px solid var(--brand-mid);border-radius:14px;font-size:14px;font-family:inherit;resize:vertical;min-height:96px;background:rgba(255,255,255,.96);box-sizing:border-box;"></textarea>
+          <div id="reviews-write-msg" style="display:none;max-width:540px;margin:10px auto 0;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;"></div>
+          <button class="btn btn-primary" onclick="submitReviewsPageReview()" style="margin-top:14px;">Write a Review</button>
+        </div>
+
+        <div class="reviews-list" id="reviews-dynamic-list"></div>
+
+        <div style="text-align:center;margin-top:24px;">
+          <button class="btn btn-outline" onclick="loadMoreReviews()">Load More Reviews</button>
+        </div>
+      </div>
+      <footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+        <strong style="color:white">Smart Boarding Finder</strong> · © 2026
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

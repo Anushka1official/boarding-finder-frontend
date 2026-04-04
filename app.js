@@ -250,6 +250,9 @@ function showPage(id) {
   const listingId = ['detail', 'booking', 'reviews'].includes(id) ? (currentListing?._id || getCurrentListingId()) : undefined;
 
   if (currentPage === 'results' && ['detail', 'booking', 'reviews'].includes(id) && listingId) {
+    if (id === 'detail') { openDetail(listingId); return; }
+    if (id === 'booking') { goToBooking(); return; }
+    if (id === 'reviews') { loadReviewsPage().then(() => openSearchModal('reviews')); return; }
     navigateToPage(id, { listingId });
     return;
   }
@@ -1027,18 +1030,22 @@ async function renderCurrentDetailPage() {
       bookBtn.style.cursor  = canBook ? 'pointer' : 'not-allowed';
     }
 
-    // Owner details — show verified status from listing data
-    const ownerWrap = document.querySelector('#page-detail .booking-panel > div:last-child > div:last-child');
-    if (ownerWrap) {
-      const verifiedBadge = l.ownerVerified
-        ? '<div style="font-size:12px;color:var(--success);font-weight:600;">✅ Verified Owner</div>'
-        : '<div style="font-size:12px;color:var(--gray-400);">Owner</div>';
-      ownerWrap.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">🏠</div>
-          <div><div style="font-weight:600;font-size:14px;">Property Owner</div>${verifiedBadge}</div>
+    // Owner details — keep inside the description section
+    const ownerInline = document.getElementById('detail-owner-inline');
+    if (ownerInline) {
+      const ownerName = l.ownerName || l.owner?.name || 'Property Owner';
+      const ownerSub  = l.ownerVerified ? '✅ Verified Owner' : 'Owner';
+      ownerInline.innerHTML = `
+        <div class="detail-owner-chip">
+          <div class="detail-owner-avatar">🏠</div>
+          <div>
+            <div class="detail-owner-title">Owner Details</div>
+            <div class="detail-owner-name">${ownerName}</div>
+            <div class="detail-owner-sub">${ownerSub}</div>
+          </div>
         </div>`;
     }
+
 
     // Save button
     const saveBtn = document.getElementById('detail-save-btn');
@@ -1210,6 +1217,7 @@ function setReviewsPageRating(val) {
 
 async function submitReviewsPageReview() {
   if (!isLoggedIn()) { showToast('Please sign in to write a review','warning'); showPage('login'); return; }
+  if (!currentListing) await ensureCurrentListingLoaded();
   if (!currentListing) { showToast('Please select a listing first','error'); return; }
   if (!currentReviewsPageRating) { showToast('Please select a star rating','error'); return; }
 

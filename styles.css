@@ -1020,3 +1020,72 @@ nav {
 .page-overlay-shell#overlay-reviews #reviews-write-stars span:hover{
   transform: translateY(-1px) scale(1.05);
 }
+
+
+
+/* Detail page polish + lighter readable glass */
+.page-overlay-shell #page-detail .detail-content,
+.page-overlay-shell #page-detail .booking-panel,
+.page-overlay-shell #page-detail .gallery,
+.page-overlay-shell #page-reviews .overall-rating,
+.page-overlay-shell #page-reviews .write-review,
+.page-overlay-shell #page-reviews .review-card-full {
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(255,255,255,.68);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 14px 30px rgba(0,54,64,.10);
+}
+
+.page-overlay-shell #page-detail .detail-content {
+  padding: 34px 34px 28px;
+  border-radius: 28px;
+}
+.page-overlay-shell #page-detail .booking-panel {
+  border-radius: 28px;
+}
+.page-overlay-shell #page-detail .gallery {
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.72);
+}
+
+.detail-owner-inline {
+  margin: 0 0 22px;
+}
+.detail-owner-chip {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  border-radius:18px;
+  background: rgba(224,245,245,.58);
+  border: 1px solid rgba(128,219,217,.55);
+}
+.detail-owner-avatar {
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background: rgba(255,255,255,.88);
+  color: var(--brand);
+  font-size:20px;
+}
+.detail-owner-title {
+  font-size:12px;
+  font-weight:700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing:.45px;
+}
+.detail-owner-name {
+  font-size:15px;
+  font-weight:700;
+  color: var(--gray-900);
+}
+.detail-owner-sub {
+  font-size:12px;
+  color: var(--gray-500);
+}

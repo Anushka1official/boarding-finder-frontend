@@ -24,6 +24,28 @@ function esc(v) {
 }
 
 
+function normalizeBoardingFor(value) {
+  const v = String(value || '').trim().toLowerCase();
+  if (!v) return '';
+  if (v.includes('ladies')) return 'Ladies Only';
+  if (v.includes('gents')) return 'Gents Only';
+  return value;
+}
+
+function boardingForBadgeHTML(value, kind = 'badge') {
+  const label = normalizeBoardingFor(value);
+  if (!label) return '';
+  const isLadies = label === 'Ladies Only';
+  const genderClass = isLadies ? `${kind}-ladies` : `${kind}-gents`;
+  const icon = isLadies ? '♀' : '♂';
+  return `<span class="${kind} ${kind}-gender ${genderClass}">${icon} ${label}</span>`;
+}
+
+function appendGenderTagHTML(value, kind = 'tag') {
+  return boardingForBadgeHTML(value, kind);
+}
+
+
 function getSavedStorageKey() {
   const role = localStorage.getItem('userRole') || '';
   const userId = localStorage.getItem('userId') || '';
@@ -613,8 +635,8 @@ function hydrateBookingPage(listing = currentListing) {
     }
   }
   if (titleEl) titleEl.textContent = listing.title || '—';
-  if (subEl) subEl.textContent = `${listing.roomType || 'Room'} · ${listing.city || '—'}${listing.boardingFor ? ' · ' + listing.boardingFor : ''}`;
-  if (badgesEl) badgesEl.innerHTML = `<span class="badge ${meta.badgeClass}">${meta.badgeText}</span>`;
+  if (subEl) subEl.textContent = `${listing.roomType || 'Room'} · ${listing.city || '—'}`;
+  if (badgesEl) badgesEl.innerHTML = `<span class="badge ${meta.badgeClass}">${meta.badgeText}</span>${appendGenderTagHTML(listing.boardingFor, 'badge')}`;
   if (priceEl) priceEl.textContent = `LKR ${Number(listing.price || 0).toLocaleString()}`;
 
   const sumTitle = document.getElementById('bk-sum-title');
@@ -673,12 +695,12 @@ function homeCardHTML(l) {
     </div>
     <div class="card-body">
       <div class="card-title">${l.title}</div>
-      <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}${l.boardingFor?' · '+l.boardingFor:''}</div>
+      <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}</div>
       <div class="card-meta">
         <div class="card-price">LKR ${Number(l.price).toLocaleString()}<span>/mo</span></div>
         <div class="card-dist" ${l.available? 'style="background:#C0EDED;color:#065F46;"' : ''}>${meta.shortText}</div>
       </div>
-      <div class="card-tags">${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
+      <div class="card-tags">${appendGenderTagHTML(l.boardingFor, 'tag')}${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
     </div>
   </div>`;
 }
@@ -699,7 +721,7 @@ function resultCardHTML(l) {
             <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
               <span class="badge ${meta.badgeClass}">${meta.badgeText}</span>
               ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🛏 ${l.roomType}</span>`:''}
-              ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🚻 ${l.boardingFor}</span>`:''}
+              ${appendGenderTagHTML(l.boardingFor, 'badge')}
               ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
             </div>
             <div class="result-title">${l.title}</div>
@@ -971,7 +993,7 @@ async function renderCurrentDetailPage() {
     const distEl   = document.getElementById('detail-dist');
     const ratingEl = document.getElementById('detail-rating');
     if (cityEl)   cityEl.innerHTML   = `📍 ${l.city}`;
-    if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''} · LKR ${Number(l.price).toLocaleString()}/mo`;
+    if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'} · LKR ${Number(l.price).toLocaleString()}/mo`;
     if (ratingEl) ratingEl.innerHTML = `<span class="rating-stars">★★★★☆</span> Loading...`;
 
     // Description
@@ -984,7 +1006,7 @@ async function renderCurrentDetailPage() {
       badgesDiv.innerHTML = `
         <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
         ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🛏 ${l.roomType}</span>`:''}
-        ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🚻 ${l.boardingFor}</span>`:''}
+        ${appendGenderTagHTML(l.boardingFor, 'badge')}
         ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">📷 ${l.media.length} photos</span>`:''}`;
     }
 
@@ -1043,7 +1065,7 @@ async function renderCurrentDetailPage() {
     const priceSub   = document.querySelector('#page-detail .price-sub');
     const availBadge = document.querySelector('#page-detail .avail-badge');
     if (priceBig) priceBig.textContent = `LKR ${Number(l.price).toLocaleString()}`;
-    if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'}${l.boardingFor ? ' · '+l.boardingFor : ''} · Bills may vary`;
+    if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'} · Bills may vary`;
     if (availBadge) {
       const meta = availabilityMeta(l);
       if (alreadyBookedByUser) {
@@ -1742,9 +1764,9 @@ async function loadDashboard() {
                     `<div style="width:60px;height:60px;border-radius:var(--radius-sm);background:${gradFor(l._id)};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${iconFor(l._id)}</div>`}
               <div style="flex:1;min-width:0;">
                 <div style="font-weight:700;font-size:15px;">${l.title}</div>
-                <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''}</div>
+                <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}</div>
                 <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
-                <div style="margin-top:6px;"><span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).badgeText}</span></div>
+                <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).badgeText}</span>${appendGenderTagHTML(l.boardingFor, 'badge')}</div>
               </div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
@@ -1922,6 +1944,7 @@ function renderAllBookings(bookings, role) {
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
             <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🏠 ${b.listing?.title||'Listing'}</div>
             <div style="font-size:13px;color:var(--gray-500);">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo · 🛏 ${b.roomType||b.listing?.roomType||'—'} · ${b.bookingType === 'future' ? '📅 Future Vacancy' : '✅ Available Vacancy'}</div>
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">${appendGenderTagHTML(b.listing?.boardingFor, 'badge')}</div>
           </div>
           <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
             <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>
@@ -1946,6 +1969,7 @@ function renderAllBookings(bookings, role) {
           </div>
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
             <div style="font-size:13px;color:var(--gray-600);">🛏 Room: <strong>${b.roomType||b.listing?.roomType||'—'}</strong> · 💰 LKR <strong>${b.listing?.price?.toLocaleString()||'—'}/mo</strong> · ${b.bookingType === 'future' ? '📅 Future Vacancy' : '✅ Available Vacancy'}</div>
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">${appendGenderTagHTML(b.listing?.boardingFor, 'badge')}</div>
           </div>
           <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
             <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>

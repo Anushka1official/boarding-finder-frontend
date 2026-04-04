@@ -56,48 +56,13 @@
   .nav-links a { text-decoration:none; padding:6px 14px; border-radius:var(--radius-sm); font-size:14px; font-weight:500; color:var(--gray-600); cursor:pointer; transition:all .2s; }
   .nav-links a:hover, .nav-links a.active { background:var(--brand-light); color:var(--brand); }
   .nav-end { margin-left:auto; display:flex; gap:10px; align-items:center; }
-  .mobile-menu-toggle {
-    display:none; margin-left:auto; width:42px; height:42px; border-radius:10px;
-    border:1px solid var(--gray-200); background:white; color:var(--gray-800);
-    align-items:center; justify-content:center; font-size:24px; cursor:pointer;
-    box-shadow:var(--shadow-sm);
-  }
-  .mobile-menu-toggle:hover { background:var(--gray-50); }
-  .mobile-sidebar-backdrop {
-    position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:120; opacity:0;
-    visibility:hidden; transition:all .25s ease;
-  }
-  .mobile-sidebar-backdrop.open { opacity:1; visibility:visible; }
-  .mobile-sidebar {
-    position:fixed; top:0; right:0; width:min(320px, 86vw); height:100vh; background:white;
-    z-index:130; box-shadow:var(--shadow-lg); transform:translateX(100%); transition:transform .25s ease;
-    display:flex; flex-direction:column;
-  }
-  .mobile-sidebar.open { transform:translateX(0); }
-  .mobile-sidebar-header {
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:20px 20px 14px; border-bottom:1px solid var(--gray-200);
-  }
-  .mobile-sidebar-title { font-size:17px; font-weight:700; color:var(--gray-900); }
-  .mobile-sidebar-close {
-    width:40px; height:40px; border:none; border-radius:10px; background:var(--gray-100);
-    color:var(--gray-700); cursor:pointer; font-size:22px;
-  }
-  .mobile-sidebar-user {
-    padding:16px 20px; border-bottom:1px solid var(--gray-200); color:var(--gray-600); font-size:14px;
-  }
-  .mobile-sidebar-links { padding:14px; display:flex; flex-direction:column; gap:8px; overflow:auto; }
-  .mobile-sidebar-links .menu-link {
-    display:flex; align-items:center; gap:10px; width:100%; text-align:left; text-decoration:none;
-    padding:12px 14px; border-radius:12px; border:1px solid transparent; background:transparent;
-    color:var(--gray-700); font-size:15px; font-weight:600; cursor:pointer; font-family:inherit;
-  }
-  .mobile-sidebar-links .menu-link:hover,
-  .mobile-sidebar-links .menu-link.active { background:var(--brand-light); color:var(--brand); border-color:var(--brand-mid); }
-  .mobile-sidebar-links .menu-link.primary {
-    background:var(--brand); color:white; box-shadow:0 2px 8px rgba(0,183,181,.25);
-  }
-  .mobile-sidebar-links .menu-link.danger { color:var(--danger); background:#FEF2F2; border-color:#FECACA; }
+  .mobile-nav-toggle { display:none; margin-left:auto; width:42px; height:42px; border-radius:12px; border:1px solid var(--gray-200); background:white; color:var(--gray-700); align-items:center; justify-content:center; font-size:20px; cursor:pointer; }
+  .mobile-nav-menu { display:none; position:fixed; top:calc(var(--nav-h) + 8px); left:16px; right:16px; background:rgba(255,255,255,0.98); border:1px solid var(--gray-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); padding:14px; z-index:120; }
+  .mobile-nav-menu.open { display:block; }
+  .mobile-nav-links, .mobile-nav-actions { display:flex; flex-direction:column; gap:8px; }
+  .mobile-nav-links a, .mobile-nav-actions button { width:100%; text-align:left; text-decoration:none; padding:11px 14px; border-radius:12px; font-size:14px; font-weight:600; color:var(--gray-700); background:white; border:1px solid var(--gray-200); cursor:pointer; font-family:inherit; }
+  .mobile-nav-links a.active, .mobile-nav-links a:hover, .mobile-nav-actions button:hover { background:var(--brand-light); color:var(--brand); border-color:var(--brand-mid); }
+  .mobile-nav-user { padding:8px 6px 12px; font-size:13px; color:var(--gray-500); font-weight:600; }
   .btn { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; cursor:pointer; transition:all .18s; border:none; font-family:inherit; text-decoration:none; }
   .btn-ghost { background:transparent; color:var(--gray-700); border:1px solid var(--gray-200); }
   .btn-ghost:hover { background:var(--gray-100); border-color:var(--gray-300); }
@@ -109,13 +74,6 @@
   .btn-success:hover { background:#059669; }
   .btn-lg { padding:13px 28px; font-size:15px; border-radius:var(--radius-md); }
   .btn-sm { padding:6px 12px; font-size:13px; }
-
-  @media(max-width:768px){
-    nav { padding:0 14px; gap:14px; }
-    .nav-links, .nav-end { display:none; }
-    .mobile-menu-toggle { display:inline-flex; }
-    .nav-brand span { font-size:15px; }
-  }
 
   /* ── PAGES ── */
   .page { display:none; padding-top:var(--nav-h); min-height:100vh; }
@@ -147,7 +105,9 @@
     padding:28px; max-width:780px; margin:0 auto 20px;
     border:1px solid var(--gray-200);
   }
-  .search-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr auto; gap:12px; align-items:end; }
+  .search-grid { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)) minmax(140px, auto); gap:12px; align-items:end; width:100%; }
+  .search-grid > * { min-width:0; }
+  @media(max-width:1024px){ .search-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); } .search-grid .btn { width:100%; justify-content:center; } }
   @media(max-width:680px){ .search-grid { grid-template-columns:1fr; } }
   .field { display:flex; flex-direction:column; gap:6px; }
   .field label { font-size:12px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:.6px; }
@@ -219,9 +179,9 @@
   .stat-label { font-size:13px; color:var(--gray-500); font-weight:500; margin-top:2px; }
 
   /* ── SEARCH RESULTS ── */
-  .results-layout { display:grid; grid-template-columns:280px 1fr; gap:24px; padding:24px; max-width:1200px; margin:0 auto; }
+  .results-layout { display:grid; grid-template-columns:280px minmax(0,1fr); gap:24px; padding:24px; max-width:1200px; margin:0 auto; align-items:start; }
   @media(max-width:768px){ .results-layout { grid-template-columns:1fr; } }
-  .filters-panel { background:white; border-radius:var(--radius-lg); border:1px solid var(--gray-200); padding:20px; height:fit-content; position:sticky; top:80px; }
+  .filters-panel { background:white; border-radius:var(--radius-lg); border:1px solid var(--gray-200); padding:20px; height:fit-content; position:sticky; top:80px; z-index:5; isolation:isolate; }
   .filters-panel h3 { font-weight:700; font-size:16px; margin-bottom:20px; color:var(--gray-800); }
   .filter-group { margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--gray-100); }
   .filter-group:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
@@ -233,7 +193,7 @@
   .radio-item { display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700);cursor:pointer; }
   .radio-item input[type=radio] { width:16px;height:16px;accent-color:var(--brand);cursor:pointer; }
   
-  .results-main {}
+  .results-main { min-width:0; position:relative; z-index:1; }
   .results-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
   .results-count { font-size:15px; color:var(--gray-600); }
   .results-count strong { color:var(--gray-900); font-weight:700; }
@@ -418,6 +378,34 @@
   .hidden { display:none; }
   .mobile-filter-btn { display:none;margin-bottom:16px; }
   @media(max-width:768px){ .mobile-filter-btn { display:block; } }
+  @media(max-width:900px){
+    :root { --nav-h: 72px; }
+    nav { padding: 0 14px; gap: 12px; }
+    .nav-links, .nav-end { display:none; }
+    .mobile-nav-toggle { display:inline-flex; }
+    .nav-brand span { font-size:15px; }
+    .nav-brand .logo { width:34px; height:34px; }
+    .section, .detail-wrap, .booking-page-wrap { padding-left:16px; padding-right:16px; }
+    .hero { padding: 68px 16px 48px; }
+    .search-card { padding:18px; }
+    .results-layout { padding:16px; gap:16px; }
+    .filters-panel { position:relative; top:0; z-index:2; }
+    .result-card { flex-direction:column; }
+    .result-img { width:100%; height:200px; }
+    .result-body { padding:14px; }
+    .result-header, .result-footer { flex-direction:column; align-items:flex-start; }
+    .gallery { grid-template-columns:1fr 1fr; grid-template-rows:220px 140px 140px; }
+    .gallery-main { grid-column:1 / -1; grid-row:auto; }
+  }
+  @media(max-width:520px){
+    nav { min-height: var(--nav-h); }
+    .mobile-nav-menu { left:10px; right:10px; top:calc(var(--nav-h) + 6px); }
+    .stats-row { flex-direction:column; }
+    .stat-item { border-right:none; border-bottom:1px solid var(--gray-200); }
+    .stat-item:last-child { border-bottom:none; }
+    .vacancy-banner { padding:24px 20px; margin-bottom:40px; }
+    .vacancy-banner::after { display:none; }
+  }
 
   /* ── AUTH PAGES ── */
   .auth-page {
@@ -494,827 +482,258 @@
     border-radius:100px; font-size:12px; font-weight:700; border:1px solid #5CCFCD;
   }
 
-</style>
 
-<style id="ui-redesign-v2">
+  /* ── Soft modern UI override ── */
   :root{
-    --ux-surface: rgba(255,255,255,0.72);
-    --ux-surface-strong: rgba(255,255,255,0.88);
-    --ux-line: rgba(0,84,97,0.12);
-    --ux-line-strong: rgba(0,84,97,0.18);
-    --ux-shadow-xl: 0 24px 80px rgba(0, 54, 64, 0.12);
-    --ux-shadow-soft: 0 12px 44px rgba(0, 54, 64, 0.08);
-    --ux-shadow-card: 0 12px 40px rgba(0, 54, 64, 0.08), 0 4px 10px rgba(0, 54, 64, 0.05);
-    --ux-glow: 0 0 0 1px rgba(255,255,255,0.28) inset;
+    --glass-bg: rgba(255,255,255,0.72);
+    --glass-strong: rgba(255,255,255,0.84);
+    --glass-border: rgba(255,255,255,0.55);
+    --soft-shadow: 0 14px 34px rgba(0, 84, 97, 0.08), 0 4px 14px rgba(0, 0, 0, 0.04);
+    --lift-shadow: 0 20px 42px rgba(0, 84, 97, 0.12), 0 8px 22px rgba(0, 0, 0, 0.05);
   }
 
   body{
     background:
-      radial-gradient(circle at 8% 10%, rgba(0,183,181,.12), transparent 28%),
-      radial-gradient(circle at 92% 16%, rgba(1,135,144,.10), transparent 24%),
-      radial-gradient(circle at 12% 90%, rgba(245,158,11,.08), transparent 20%),
-      linear-gradient(180deg, #f7fbfb 0%, #eef7f7 32%, #f5f6f8 100%);
-    color: var(--gray-800);
-  }
-
-  body::before,
-  body::after{
-    content:'';
-    position:fixed;
-    inset:auto;
-    z-index:-1;
-    pointer-events:none;
-    filter: blur(54px);
-    opacity:.65;
-    animation: uxFloat 16s ease-in-out infinite;
-  }
-  body::before{
-    width:360px; height:360px;
-    left:-120px; top:90px;
-    background:radial-gradient(circle, rgba(0,183,181,.22), transparent 70%);
-  }
-  body::after{
-    width:320px; height:320px;
-    right:-100px; top:220px;
-    background:radial-gradient(circle, rgba(1,135,144,.14), transparent 70%);
-    animation-delay:-8s;
-  }
-
-  @keyframes uxFloat{
-    0%,100%{ transform:translate3d(0,0,0) scale(1); }
-    50%{ transform:translate3d(0,22px,0) scale(1.06); }
-  }
-
-  .ui-orb{
-    position:fixed;
-    border-radius:50%;
-    pointer-events:none;
-    z-index:-1;
-    filter:blur(70px);
-    opacity:.45;
-    animation: uxOrb 20s ease-in-out infinite;
-  }
-  .ui-orb.orb-a{ width:260px;height:260px; left:8%; top:34%; background:radial-gradient(circle, rgba(0,183,181,.18), transparent 68%); }
-  .ui-orb.orb-b{ width:260px;height:260px; right:10%; bottom:10%; background:radial-gradient(circle, rgba(245,158,11,.13), transparent 68%); animation-delay:-7s; }
-  .ui-orb.orb-c{ width:220px;height:220px; right:34%; top:68%; background:radial-gradient(circle, rgba(0,84,97,.12), transparent 68%); animation-delay:-11s; }
-
-  @keyframes uxOrb{
-    0%,100%{ transform:translate3d(0,0,0) scale(1); }
-    33%{ transform:translate3d(14px,-18px,0) scale(1.06); }
-    66%{ transform:translate3d(-12px,22px,0) scale(.96); }
+      radial-gradient(circle at top left, rgba(0,183,181,0.10), transparent 26%),
+      radial-gradient(circle at top right, rgba(1,135,144,0.08), transparent 24%),
+      linear-gradient(180deg, #F7FBFB 0%, #F4F4F4 38%, #EEF7F7 100%);
   }
 
   nav{
-    background:rgba(255,255,255,.62);
-    border-bottom:1px solid rgba(255,255,255,.45);
-    box-shadow:0 12px 36px rgba(0,54,64,.06);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    padding:0 28px;
-  }
-  .nav-brand{ position:relative; }
-  .nav-brand .logo{
-    background:linear-gradient(135deg, var(--brand) 0%, var(--accent) 55%, var(--brand-dark) 100%);
-    box-shadow: 0 10px 24px rgba(0,183,181,.28), 0 0 0 1px rgba(255,255,255,.55) inset;
-    transform:translateZ(0);
-  }
-  .nav-brand span{
-    font-size:1.05rem;
-    font-weight:800;
-    letter-spacing:-.02em;
-  }
-  .nav-brand em{
-    font-style:normal;
-    color:var(--accent);
-  }
-  .nav-links a{
-    position:relative;
-    color:var(--gray-700);
-    transition:color .25s ease, transform .25s ease;
-  }
-  .nav-links a::after{
-    content:'';
-    position:absolute;
-    left:0; right:0; bottom:-8px;
-    height:3px;
-    border-radius:999px;
-    background:linear-gradient(90deg, var(--brand), var(--accent));
-    transform:scaleX(0);
-    transform-origin:center;
-    transition:transform .28s ease;
-  }
-  .nav-links a:hover,
-  .nav-links a.active{
-    color:var(--gray-900);
-    transform:translateY(-1px);
-  }
-  .nav-links a:hover::after,
-  .nav-links a.active::after{ transform:scaleX(1); }
-
-  .btn{
-    border-radius:999px;
-    font-weight:700;
-    letter-spacing:-.01em;
-    transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease, background .28s ease, color .28s ease;
-  }
-  .btn:hover{
-    transform:translateY(-2px);
-  }
-  .btn:active{
-    transform:translateY(0);
-  }
-  .btn-primary{
-    background:linear-gradient(135deg, var(--brand-dark) 0%, var(--accent) 50%, var(--brand) 100%);
-    box-shadow:0 14px 34px rgba(0,84,97,.22);
-    border:none;
-  }
-  .btn-primary:hover{
-    box-shadow:0 18px 40px rgba(0,84,97,.28);
-    filter:saturate(1.05);
-  }
-  .btn-ghost,
-  .btn-outline{
-    background:rgba(255,255,255,.7);
-    border:1px solid rgba(0,84,97,.12);
-    backdrop-filter: blur(12px);
-  }
-  .btn-ghost:hover,
-  .btn-outline:hover{
-    background:rgba(255,255,255,.95);
-    border-color:rgba(0,183,181,.35);
-  }
-
-  .page{
-    position:relative;
-    animation: pageLift .55s ease both;
-  }
-  @keyframes pageLift{
-    from{ opacity:0; transform:translateY(18px); }
-    to{ opacity:1; transform:translateY(0); }
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.75);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
   }
 
   .hero{
-    text-align:left;
-    padding: 108px 24px 82px;
-    overflow:visible;
     background:
-      radial-gradient(circle at 78% 14%, rgba(0,183,181,.18), transparent 30%),
-      radial-gradient(circle at 18% 85%, rgba(1,135,144,.12), transparent 26%),
-      linear-gradient(135deg, rgba(224,245,245,.96) 0%, rgba(245,251,251,.88) 42%, rgba(224,245,245,.96) 100%);
+      radial-gradient(circle at 20% 20%, rgba(0,183,181,0.16), transparent 24%),
+      radial-gradient(circle at 85% 10%, rgba(1,135,144,0.10), transparent 20%),
+      linear-gradient(135deg, #F0FBFB 0%, #E7F7F7 45%, #F6FBFB 100%);
+  }
+
+  .hero::before,
+  .hero::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    filter: blur(18px);
+    opacity:.45;
   }
   .hero::before{
-    width:460px; height:460px; right:-140px; top:-90px;
-    background: radial-gradient(circle, rgba(0,183,181,.18) 0%, transparent 70%);
-    animation: uxHeroBlob 18s ease-in-out infinite;
+    width:240px;height:240px;right:-80px;top:40px;
+    background: radial-gradient(circle, rgba(0,183,181,0.18), transparent 70%);
   }
   .hero::after{
-    width:360px; height:360px; left:-100px; bottom:-90px;
-    background: radial-gradient(circle, rgba(1,135,144,.12) 0%, transparent 70%);
-    animation: uxHeroBlob 20s ease-in-out infinite reverse;
-  }
-  @keyframes uxHeroBlob{
-    0%,100%{ transform:translate3d(0,0,0) scale(1); }
-    50%{ transform:translate3d(0,20px,0) scale(1.06); }
-  }
-  .hero > *{
-    max-width:1200px;
-    margin-left:auto;
-    margin-right:auto;
-    position:relative;
-    z-index:1;
-  }
-  .hero-badge{
-    background:rgba(255,255,255,.78);
-    border:1px solid rgba(255,255,255,.9);
-    box-shadow:var(--ux-shadow-soft), var(--ux-glow);
-    backdrop-filter: blur(14px);
-    padding:8px 16px;
-  }
-  .hero h1{
-    font-size:clamp(42px, 6vw, 72px);
-    line-height:1.02;
-    margin-bottom:18px;
-    letter-spacing:-.045em;
-  }
-  .hero h1 em{
-    background:linear-gradient(135deg, var(--accent), var(--brand));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-  }
-  .hero p{
-    max-width:640px;
-    font-size:18px;
-    line-height:1.8;
-    color:rgba(31,41,55,.72);
-    margin:0 0 34px;
-  }
-  .search-card{
-    position:relative;
-    margin-top:26px;
-    border-radius:32px;
-    padding:30px;
-    border:1px solid rgba(255,255,255,.75);
-    background:linear-gradient(180deg, rgba(255,255,255,.76) 0%, rgba(255,255,255,.66) 100%);
-    box-shadow:var(--ux-shadow-xl), var(--ux-glow);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  .search-card::before{
-    content:'';
-    position:absolute;
-    inset:1px;
-    border-radius:31px;
-    background:linear-gradient(135deg, rgba(255,255,255,.46), rgba(255,255,255,0));
-    pointer-events:none;
-  }
-  .search-grid{
-    display:grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
-    gap:14px;
-    align-items:end;
-  }
-  .field{
-    position:relative;
-  }
-  .field label{
-    font-size:11px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:rgba(75,85,99,.74);
-    margin-bottom:9px;
-  }
-  .field select,
-  .field input,
-  #page-results input,
-  #page-results select,
-  .sort-select,
-  .form-group input,
-  .form-group select,
-  .form-group textarea,
-  .auth-field input,
-  .auth-field select{
-    border:1px solid rgba(0,84,97,.10) !important;
-    background:rgba(255,255,255,.84) !important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
-    border-radius:16px !important;
-    padding:13px 15px !important;
-    transition:border-color .26s ease, box-shadow .26s ease, transform .26s ease;
-  }
-  .field select:focus,
-  .field input:focus,
-  #page-results input:focus,
-  #page-results select:focus,
-  .sort-select:focus,
-  .form-group input:focus,
-  .form-group select:focus,
-  .form-group textarea:focus,
-  .auth-field input:focus,
-  .auth-field select:focus{
-    border-color:rgba(0,183,181,.36) !important;
-    box-shadow:0 0 0 4px rgba(0,183,181,.10), inset 0 1px 0 rgba(255,255,255,.8) !important;
-    outline:none;
-    transform:translateY(-1px);
+    width:180px;height:180px;left:-40px;bottom:20px;
+    background: radial-gradient(circle, rgba(1,135,144,0.12), transparent 70%);
   }
 
-  .divider-or{
-    opacity:.55;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    font-size:11px;
-    font-weight:700;
-    margin-top:24px;
-  }
-  .quick-features{
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-    justify-content:center;
-    margin-top:18px;
-  }
-  .quick-feat{
-    position:relative;
-    background:rgba(255,255,255,.74);
-    border:1px solid rgba(255,255,255,.92);
-    box-shadow:var(--ux-shadow-soft), var(--ux-glow);
-    backdrop-filter: blur(14px);
-    border-radius:999px;
-    padding:12px 18px;
-    transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
-  }
-  .quick-feat:hover{
-    transform:translateY(-4px);
-    box-shadow:0 18px 34px rgba(0,84,97,.14);
-    border-color:rgba(0,183,181,.26);
-  }
-  .quick-feat .icon{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:28px; height:28px;
-    margin-right:6px;
-    border-radius:999px;
-    background:linear-gradient(135deg, rgba(0,183,181,.18), rgba(0,84,97,.08));
-  }
-
-  .stats-row{
-    background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.62));
-    border:1px solid rgba(255,255,255,.74);
-    box-shadow:var(--ux-shadow-soft), var(--ux-glow);
-    backdrop-filter: blur(18px);
-    overflow:hidden;
-    border-radius:26px;
-  }
-  .stat-item{
-    background:transparent;
-    transition:transform .28s ease, background .28s ease;
-  }
-  .stat-item:hover{
-    transform:translateY(-3px);
-    background:rgba(255,255,255,.28);
-  }
-  .stat-num{
-    font-size:clamp(28px, 3vw, 38px);
-    background:linear-gradient(135deg, var(--brand-dark), var(--accent));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    letter-spacing:-.04em;
-  }
-
-  .vacancy-banner{
-    border:1px solid rgba(255,255,255,.26);
-    box-shadow:var(--ux-shadow-xl);
-    background:
-      radial-gradient(circle at 100% 0%, rgba(255,255,255,.18), transparent 24%),
-      linear-gradient(135deg, #003640 0%, #005461 38%, #018790 100%);
-  }
-  .vacancy-banner::before{
-    content:'';
-    position:absolute;
-    inset:1px;
-    border-radius:inherit;
-    background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,0));
-    pointer-events:none;
-  }
-  .vacancy-banner h2{
-    font-size:clamp(26px, 3vw, 34px);
-    letter-spacing:-.03em;
-  }
-
-  .section-title{
-    font-size:13px;
-    font-weight:800;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    color:rgba(0,84,97,.72);
-  }
-  .see-all{
-    border-radius:999px;
-    padding:10px 16px;
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(0,84,97,.1);
-    box-shadow:var(--ux-shadow-soft);
-  }
-
-  .cards-grid{
-    gap:24px;
-  }
-  .boarding-card{
-    border-radius:26px;
-    border:1px solid rgba(255,255,255,.9);
-    background:linear-gradient(180deg, rgba(255,255,255,.84) 0%, rgba(255,255,255,.72) 100%);
-    box-shadow:var(--ux-shadow-card), var(--ux-glow);
-    backdrop-filter: blur(10px);
-    overflow:hidden;
-    transform-origin:center;
-  }
-  .boarding-card::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    background:linear-gradient(135deg, rgba(255,255,255,.36), transparent 32%);
-    opacity:.8;
-  }
-  .boarding-card:hover{
-    transform:translateY(-10px) scale(1.01);
-    box-shadow:0 28px 54px rgba(0,54,64,.14), 0 10px 22px rgba(0,54,64,.08);
-  }
-  .card-img{
-    height:200px;
-  }
-  .card-img .img-bg,
-  .result-img img,
-  .gallery-cell img,
-  .gallery-cell video,
-  .media-thumb img,
-  .media-thumb video{
-    transition:transform .65s ease, filter .45s ease;
-  }
-  .boarding-card:hover .img-bg,
-  .result-card:hover .result-img img{
-    transform:scale(1.06);
-    filter:saturate(1.05);
-  }
-  .card-img::after,
-  .result-img::after{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,54,64,.18) 100%);
-    pointer-events:none;
-  }
-  .card-badges,
-  .result-tags{
-    gap:8px;
-  }
-  .badge,
-  .tag{
-    border-radius:999px;
-    padding:6px 11px;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.02em;
-    border:1px solid transparent;
-    backdrop-filter: blur(10px);
-  }
-  .badge-available{
-    background:rgba(255,255,255,.8);
-    color:#05603f;
-    border-color:rgba(255,255,255,.72);
-  }
-  .badge-soon{
-    background:rgba(245,158,11,.18);
-    color:#8a5400;
-    border-color:rgba(245,158,11,.18);
-  }
-  .badge-verified,
-  .badge-group{
-    background:rgba(255,255,255,.72);
-    color:var(--brand-dark);
-    border-color:rgba(255,255,255,.65);
-  }
-  .fav-btn{
-    width:38px; height:38px;
-    top:14px; right:14px;
-    border:1px solid rgba(255,255,255,.85);
-    backdrop-filter: blur(12px);
-    box-shadow:0 10px 22px rgba(0,54,64,.10);
-  }
-  .fav-btn:hover{ transform:scale(1.08) translateY(-1px); }
-
-  .card-body{
-    padding:18px 18px 20px;
-  }
-  .card-title{
-    font-size:17px;
-    letter-spacing:-.02em;
-  }
-  .card-location{
-    color:rgba(75,85,99,.76);
-  }
-  .card-price,
-  .result-price{
-    letter-spacing:-.04em;
-    color:var(--brand-dark);
-  }
-  .card-dist{
-    background:rgba(0,84,97,.06);
-    border-radius:999px;
-    padding:6px 10px;
-    font-weight:600;
-  }
-
-  .results-layout{
-    gap:28px;
-    padding:28px 24px 40px;
-  }
+  .search-card,
   .filters-panel,
+  .boarding-card,
   .result-card,
-  .detail-side-card,
-  .booking-summary,
+  .booking-panel,
+  .bookings-panel,
+  .dash-stat,
+  .listing-form,
+  .auth-card,
+  .review-card,
+  .review-card-full,
+  .modal,
   .booking-form-section,
+  .booking-summary{
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.72) !important;
+    box-shadow: var(--soft-shadow);
+  }
+
+  .dashboard-wrap .listing-form,
+  .dashboard-wrap .bookings-panel,
+  .detail-layout > aside .booking-panel,
+  .search-results-layout .filters-panel{
+    background: var(--glass-strong);
+  }
+
+  .search-card,
+  .filters-panel,
+  .boarding-card,
+  .result-card,
+  .booking-panel,
+  .dash-stat,
+  .auth-card,
+  .modal,
+  .listing-form,
+  .bookings-panel,
+  .review-card,
+  .review-card-full,
+  .booking-form-section,
+  .booking-summary,
+  .btn,
+  .fav-btn,
+  .nav-btn{
+    transition:
+      transform .18s ease,
+      box-shadow .18s ease,
+      border-color .18s ease,
+      background-color .18s ease,
+      color .18s ease;
+  }
+
+  .boarding-card:hover,
+  .result-card:hover,
+  .dash-stat:hover,
+  .review-card:hover,
+  .review-card-full:hover,
+  .auth-card:hover{
+    transform: translateY(-2px);
+    box-shadow: var(--lift-shadow);
+  }
+
+  .search-card:hover,
+  .filters-panel:hover,
+  .booking-panel:hover,
+  .listing-form:hover,
+  .bookings-panel:hover{
+    box-shadow: 0 18px 40px rgba(0,84,97,0.09), 0 6px 20px rgba(0,0,0,0.04);
+  }
+
+  .btn-primary,
+  .btn-success,
+  .nav-btn,
+  .btn-lg.btn-primary{
+    box-shadow: 0 8px 20px rgba(0, 183, 181, 0.18);
+  }
+
+  .btn-primary:hover,
+  .btn-success:hover,
+  .nav-btn:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(0, 183, 181, 0.22);
+  }
+
+  .btn-ghost,
+  .btn-outline{
+    background: rgba(255,255,255,0.62);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .mobile-nav-menu{
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.78);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+  }
+
+  .section-title,
+  .detail-title,
+  .dashboard-header h1{
+    letter-spacing: -0.02em;
+  }
+
+  .badge,
+  .avail-badge,
+  .booking-status{
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+
+  .card-img,
+  .result-img-placeholder,
+  .gallery-cell{
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-img::after,
+  .result-img-placeholder::after,
+  .gallery-cell::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.03));
+    pointer-events:none;
+  }
+
+  .search-card,
+  .filters-panel,
+  .boarding-card,
+  .result-card,
+  .booking-panel,
   .dash-stat,
   .listing-form,
   .bookings-panel,
   .auth-card,
-  .review-card-full,
-  .write-review,
-  .owner-extras,
-  .room-type-card,
-  .payment-option,
-  .booking-card,
-  .saved-card{
-    background:linear-gradient(180deg, rgba(255,255,255,.82) 0%, rgba(255,255,255,.70) 100%);
-    border:1px solid rgba(255,255,255,.86);
-    box-shadow:var(--ux-shadow-card), var(--ux-glow);
-    backdrop-filter: blur(18px);
-  }
-  .filters-panel{
-    top:92px;
-    border-radius:28px;
-    padding:22px;
-  }
-  .filter-group{
-    border-bottom:1px solid rgba(0,84,97,.08);
-  }
-  .check-item,
-  .radio-item{
-    padding:10px 12px;
-    border-radius:14px;
-    transition:background .24s ease, transform .24s ease;
-  }
-  .check-item:hover,
-  .radio-item:hover{
-    background:rgba(255,255,255,.65);
-    transform:translateX(3px);
+  .modal{
+    border-radius: 20px;
   }
 
-  #page-results > div:first-child{
-    background:rgba(255,255,255,.62) !important;
-    backdrop-filter: blur(18px);
-    border-bottom:1px solid rgba(255,255,255,.62) !important;
-    box-shadow:0 10px 30px rgba(0,54,64,.05);
-  }
-
-  .result-card{
-    border-radius:28px;
-    overflow:hidden;
-    align-items:stretch;
-  }
-  .result-card:hover{
-    transform:translateY(-7px);
-    box-shadow:0 24px 48px rgba(0,54,64,.14), 0 8px 18px rgba(0,54,64,.08);
-  }
-  .result-img{
-    width:230px;
-  }
-  .result-body{
-    padding:20px 22px;
-  }
-  .result-title{
-    font-size:19px;
-    letter-spacing:-.02em;
-  }
-
-  .detail-wrap,
-  .booking-page-wrap,
-  .dashboard-wrap{
-    padding:36px 24px 48px;
-  }
-  .detail-title,
-  .booking-page-wrap h1,
-  .dashboard-header h1{
-    font-size:clamp(30px, 4vw, 42px);
-    letter-spacing:-.04em;
-    line-height:1.04;
-  }
-  .gallery{
-    border-radius:32px;
-    box-shadow:var(--ux-shadow-xl);
-    border:1px solid rgba(255,255,255,.72);
-    overflow:hidden;
-  }
-  .gallery-cell{
-    background:linear-gradient(135deg, rgba(0,183,181,.12), rgba(255,255,255,.56));
-  }
-  .detail-layout{
-    gap:30px;
-  }
-  .detail-content section,
-  .detail-side-card,
-  .review-card-full,
-  .write-review{
-    border-radius:28px;
-    padding:24px;
-  }
-  .detail-meta{
-    color:rgba(75,85,99,.76);
-  }
-  .al-rule,
-  .el-rule{
-    border-bottom-color:rgba(0,84,97,.08);
-  }
-
-  .booking-layout,
-  .dash-main{
-    gap:28px;
-  }
-  .booking-form-section,
-  .booking-summary,
-  .listing-form,
-  .bookings-panel,
-  .auth-card{
-    border-radius:30px;
-  }
-  .booking-form-section h3,
-  .booking-summary h3,
-  .listing-form h3{
-    font-size:18px;
-  }
-  .payment-option,
-  .room-type-card{
-    border-radius:18px;
-    transition:transform .26s ease, border-color .26s ease, background .26s ease, box-shadow .26s ease;
-  }
-  .payment-option:hover,
-  .room-type-card:hover,
-  .payment-option.selected,
-  .room-type-card.selected{
-    transform:translateY(-3px);
-    border-color:rgba(0,183,181,.30);
-    box-shadow:0 16px 34px rgba(0,84,97,.10);
-  }
-
-  .dash-stat{
-    position:relative;
-    overflow:hidden;
-    padding:22px;
-  }
-  .dash-stat::after{
-    content:'';
-    position:absolute;
-    inset:auto -40px -60px auto;
-    width:120px; height:120px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(0,183,181,.12), transparent 70%);
-    pointer-events:none;
-  }
-  .dash-stat .stat-val{
-    letter-spacing:-.05em;
-  }
-  .bookings-panel{
-    padding:22px;
-  }
-
-  .auth-page{
-    background:
-      radial-gradient(circle at 16% 18%, rgba(0,183,181,.12), transparent 24%),
-      radial-gradient(circle at 84% 80%, rgba(1,135,144,.12), transparent 22%),
-      linear-gradient(135deg, #edf9f8 0%, #f8fbfb 100%);
-  }
-  .auth-card{
-    overflow:hidden;
-  }
-  .auth-header{
-    background:
-      radial-gradient(circle at 0% 0%, rgba(255,255,255,.15), transparent 22%),
-      linear-gradient(135deg, #003640, #005461 42%, #018790 100%);
-    padding:34px 32px 28px;
-  }
-  .auth-header .auth-logo{
-    box-shadow:0 10px 26px rgba(0,0,0,.18);
-    backdrop-filter: blur(10px);
-  }
-
-  .mobile-menu-toggle{
-    border:1px solid rgba(0,84,97,.12);
-    background:rgba(255,255,255,.76);
-    backdrop-filter: blur(14px);
-    box-shadow:var(--ux-shadow-soft);
-  }
-  .mobile-sidebar-backdrop{
-    background:rgba(0,54,64,.24);
-    backdrop-filter: blur(6px);
-  }
-  .mobile-sidebar{
-    background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.82));
-    backdrop-filter: blur(22px);
-    border-left:1px solid rgba(255,255,255,.72);
-  }
-  .mobile-sidebar-header,
-  .mobile-sidebar-user{
-    border-bottom-color:rgba(0,84,97,.08);
-  }
-  .mobile-sidebar-links .btn,
-  .mobile-sidebar-links a{
-    border-radius:16px !important;
-  }
-
-  .reveal-up{
-    opacity:0;
-    transform:translateY(28px) scale(.985);
-    transition:opacity .65s ease, transform .65s cubic-bezier(.22,.61,.36,1), filter .65s ease;
-    filter:blur(4px);
-  }
-  .reveal-up.is-visible{
-    opacity:1;
-    transform:translateY(0) scale(1);
-    filter:blur(0);
-  }
-
-  .glass-hover{
-    transition:transform .3s ease, box-shadow .3s ease;
-  }
-  .glass-hover:hover{
-    transform:translateY(-4px);
-  }
-
-  @media (max-width: 1100px){
-    .search-grid{
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @media (max-width: 768px){
-    nav{ padding:0 16px; }
+  @media (max-width: 900px){
     .hero{
-      text-align:center;
-      padding: 96px 16px 64px;
+      padding-top: 88px;
     }
-    .hero p{ margin-left:auto; margin-right:auto; }
-    .search-card{
-      padding:20px;
-      border-radius:26px;
-    }
-    .search-grid{
-      grid-template-columns: 1fr;
-    }
-    .quick-features{
-      justify-content:center;
-    }
-    .vacancy-banner{
-      padding:28px 24px;
-      margin-bottom:44px;
-      border-radius:28px;
-    }
-    .cards-grid{
-      grid-template-columns:1fr;
-    }
-    .result-card{
-      flex-direction:column;
-    }
-    .result-img{
-      width:100%;
-      height:220px;
-    }
-    .detail-wrap,
-    .booking-page-wrap,
-    .dashboard-wrap{
-      padding:28px 16px 40px;
-    }
-    .gallery{
-      grid-template-columns:1fr 1fr;
-      grid-template-rows:220px 140px 140px;
-    }
-    .gallery-main{ grid-column:1 / -1; grid-row:auto; }
-    .filters-panel{
-      position:relative;
-      top:auto;
-    }
-    .results-layout{
-      padding:20px 16px 36px;
-    }
-  }
-  @media (max-width: 520px){
-    .hero h1{ font-size:40px; }
-    .hero p{ font-size:16px; }
-    .stat-item{ padding:18px 10px; }
-    .quick-feat{ width:100%; justify-content:center; }
+    .search-card,
+    .filters-panel,
     .boarding-card,
     .result-card,
-    .filters-panel,
-    .detail-side-card,
-    .booking-summary,
-    .booking-form-section,
+    .booking-panel,
     .dash-stat,
     .listing-form,
     .bookings-panel,
-    .auth-card{ border-radius:22px; }
+    .auth-card,
+    .modal{
+      border-radius: 18px;
+    }
   }
-</style>
 
+  @media (prefers-reduced-motion: reduce){
+    html { scroll-behavior: auto; }
+    *,
+    *::before,
+    *::after{
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+</style>
 </head>
 <body>
 <!-- ════════════ NAV ════════════ -->
 <nav>
-  <div class="nav-brand" onclick="showPage('home')">
+  <div class="nav-brand" onclick="showPage('home'); closeMobileMenu();">
     <div class="logo">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
     </div>
     <span>Smart<em>Boarding</em></span>
   </div>
   <div class="nav-links">
-    <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
-    <a onclick="showPage('results')" id="nav-results">Search</a>
-    <a onclick="showPage('dashboard')" id="nav-dashboard">Owner Portal</a>
+    <a onclick="showPage('home'); closeMobileMenu();" id="nav-home" class="active">Home</a>
+    <a onclick="showPage('results'); closeMobileMenu();" id="nav-results">Search</a>
+    <a onclick="showPage('dashboard'); closeMobileMenu();" id="nav-dashboard">Owner Portal</a>
   </div>
   <div class="nav-end">
     <button class="btn btn-ghost" onclick="showPage('dashboard')">List Property</button>
     <button class="btn btn-ghost" onclick="showPage('login')">Sign In</button>
     <button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>
   </div>
-  <button class="mobile-menu-toggle" id="mobile-menu-toggle" onclick="toggleMobileSidebar(true)" aria-label="Open menu">☰</button>
+  <button class="mobile-nav-toggle" onclick="toggleMobileMenu()" aria-label="Open menu">☰</button>
 </nav>
-<div class="mobile-sidebar-backdrop" id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar(false)"></div>
-<aside class="mobile-sidebar" id="mobile-sidebar">
-  <div class="mobile-sidebar-header">
-    <div class="mobile-sidebar-title">Menu</div>
-    <button class="mobile-sidebar-close" onclick="toggleMobileSidebar(false)" aria-label="Close menu">×</button>
+<div class="mobile-nav-menu" id="mobile-nav-menu">
+  <div class="mobile-nav-user" id="mobile-nav-user">Menu</div>
+  <div class="mobile-nav-links">
+    <a onclick="showPage('home'); closeMobileMenu();" id="mobile-nav-home">Home</a>
+    <a onclick="showPage('results'); closeMobileMenu();" id="mobile-nav-results">Search</a>
+    <a onclick="showPage('dashboard'); closeMobileMenu();" id="mobile-nav-dashboard">Dashboard</a>
   </div>
-  <div class="mobile-sidebar-user" id="mobile-sidebar-user">Browse SmartBoarding</div>
-  <div class="mobile-sidebar-links" id="mobile-sidebar-links"></div>
-</aside>
+  <div class="mobile-nav-actions" id="mobile-nav-actions" style="margin-top:10px;"></div>
+</div>
 
 <!-- ════════════ HOME PAGE ════════════ -->
 <div class="page active" id="page-home">
@@ -2788,16 +2207,20 @@ function showMsg(el, text, type) {
 
 // ── Page navigation ───────────────────────────────
 function showPage(id) {
+  closeMobileMenu();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
   if (!pg) { console.error('Page not found: page-' + id); return; }
   pg.classList.add('active');
-  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-  const navMap = { home:'nav-home', results:'nav-results', dashboard:'nav-dashboard',
-    detail:'nav-results', booking:'nav-results', reviews:'nav-results',
-    'add-listing':'nav-dashboard', saved:null, login:null, signup:null, verify:null, allbookings:'nav-dashboard' };
-  const el = document.getElementById(navMap[id]);
+  document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(a => a.classList.remove('active'));
+  const navMap = { home:'home', results:'results', dashboard:'dashboard',
+    detail:'results', booking:'results', reviews:'results',
+    'add-listing':'dashboard', saved:null, login:null, signup:null, verify:null, allbookings:'dashboard' };
+  const navKey = navMap[id];
+  const el = navKey ? document.getElementById('nav-' + navKey) : null;
+  const mobileEl = navKey ? document.getElementById('mobile-nav-' + navKey) : null;
   if (el) el.classList.add('active');
+  if (mobileEl) mobileEl.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
   if (id === 'results')   applyFilters();
   if (id === 'dashboard') {
@@ -2810,8 +2233,6 @@ function showPage(id) {
   }
   if (id === 'reviews' && currentListing) loadReviewsPage();
   if (id === 'saved')     loadSavedPage();
-  renderMobileSidebar(id);
-  toggleMobileSidebar(false);
 
 }
 
@@ -2837,77 +2258,59 @@ function switchSignupRole(role) {
 }
 
 // ── Nav ───────────────────────────────────────────
-function toggleMobileSidebar(forceOpen) {
-  const sidebar = document.getElementById('mobile-sidebar');
-  const backdrop = document.getElementById('mobile-sidebar-backdrop');
-  if (!sidebar || !backdrop) return;
-  const open = typeof forceOpen === 'boolean' ? forceOpen : !sidebar.classList.contains('open');
-  sidebar.classList.toggle('open', open);
-  backdrop.classList.toggle('open', open);
-  document.body.style.overflow = open ? 'hidden' : '';
-}
 
-function getMobileMenuItems() {
-  const name = localStorage.getItem('userName');
-  const role = localStorage.getItem('userRole');
-  const items = [
-    { label:'Home', icon:'🏠', action:"showPage('home')", active:['home'] },
-    { label:'Search', icon:'🔎', action:"showPage('results')", active:['results','detail','booking','reviews','saved'] }
-  ];
-  if (name) {
-    if (role === 'landlord') {
-      items.push({ label:'Dashboard', icon:'📊', action:"showPage('dashboard')", active:['dashboard','add-listing','allbookings'] });
-      items.push({ label:'Sign Out', icon:'🚪', action:'logoutUser()', type:'danger' });
-    } else {
-      items.push({ label:'My Bookings', icon:'📘', action:"showPage('dashboard')", active:['dashboard'] });
-      items.push({ label:'Saved', icon:'♥', action:"showPage('saved')", active:['saved'] });
-      items.push({ label:'Sign Out', icon:'🚪', action:'logoutUser()', type:'danger' });
-    }
-  } else {
-    items.push({ label:'Sign In', icon:'🔐', action:"showPage('login')", active:['login'] });
-    items.push({ label:'Sign Up', icon:'✨', action:"showPage('signup')", active:['signup'], type:'primary' });
-  }
-  return items;
+function toggleMobileMenu() {
+  document.getElementById('mobile-nav-menu')?.classList.toggle('open');
 }
-
-function renderMobileSidebar(activePage) {
-  const links = document.getElementById('mobile-sidebar-links');
-  const userBox = document.getElementById('mobile-sidebar-user');
-  if (!links || !userBox) return;
-  const name = localStorage.getItem('userName');
-  const role = localStorage.getItem('userRole');
-  userBox.textContent = name ? `Signed in as ${name}${role==='landlord' ? ' · Owner' : ''}` : 'Browse SmartBoarding';
-  links.innerHTML = getMobileMenuItems().map(item => {
-    const active = (item.active || []).includes(activePage) ? ' active' : '';
-    const type = item.type ? ` ${item.type}` : '';
-    return `<button class="menu-link${active}${type}" onclick="toggleMobileSidebar(false); ${item.action}"><span>${item.icon}</span><span>${item.label}</span></button>`;
-  }).join('');
+function closeMobileMenu() {
+  document.getElementById('mobile-nav-menu')?.classList.remove('open');
 }
+window.addEventListener('resize', () => { if (window.innerWidth > 900) closeMobileMenu(); });
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('mobile-nav-menu');
+  const toggle = document.querySelector('.mobile-nav-toggle');
+  if (!menu || !toggle) return;
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !toggle.contains(e.target)) closeMobileMenu();
+});
 
-function updateNav(activePage = document.querySelector('.page.active')?.id?.replace('page-','') || 'home') {
+function updateNav() {
   const name = localStorage.getItem('userName');
   const role = localStorage.getItem('userRole');
   const navEnd = document.querySelector('.nav-end');
   const navDashLink = document.getElementById('nav-dashboard');
+  const mobileDashLink = document.getElementById('mobile-nav-dashboard');
+  const mobileActions = document.getElementById('mobile-nav-actions');
+  const mobileUser = document.getElementById('mobile-nav-user');
 
   // Show/hide Owner Portal nav link — only visible to landlords
   if (navDashLink) {
     if (role === 'landlord') {
       navDashLink.style.display = '';
       navDashLink.textContent = 'Owner Portal';
-      navDashLink.onclick = function() { showPage('dashboard'); };
+      navDashLink.onclick = function() { showPage('dashboard'); closeMobileMenu(); };
     } else {
-      // Logged-in students get "My Bookings", guests see nothing
       if (name) {
         navDashLink.style.display = '';
         navDashLink.textContent = 'My Bookings';
-        navDashLink.onclick = function() { showPage('dashboard'); };
+        navDashLink.onclick = function() { showPage('dashboard'); closeMobileMenu(); };
       } else {
         navDashLink.style.display = 'none';
       }
     }
   }
+  if (mobileDashLink) {
+    if (role === 'landlord') {
+      mobileDashLink.style.display = '';
+      mobileDashLink.textContent = 'Dashboard';
+    } else if (name) {
+      mobileDashLink.style.display = '';
+      mobileDashLink.textContent = 'My Bookings';
+    } else {
+      mobileDashLink.style.display = 'none';
+    }
+  }
 
+  if (mobileUser) mobileUser.textContent = name ? `👤 ${name}` : 'Menu';
   if (!navEnd) return;
   if (name) {
     navEnd.innerHTML = `
@@ -2916,20 +2319,28 @@ function updateNav(activePage = document.querySelector('.page.active')?.id?.repl
         ? '<button class="btn btn-ghost" onclick="showPage(\'dashboard\')">Dashboard</button>'
         : '<button class="btn btn-ghost" onclick="showPage(\'saved\')">♥ Saved</button>'}
       <button class="btn btn-ghost" onclick="logoutUser()">Sign Out</button>`;
+    if (mobileActions) mobileActions.innerHTML = `
+      ${role==='landlord'
+        ? '<button onclick="showPage(\'dashboard\'); closeMobileMenu();">Dashboard</button>'
+        : '<button onclick="showPage(\'saved\'); closeMobileMenu();">♥ Saved</button>'}
+      <button onclick="logoutUser(); closeMobileMenu();">Sign Out</button>`;
   } else {
     navEnd.innerHTML = `
       <button class="btn btn-ghost" onclick="goToAddListing()">List Property</button>
       <button class="btn btn-ghost" onclick="showPage('login')">Sign In</button>
       <button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>`;
+    if (mobileActions) mobileActions.innerHTML = `
+      <button onclick="goToAddListing(); closeMobileMenu();">List Property</button>
+      <button onclick="showPage('login'); closeMobileMenu();">Sign In</button>
+      <button onclick="showPage('signup'); closeMobileMenu();">Sign Up</button>`;
   }
-  renderMobileSidebar(activePage);
 }
+
 
 // ── Auth helpers ──────────────────────────────────
 const getToken    = () => localStorage.getItem('token');
 const getUserRole = () => localStorage.getItem('userRole');
 const isLoggedIn  = () => !!getToken();
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMobileSidebar(false); });
 
 async function signupUser() {
   const fname    = document.getElementById('signup-fname')?.value.trim();
@@ -4563,112 +3974,5 @@ updateNav();
 loadHomeListings();
 loadHomeStats();
 </script>
-
-<script id="ui-redesign-v2-js">
-(function(){
-  const targets = [
-    '.search-card','.quick-feat','.stat-item','.vacancy-banner','.boarding-card','.result-card',
-    '.filters-panel','.detail-side-card','.booking-form-section','.booking-summary',
-    '.dash-stat','.listing-form','.bookings-panel','.auth-card','.review-card-full',
-    '.write-review','.room-type-card','.payment-option','.owner-extras'
-  ];
-
-  function ensureOrbs(){
-    if (document.querySelector('.ui-orb')) return;
-    ['orb-a','orb-b','orb-c'].forEach(cls=>{
-      const div = document.createElement('div');
-      div.className = 'ui-orb ' + cls;
-      document.body.appendChild(div);
-    });
-  }
-
-  let observer;
-  function ensureObserver(){
-    if (observer) return observer;
-    observer = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    return observer;
-  }
-
-  function decorateUi(){
-    ensureOrbs();
-    const obs = ensureObserver();
-    document.querySelectorAll(targets.join(',')).forEach((el, idx)=>{
-      if (!el.classList.contains('reveal-up')) {
-        el.classList.add('reveal-up');
-        el.style.transitionDelay = Math.min((idx % 10) * 45, 240) + 'ms';
-        obs.observe(el);
-      }
-    });
-  }
-
-  function patchShowPage(){
-    if (!window.showPage || window.showPage.__uiPatched) return;
-    const original = window.showPage;
-    const wrapped = function(id){
-      original(id);
-      requestAnimationFrame(() => {
-        const pg = document.getElementById('page-' + id);
-        if (pg) {
-          pg.style.animation = 'none';
-          pg.offsetHeight;
-          pg.style.animation = 'pageLift .55s ease both';
-        }
-        setTimeout(decorateUi, 80);
-      });
-    };
-    wrapped.__uiPatched = true;
-    window.showPage = wrapped;
-  }
-
-  function patchRenderers(){
-    ['loadHomeListings','applyFilters','loadDashboard','loadSavedPage','loadReviewsPage'].forEach(name=>{
-      const fn = window[name];
-      if (!fn || fn.__uiPatched) return;
-      const wrapped = async function(...args){
-        const result = await fn.apply(this, args);
-        setTimeout(decorateUi, 80);
-        return result;
-      };
-      wrapped.__uiPatched = true;
-      window[name] = wrapped;
-    });
-  }
-
-  function patchOpenModal(){
-    if (!window.openModal || window.openModal.__uiPatched) return;
-    const original = window.openModal;
-    const wrapped = function(...args){
-      const result = original.apply(this, args);
-      setTimeout(decorateUi, 50);
-      return result;
-    };
-    wrapped.__uiPatched = true;
-    window.openModal = wrapped;
-  }
-
-  function init(){
-    patchShowPage();
-    patchRenderers();
-    patchOpenModal();
-    decorateUi();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  window.addEventListener('load', decorateUi);
-})();
-</script>
-
 </body>
 </html>

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Boarding Finder — Search</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/>
+</head>
+<body data-page="results">
+<nav>
+<div class="nav-brand" onclick="showPage('home'); closeMobileMenu();">
+<div class="logo">
+<svg viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
+</div>
+<span>Smart<em>Boarding</em></span>
+</div>
+<div class="nav-links">
+<a class="active" id="nav-home" onclick="showPage('home'); closeMobileMenu();">Home</a>
+<a id="nav-results" onclick="showPage('results'); closeMobileMenu();">Search</a>
+<a id="nav-dashboard" onclick="showPage('dashboard'); closeMobileMenu();">Owner Portal</a>
+</div>
+<div class="nav-end">
+<button class="btn btn-ghost" onclick="showPage('dashboard')">List Property</button>
+<button class="btn btn-ghost" onclick="showPage('login')">Sign In</button>
+<button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>
+</div>
+<button aria-label="Open menu" class="mobile-nav-toggle" onclick="toggleMobileMenu()">☰</button>
+</nav>
+<div class="mobile-nav-menu" id="mobile-nav-menu">
+<div class="mobile-nav-user" id="mobile-nav-user">Menu</div>
+<div class="mobile-nav-links">
+<a id="mobile-nav-home" onclick="showPage('home'); closeMobileMenu();">Home</a>
+<a id="mobile-nav-results" onclick="showPage('results'); closeMobileMenu();">Search</a>
+<a id="mobile-nav-dashboard" onclick="showPage('dashboard'); closeMobileMenu();">Dashboard</a>
+</div>
+<div class="mobile-nav-actions" id="mobile-nav-actions" style="margin-top:10px;"></div>
+</div>
+<div class="page active" id="page-results">
+<div style="background:white;border-bottom:1px solid var(--gray-200);padding:16px 24px;">
+<div style="max-width:1200px;margin:0 auto;">
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+<input id="search-city" placeholder="City or area..." style="flex:1;min-width:140px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;" type="text"/>
+<select id="search-price" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<option value="">Any Price</option><option value="15000">Under LKR 15,000</option><option value="25000">LKR 15–25k</option><option value="40000">LKR 25–40k</option><option value="40001">Over 40k</option>
+</select>
+<select id="search-room" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<option value="">Any Room</option><option value="Single Room">Single</option><option value="Shared Room">Shared</option>
+</select>
+<select id="search-gender" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<option value="">Anyone</option><option value="Ladies Only">Ladies Only</option><option value="Gents Only">Gents Only</option>
+</select>
+<select id="search-future" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<option value="">Any Future Vacancy</option><option value="1">1 Month</option><option value="2">2 Months</option><option value="3">3 Months</option><option value="6">6 Months</option><option value="12">12 Months</option>
+</select>
+<button class="btn btn-primary" onclick="applyFilters()">🔍 Search</button>
+</div>
+</div>
+</div>
+<div class="results-layout">
+<!-- Filters -->
+<aside class="filters-panel">
+<h3>🎛 Filters</h3>
+<div class="filter-group">
+<h4>Room Type</h4>
+<div class="radio-list">
+<label class="radio-item"><input checked="" name="room" onchange="applyFilters()" type="radio" value=""/> Any Type</label>
+<label class="radio-item"><input name="room" onchange="applyFilters()" type="radio" value="Single Room"/> Single Room</label>
+<label class="radio-item"><input name="room" onchange="applyFilters()" type="radio" value="Shared Room"/> Shared Room</label>
+</div>
+</div>
+<div class="filter-group">
+<h4>For</h4>
+<div class="radio-list">
+<label class="radio-item"><input checked="" name="gender" onchange="applyFilters()" type="radio" value=""/> Any</label>
+<label class="radio-item"><input name="gender" onchange="applyFilters()" type="radio" value="Ladies Only"/> Ladies Only</label>
+<label class="radio-item"><input name="gender" onchange="applyFilters()" type="radio" value="Gents Only"/> Gents Only</label>
+</div>
+</div>
+<div class="filter-group">
+<h4>Future Vacancy</h4>
+<div class="radio-list">
+<label class="radio-item"><input checked="" name="future" onchange="applyFilters()" type="radio" value=""/> Any</label>
+<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="1"/> Within 1 Month</label>
+<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="2"/> Within 2 Months</label>
+<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="3"/> Within 3 Months</label>
+<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="6"/> Within 6 Months</label>
+</div>
+</div>
+<div class="filter-group">
+<h4>Facilities</h4>
+<div class="check-list" id="facilities-filter">
+<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="WiFi"/> 📶 WiFi</label>
+<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Kitchen"/> 🍳 Cooking Allowed</label>
+<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Parking"/> 🚗 Parking</label>
+<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Laundry"/> 🧺 Laundry</label>
+<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="AC"/> ❄️ Air Conditioning</label>
+<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Security"/> 🛡 24h Security</label>
+<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Meals"/> 🚿 Attached Bath</label>
+</div>
+</div>
+<div class="filter-group">
+<h4>Availability Slots</h4>
+<div class="radio-list">
+<label class="radio-item"><input checked="" name="avail" onchange="applyFilters()" type="radio" value=""/> Any</label>
+<label class="radio-item"><input name="avail" onchange="applyFilters()" type="radio" value="now"/> Available Now</label>
+<label class="radio-item"><input name="avail" onchange="applyFilters()" type="radio" value="future"/> Future (next 3 months)</label>
+<label class="radio-item"><input name="avail" onchange="applyFilters()" type="radio" value="groups"/> 3+ Slots (Groups)</label>
+</div>
+</div>
+<div class="filter-group">
+</div>
+<button class="btn btn-outline" onclick="resetFilters()" style="width:100%;margin-top:8px;justify-content:center;">Reset Filters</button>
+</aside>
+<!-- Results -->
+<main class="results-main">
+<div class="results-toolbar">
+<div class="results-count" id="results-count"><strong>Loading...</strong></div>
+<select class="sort-select" id="sort-select" onchange="applyFilters()">
+<option value="newest">Sort: Newest</option>
+<option value="price-asc">Price: Low to High</option>
+<option value="price-desc">Price: High to Low</option>
+</select>
+</div>
+<div class="results-list" id="results-list">
+<!-- dynamically populated -->
+<div class="result-card" onclick="showPage('detail')">
+<div class="result-img" style="background:linear-gradient(135deg,#80DBD9,#5CCFCD);">
+<div class="result-img-placeholder">🏘️</div>
+</div>
+<div class="result-body">
+<div>
+<div class="result-header">
+<div>
+<div style="display:flex;gap:6px;margin-bottom:6px;">
+<span class="badge badge-available">✓ Available Now</span>
+<span class="badge badge-group">👥 Groups OK</span>
+</div>
+<div class="result-title">Sunset View Boarding House</div>
+</div>
+<div class="result-price">LKR 18,000<br/><small>/month</small></div>
+</div>
+<div class="result-loc">📍 Molpe Road · 0.8 km from university · 🚶 10 min walk</div>
+<div class="result-tags">
+<span class="tag">📶 WiFi</span><span class="tag">🍳 Kitchen</span><span class="tag">🚗 Parking</span><span class="tag">🧺 Laundry</span><span class="tag">🛡 Security</span>
+</div>
+</div>
+<div class="result-footer">
+<div style="font-size:13px;color:var(--gray-400);">⭐ 4.8 · 32 reviews · 3 slots left</div>
+<div style="display:flex;gap:8px;">
+<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Result 2 -->
+<div class="result-card" onclick="showPage('detail')">
+<div class="result-img" style="background:linear-gradient(135deg,#A8E6E5,#5CCFCD);">
+<div class="result-img-placeholder">🏠</div>
+</div>
+<div class="result-body">
+<div>
+<div class="result-header">
+<div>
+<div style="display:flex;gap:6px;margin-bottom:6px;">
+<span class="badge badge-soon">📅 Available May 2026</span>
+</div>
+<div class="result-title">Green Garden Residence</div>
+</div>
+<div class="result-price">LKR 12,500<br/><small>/month</small></div>
+</div>
+<div class="result-loc">📍 Piliyandala Road · 1.2 km from university · 🚌 15 min</div>
+<div class="result-tags">
+<span class="tag">📶 WiFi</span><span class="tag">🛡 Security</span><span class="tag">🌿 Garden</span>
+</div>
+</div>
+<div class="result-footer">
+<div style="font-size:13px;color:var(--gray-400);">⭐ 4.5 · 18 reviews · 5 slots upcoming</div>
+<div style="display:flex;gap:8px;">
+<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Result 3 -->
+<div class="result-card" onclick="showPage('detail')">
+<div class="result-img" style="background:linear-gradient(135deg,#80CECE,#018790);">
+<div class="result-img-placeholder">🏡</div>
+</div>
+<div class="result-body">
+<div>
+<div class="result-header">
+<div>
+<div style="display:flex;gap:6px;margin-bottom:6px;">
+<span class="badge badge-available">✓ Available Now</span>
+</div>
+<div class="result-title">Mahaweli Heights Annex</div>
+</div>
+<div class="result-price">LKR 22,000<br/><small>/month</small></div>
+</div>
+<div class="result-loc">📍Piliyandala Road · 0.4 km from university · 🚶 5 min walk</div>
+<div class="result-tags">
+<span class="tag">📶 WiFi</span><span class="tag">🍳 Kitchen</span><span class="tag">🧺 Laundry</span><span class="tag">❄️ AC</span><span class="tag">🍽 Meals</span>
+</div>
+</div>
+<div class="result-footer">
+<div style="font-size:13px;color:var(--gray-400);">⭐ 4.9 · 47 reviews · 1 slot left</div>
+<div style="display:flex;gap:8px;">
+<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Result 4 -->
+<div class="result-card" onclick="showPage('detail')">
+<div class="result-img" style="background:linear-gradient(135deg,#4ABFBE,#005461);">
+<div class="result-img-placeholder">🏢</div>
+</div>
+<div class="result-body">
+<div>
+<div class="result-header">
+<div>
+<div style="display:flex;gap:6px;margin-bottom:6px;">
+<span class="badge badge-soon">📅 Available July 2026</span>
+<span class="badge badge-group">👥 Best for Groups</span>
+</div>
+<div class="result-title">Campus Gate Residency</div>
+</div>
+<div class="result-price">LKR 9,500<br/><small>/month</small></div>
+</div>
+<div class="result-loc">📍 Reid Avenue · 0.2 km from university · 🚶 3 min walk</div>
+<div class="result-tags">
+<span class="tag">📶 WiFi</span><span class="tag">🛡 Security</span><span class="tag">📺 TV Room</span>
+</div>
+</div>
+<div class="result-footer">
+<div style="font-size:13px;color:var(--gray-400);">⭐ 4.3 · 12 reviews · 8 slots upcoming</div>
+<div style="display:flex;gap:8px;">
+<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div style="display:flex;justify-content:center;gap:8px;margin-top:28px;">
+<button class="btn btn-ghost btn-sm">← Prev</button>
+<button class="btn btn-primary btn-sm">1</button>
+<button class="btn btn-ghost btn-sm">2</button>
+<button class="btn btn-ghost btn-sm">3</button>
+<button class="btn btn-ghost btn-sm">Next →</button>
+</div>
+</main>
+</div>
+<footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+<strong style="color:white">Smart Boarding Finder</strong> · © 2026
+  </footer>
+</div>
+<div class="page-overlay-shell" id="overlay-detail" onclick="if(event.target===this) closeSearchModal()"><div class="page-overlay-panel"><button class="page-overlay-close" onclick="closeSearchModal()">✕</button><div class="page active" id="page-detail">
+<div class="detail-wrap">
+<div class="breadcrumb">
+<a onclick="showPage('home')">Home</a><span class="sep">›</span>
+<a onclick="showPage('results')">Search Results</a><span class="sep">›</span>
+<span>Sunset View Boarding House</span>
+</div>
+<!-- Gallery -->
+<div class="gallery" id="detail-gallery">
+<div class="gallery-cell gallery-main" style="background:linear-gradient(135deg,#80DBD9,#5CCFCD);">🏘️</div>
+<div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#A8E6E5,#5CCFCD);">🛏️</div>
+<div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#80CECE,#018790);">🍳</div>
+<div class="gallery-cell gallery-thumb" style="background:linear-gradient(135deg,#4ABFBE,#005461);">🚿</div>
+<div class="gallery-cell gallery-thumb has-more" style="background:linear-gradient(135deg,#A8E6E5,#66CFCE);">🏡</div>
+</div>
+<div class="detail-layout">
+<!-- Left content -->
+<div class="detail-content">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+<div>
+<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+<span class="badge badge-available" style="font-size:12px;padding:5px 12px">✓ Available Now</span>
+<span class="badge badge-group" style="font-size:12px;padding:5px 12px">👥 Best for Groups</span>
+</div>
+<div class="detail-title" id="detail-title">Sunset View Boarding House</div>
+<div class="detail-meta">
+<span id="detail-city">📍 Galle Road, Moratuwa</span>
+<span id="detail-dist">🚶 1.5 km · 10 min walk to UoM</span>
+<span id="detail-rating"><span class="rating-stars">★★★★★</span> 4.8 (32 reviews)</span>
+</div>
+</div>
+<button class="btn btn-ghost" id="detail-save-btn" onclick="toggleSave(currentListing?._id, this)" style="gap:6px">♡ Save</button>
+</div>
+<p style="color:var(--gray-600);font-size:15px;line-height:1.7;margin-bottom:20px;">A comfortable and secure boarding facility designed specifically for university students. Located just minutes from the University of Moratuwa, offering clean rooms, reliable WiFi, and a supportive community environment. All rooms are furnished and bills included.</p>
+<div class="divider"></div>
+<h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">🏠 Choose Your Room</h3>
+<div class="room-types-grid">
+<div class="room-type-card selected" onclick="selectRoom(this)">
+<div class="type-icon">🛏️</div>
+<div class="type-name">Single Room</div>
+<div class="type-price">LKR 18,000</div>
+<div style="font-size:11px;color:var(--gray-400);margin-top:2px;">2 available</div>
+</div>
+<div class="room-type-card" onclick="selectRoom(this)">
+<div class="type-icon">🛌</div>
+<div class="type-name">Shared (2 pax)</div>
+<div class="type-price">LKR 11,000</div>
+<div style="font-size:11px;color:var(--gray-400);margin-top:2px;">4 available</div>
+</div>
+<div class="room-type-card" onclick="selectRoom(this)">
+<div class="type-icon">🏠</div>
+<div class="type-name">Studio Annex</div>
+<div class="type-price">LKR 28,000</div>
+<div style="font-size:11px;color:var(--gray-400);margin-top:2px;">1 available</div>
+</div>
+</div>
+<div class="divider"></div>
+<h3 class="fac-heading" style="font-weight:700;font-size:17px;margin-bottom:14px;">✨ Facilities &amp; Amenities</h3>
+<div class="facilities-grid">
+</div>
+<div class="divider"></div>
+<div id="detail-rules-section" style="display:none;">
+<h3 style="font-weight:700;font-size:17px;margin-bottom:14px;">📋 House Rules</h3>
+<div id="detail-rules-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px;color:var(--gray-600);"></div>
+<div class="divider"></div>
+</div>
+<div class="reviews-section">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+<h3 style="font-weight:700;font-size:17px;">💬 Student Reviews</h3>
+<a class="see-all" onclick="showPage('reviews')">All reviews →</a>
+</div>
+<!-- Dynamic reviews only — populated by loadReviewsPreview() -->
+<div id="detail-reviews-extra"></div>
+<!-- Write a review -->
+<div id="detail-review-form" style="margin-top:20px;background:var(--brand-light);border:1.5px dashed var(--brand-mid);border-radius:var(--radius-lg);padding:20px;">
+<p style="color:var(--brand);font-weight:600;font-size:15px;margin-bottom:12px;">✍️ Write a Review</p>
+<div id="detail-stars" style="display:flex;gap:6px;margin-bottom:10px;">
+<span data-val="1" onclick="setRating(1)" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+<span data-val="2" onclick="setRating(2)" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+<span data-val="3" onclick="setRating(3)" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+<span data-val="4" onclick="setRating(4)" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+<span data-val="5" onclick="setRating(5)" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
+</div>
+<textarea id="detail-review-comment" placeholder="Share your experience..." style="width:100%;padding:10px 14px;border:1.5px solid var(--brand-mid);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;resize:vertical;min-height:80px;background:white;box-sizing:border-box;"></textarea>
+<div id="detail-review-msg" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+<button class="btn btn-primary" onclick="submitDetailReview()" style="margin-top:10px;">Submit Review</button>
+</div>
+</div>
+</div>
+<!-- Booking panel -->
+<div>
+<div class="booking-panel">
+<div class="price-big">LKR 18,000</div>
+<div class="price-sub">per month · Single Room · Bills included</div>
+<div class="avail-badge"><span class="dot"></span> Available Now · 2 slots remaining</div>
+<div style="border-top:1px solid var(--gray-100);padding-top:16px;">
+<div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
+<span>Monthly rent</span><span id="panel-monthly-rent" style="font-weight:600;color:var(--gray-800);">—</span>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:var(--gray-600);">
+<span>Security deposit</span><span id="panel-deposit" style="font-weight:600;color:var(--gray-800);">—</span>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:14px;color:var(--gray-600);">
+<span>Advance payment</span><span id="panel-advance" style="font-weight:600;color:var(--gray-800);">—</span>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--gray-900);border-top:1px solid var(--gray-200);padding-top:12px;">
+<span>Pay to Book</span><span id="panel-pay-to-book" style="color:var(--brand)">—</span>
+</div>
+</div>
+<div class="panel-btns">
+<button class="btn btn-primary btn-lg" id="book-now-btn" onclick="goToBooking()" style="justify-content:center">🏠 Book Now</button>
+<button class="btn btn-outline btn-lg" onclick="goToBooking()" style="justify-content:center">📅 Reserve for Future</button>
+</div>
+<div style="margin-top:16px;text-align:center;font-size:12px;color:var(--gray-400);">🔒 Secure payment · Free cancellation within 24h</div>
+<div style="border-top:1px solid var(--gray-100);margin-top:16px;padding-top:14px;">
+<div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">Owner Details</div>
+<div style="display:flex;align-items:center;gap:10px;">
+<div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">NP</div>
+<div>
+<div style="font-weight:600;font-size:14px;">Nalini Perera</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+<strong style="color:white">Smart Boarding Finder</strong> · © 2026
+  </footer>
+</div></div></div><div class="page-overlay-shell" id="overlay-booking" onclick="if(event.target===this) closeSearchModal()"><div class="page-overlay-panel"><button class="page-overlay-close" onclick="closeSearchModal()">✕</button><div class="page active" id="page-booking">
+<div class="booking-page-wrap">
+<div class="breadcrumb">
+<a onclick="showPage('home')">Home</a><span class="sep">›</span>
+<a onclick="showPage('detail')">Sunset View Boarding</a><span class="sep">›</span>
+<span>Booking</span>
+</div>
+<h1>Complete Your Booking</h1>
+<div class="booking-layout">
+<div style="display:flex;flex-direction:column;gap:18px;">
+<!-- Selected room summary -->
+<div style="background:var(--brand-light);border:1.5px solid var(--brand-mid);border-radius:var(--radius-lg);padding:16px;display:flex;gap:16px;align-items:center;">
+<div id="bk-card-media" style="width:64px;height:64px;border-radius:var(--radius-md);background:linear-gradient(135deg,#80DBD9,#5CCFCD);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🏘️</div>
+<div>
+<div id="bk-card-title" style="font-weight:700;font-size:15px;">—</div>
+<div id="bk-card-sub" style="font-size:13px;color:var(--gray-600);">—</div>
+<div id="bk-card-badges" style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-available">—</span></div>
+</div>
+<div style="margin-left:auto;text-align:right;">
+<div id="bk-card-price" style="font-size:20px;font-weight:800;color:var(--brand);">LKR —</div>
+<div style="font-size:12px;color:var(--gray-400);">/month</div>
+</div>
+</div>
+<!-- Personal details -->
+<div class="booking-form-section">
+<h3>👤 Personal Details</h3>
+<div class="form-row">
+<div class="field"><label>First Name</label><input id="bk-fname" placeholder="Kasun" type="text"/></div>
+<div class="field"><label>Last Name</label><input id="bk-lname" placeholder="Perera" type="text"/></div>
+</div>
+<div class="form-row">
+<div class="field"><label>Email</label><input id="bk-email" placeholder="kasun@students.ac.lk" type="email"/></div>
+<div class="field"><label>Phone</label><input id="bk-phone" placeholder="+94 77 123 4567" type="tel"/></div>
+</div>
+<div class="form-row">
+<div class="field"><label>University</label><input id="bk-uni" placeholder="University of Moratuwa" type="text"/></div>
+<div class="field"><label>Student ID</label><input id="bk-sid" placeholder="CS/2022/001" type="text"/></div>
+</div>
+</div>
+<!-- Move-in details -->
+<div class="booking-form-section">
+<h3>📅 Move-in Details</h3>
+<div class="form-row">
+<div class="field"><label>Move-in Date</label><input id="bk-date" type="date"/></div>
+<div class="field"><label>Duration</label>
+<select id="bk-duration">
+<option>3 months</option><option>6 months</option><option selected="">12 months</option>
+</select>
+</div>
+</div>
+<div style="background:var(--brand-light);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:var(--brand);font-weight:500;margin-top:4px;">
+            💡 Booking for future? Select a date in May 2026 or later to reserve for the next intake.
+          </div>
+</div>
+<!-- Payment -->
+<div class="booking-form-section">
+<h3>💳 Payment Method</h3>
+<div class="payment-methods">
+<label class="payment-option selected" onclick="selectPayment(this)">
+<input checked="" name="payment" type="radio"/>
+<span class="payment-icon">💳</span>
+<div><div class="method-label">Credit / Debit Card</div><div class="method-sub">Visa, Mastercard, Amex</div></div>
+</label>
+<label class="payment-option" onclick="selectPayment(this)">
+<input name="payment" type="radio"/>
+<span class="payment-icon">🏦</span>
+<div><div class="method-label">Online Bank Transfer</div><div class="method-sub">BOC, HNB, Commercial Bank</div></div>
+</label>
+<label class="payment-option" onclick="selectPayment(this)">
+<input name="payment" type="radio"/>
+<span class="payment-icon">📱</span>
+<div><div class="method-label">eZ Cash / mCash</div><div class="method-sub">Dialog, Mobitel</div></div>
+</label>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
+<div class="field"><label>Card Number</label><input placeholder="1234 5678 9012 3456" type="text"/></div>
+<div class="field"><label>Expiry</label><input placeholder="MM/YY" type="text"/></div>
+</div>
+<div class="field" style="margin-top:12px;max-width:120px;"><label>CVV</label><input placeholder="123" type="text"/></div>
+</div>
+</div>
+<!-- Order summary -->
+<div>
+<div class="booking-summary">
+<h3>📋 Order Summary</h3>
+<div style="background:var(--gray-50);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;">
+<div id="bk-sum-title" style="font-weight:600;font-size:14px;">—</div>
+<div id="bk-sum-room" style="font-size:13px;color:var(--gray-500);">—</div>
+</div>
+<div class="summary-item"><span>Advance payment</span><span id="bk-sum-advance">LKR —</span></div>
+<div class="summary-item"><span>Security deposit</span><span id="bk-sum-deposit">LKR —</span></div>
+<div class="summary-item"><span>First month rent</span><span id="bk-sum-rent">LKR —</span></div>
+<div class="summary-total"><span>Total Due Now</span><span id="bk-sum-total" style="color:var(--brand);">LKR —</span></div>
+<button class="btn btn-success btn-lg" onclick="submitBooking()" style="width:100%;justify-content:center;margin-top:20px;font-size:15px;">
+            🔒 Pay Advance &amp; Reserve
+          </button>
+<div style="text-align:center;font-size:12px;color:var(--gray-400);margin-top:10px;">
+            Secure payment · SSL encrypted<br/>Free cancellation within 24 hours
+          </div>
+</div>
+<div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:14px;margin-top:14px;font-size:13px;color:var(--gray-600);">
+<strong style="color:var(--gray-800);">📌 What happens next?</strong>
+<ol style="margin-top:8px;margin-left:16px;display:flex;flex-direction:column;gap:5px;">
+<li>Your booking is confirmed instantly</li>
+<li>The listing is now marked as booked</li>
+<li>Move in on your selected date</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+<strong style="color:white">Smart Boarding Finder</strong> · © 2026
+  </footer>
+</div></div></div><div class="page-overlay-shell" id="overlay-reviews" onclick="if(event.target===this) closeSearchModal()"><div class="page-overlay-panel"><button class="page-overlay-close" onclick="closeSearchModal()">✕</button><div class="page active" id="page-reviews">
+<div class="reviews-wrap">
+<div class="breadcrumb">
+<a onclick="showPage('home')">Home</a><span class="sep">›</span>
+<a onclick="showPage('detail')">Sunset View Boarding</a><span class="sep">›</span>
+<span>Reviews</span>
+</div>
+<h1 id="reviews-title">Student Reviews</h1>
+<p id="reviews-sub" style="color:var(--gray-500);margin-bottom:24px;">Sunset View Boarding House · Molpe Road, Moratuwa</p>
+<!-- Overall rating -->
+<div class="overall-rating">
+<div class="rating-big">
+<div class="num" id="reviews-avg-num">4.8</div>
+<div class="stars" id="reviews-avg-stars">★★★★★</div>
+<div class="count" id="reviews-total-count">32 reviews</div>
+</div>
+<div class="rating-bars">
+<div class="rating-bar-row">
+<span style="min-width:14px;">5</span>
+<div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
+<span style="min-width:30px;color:var(--gray-500);">26</span>
+</div>
+<div class="rating-bar-row">
+<span style="min-width:14px;">4</span>
+<div class="bar-track"><div class="bar-fill" style="width:15%"></div></div>
+<span style="min-width:30px;color:var(--gray-500);">5</span>
+</div>
+<div class="rating-bar-row">
+<span style="min-width:14px;">3</span>
+<div class="bar-track"><div class="bar-fill" style="width:5%"></div></div>
+<span style="min-width:30px;color:var(--gray-500);">1</span>
+</div>
+<div class="rating-bar-row">
+<span style="min-width:14px;">2</span>
+<div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+<span style="min-width:30px;color:var(--gray-500);">0</span>
+</div>
+<div class="rating-bar-row">
+<span style="min-width:14px;">1</span>
+<div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+<span style="min-width:30px;color:var(--gray-500);">0</span>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;font-size:13px;">
+<div><span style="color:var(--gray-500);">Cleanliness</span><br/><span style="font-weight:700;color:var(--gray-800);">★★★★★ 4.9</span></div>
+<div><span style="color:var(--gray-500);">Location</span><br/><span style="font-weight:700;color:var(--gray-800);">★★★★★ 5.0</span></div>
+<div><span style="color:var(--gray-500);">Value</span><br/><span style="font-weight:700;color:var(--gray-800);">★★★★☆ 4.6</span></div>
+<div><span style="color:var(--gray-500);">Owner</span><br/><span style="font-weight:700;color:var(--gray-800);">★★★★★ 4.8</span></div>
+</div>
+</div>
+</div>
+<!-- Write review CTA -->
+<div class="write-review">
+<div style="font-size:28px;margin-bottom:8px;">✍️</div>
+<p>Share your experience</p>
+<div style="font-size:13px;color:var(--brand);margin-top:4px;font-weight:400;">Help fellow students make informed decisions</div>
+<div style="display:flex;justify-content:center;gap:6px;margin:12px 0;font-size:28px;cursor:pointer;">
+<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+</div>
+<button class="btn btn-primary" style="margin-top:4px;">Write a Review</button>
+</div>
+<!-- Reviews list -->
+<div class="reviews-list" id="reviews-dynamic-list">
+<div class="review-card-full">
+<div class="review-header">
+<div class="reviewer-avatar">AP</div>
+<div class="reviewer-info"><div class="name">Ayesha Perera</div><div class="date">Faculty of IT · March 2026</div></div>
+<div class="review-stars" style="font-size:16px;">★★★★★</div>
+</div>
+<p class="review-text" style="margin-bottom:10px;">"Amazing place, very clean and the landlady is very friendly. WiFi works great for online classes and video calls. The kitchen is well-equipped. Highly recommend for UoC students!"</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--gray-400);">
+<span>👍 Helpful (8)</span><span>·</span><span>Single Room</span><span>·</span><span>6 months stay</span>
+</div>
+</div>
+<div class="review-card-full">
+<div class="review-header">
+<div class="reviewer-avatar" style="background:#C0EDED;color:#065F46;">KD</div>
+<div class="reviewer-info"><div class="name">Kasun De Silva</div><div class="date">Faculty of Engineering · February 2026</div></div>
+<div class="review-stars" style="font-size:16px;">★★★★☆</div>
+</div>
+<p class="review-text" style="margin-bottom:10px;">"Good value for money. Location is perfect, walking distance from campus. Kitchen facilities could be a bit better but overall very satisfied. The owner responds quickly to any issues."</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--gray-400);">
+<span>👍 Helpful (5)</span><span>·</span><span>Shared Room</span><span>·</span><span>12 months stay</span>
+</div>
+</div>
+<div class="review-card-full">
+<div class="review-header">
+<div class="reviewer-avatar" style="background:#A8DFDE;color:#005461;">NF</div>
+<div class="reviewer-info"><div class="name">Nimesha Fernando</div><div class="date">Faculty of Architecture · January 2026</div></div>
+<div class="review-stars" style="font-size:16px;">★★★★★</div>
+</div>
+<p class="review-text" style="margin-bottom:10px;">"I was a first-year student and was nervous about finding a boarding. The Smart Boarding Finder made it so easy! Found this place, reserved it 2 months before my semester started. Excellent experience!"</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--gray-400);">
+<span>👍 Helpful (12)</span><span>·</span><span>Single Room</span><span>·</span><span>Reserved in advance</span>
+</div>
+</div>
+<div class="review-card-full">
+<div class="review-header">
+<div class="reviewer-avatar" style="background:#CCF0EF;color:#92400E;">RM</div>
+<div class="reviewer-info"><div class="name">Ravindu Mendis</div><div class="date">Faculty of Business · December 2025</div></div>
+<div class="review-stars" style="font-size:16px;">★★★★★</div>
+</div>
+<p class="review-text" style="margin-bottom:10px;">"Been here for a year now. Very safe neighborhood, 24h security makes parents happy too. Only 10 min walk to campus. Will be renewing my contract!"</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--gray-400);">
+<span>👍 Helpful (9)</span><span>·</span><span>Single Room</span><span>·</span><span>12 months stay</span>
+</div>
+</div>
+</div>
+<div style="text-align:center;margin-top:24px;">
+<button class="btn btn-outline" onclick="loadMoreReviews()">Load More Reviews</button>
+</div>
+</div>
+<footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+<strong style="color:white">Smart Boarding Finder</strong> · © 2026
+  </footer>
+</div></div></div><script src="app.js"></script>
+</body>
+</html>

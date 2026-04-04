@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Boarding Finder — My Bookings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="allbookings">
+<nav>
+<div class="nav-brand" onclick="showPage('home'); closeMobileMenu();">
+<div class="logo">
+<svg viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
+</div>
+<span>Smart<em>Boarding</em></span>
+</div>
+<div class="nav-links">
+<a class="active" id="nav-home" onclick="showPage('home'); closeMobileMenu();">Home</a>
+<a id="nav-results" onclick="showPage('results'); closeMobileMenu();">Search</a>
+<a id="nav-dashboard" onclick="showPage('dashboard'); closeMobileMenu();">Owner Portal</a>
+</div>
+<div class="nav-end">
+<button class="btn btn-ghost" onclick="showPage('dashboard')">List Property</button>
+<button class="btn btn-ghost" onclick="showPage('login')">Sign In</button>
+<button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>
+</div>
+<button aria-label="Open menu" class="mobile-nav-toggle" onclick="toggleMobileMenu()">☰</button>
+</nav>
+<div class="mobile-nav-menu" id="mobile-nav-menu">
+<div class="mobile-nav-user" id="mobile-nav-user">Menu</div>
+<div class="mobile-nav-links">
+<a id="mobile-nav-home" onclick="showPage('home'); closeMobileMenu();">Home</a>
+<a id="mobile-nav-results" onclick="showPage('results'); closeMobileMenu();">Search</a>
+<a id="mobile-nav-dashboard" onclick="showPage('dashboard'); closeMobileMenu();">Dashboard</a>
+</div>
+<div class="mobile-nav-actions" id="mobile-nav-actions" style="margin-top:10px;"></div>
+</div>
+<div class="page active" id="page-allbookings">
+<div style="max-width:900px;margin:0 auto;padding:32px 24px;">
+<div class="breadcrumb">
+<a onclick="showPage('dashboard')">Dashboard</a><span class="sep">›</span>
+<span id="allbookings-breadcrumb">All Bookings</span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+<div>
+<h1 id="allbookings-title" style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;">All Bookings</h1>
+<p id="allbookings-subtitle" style="font-size:14px;color:var(--gray-500);margin-top:4px;">Loading...</p>
+</div>
+<button class="btn btn-ghost" onclick="showPage('dashboard')">← Back to Dashboard</button>
+</div>
+<!-- No filter tabs needed — all bookings shown -->
+<!-- Bookings list -->
+<div id="allbookings-list">
+<div style="text-align:center;padding:40px;color:var(--gray-400);">Loading bookings...</div>
+</div>
+</div>
+<footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
+<strong style="color:white">Smart Boarding Finder</strong> · © 2026
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

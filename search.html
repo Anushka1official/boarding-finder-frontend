@@ -376,7 +376,7 @@
 </div>
 <div class="panel-btns">
 <button class="btn btn-primary btn-lg" id="book-now-btn" onclick="goToBooking()" style="justify-content:center">🏠 Book Now</button>
-<button class="btn btn-outline btn-lg" onclick="goToBooking()" style="justify-content:center">📅 Reserve for Future</button>
+<button class="btn btn-outline btn-lg" id="reserve-future-btn" onclick="goToBooking()" style="justify-content:center">📅 Reserve for Future</button>
 </div>
 <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--gray-400);">🔒 Secure payment · Free cancellation within 24h</div>
 </div>
@@ -557,16 +557,6 @@
     </div>
   </div>
 </div>
-
-<!-- Gallery Lightbox -->
-<div id="gallery-lightbox" class="gallery-lightbox" style="display:none;" onclick="handleLightboxClick(event)">
-  <button class="close-btn" onclick="closeLightbox()" aria-label="Close full screen media">✕</button>
-  <button class="nav-btn prev-btn" onclick="event.stopPropagation();lightboxNav(-1)" aria-label="Previous media">‹</button>
-  <div id="lightbox-content" onclick="event.stopPropagation()"></div>
-  <button class="nav-btn next-btn" onclick="event.stopPropagation();lightboxNav(1)" aria-label="Next media">›</button>
-  <div id="lightbox-counter" style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;background:rgba(0,0,0,.35);padding:6px 12px;border-radius:999px;backdrop-filter:blur(4px);">1 / 1</div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="app.js"></script>
 </body>

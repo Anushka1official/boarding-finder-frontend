@@ -12,6 +12,7 @@ let currentReviewsPageRating = 0;
 let reviewsOffset  = 0;
 let savedIds       = new Set();
 let signupRole     = 'student';
+let activeBookedListingIds = null;
 
 function esc(v) {
   return String(v == null ? '' : v)
@@ -172,10 +173,10 @@ function getCurrentListingId() {
   return restoreCurrentListing()?._id || '';
 }
 
-async function ensureCurrentListingLoaded(id = '') {
+async function ensureCurrentListingLoaded(id = '', forceFresh = false) {
   const targetId = id || getCurrentListingId();
   const restored = restoreCurrentListing();
-  if (restored && (!targetId || restored._id === targetId)) {
+  if (!forceFresh && restored && (!targetId || restored._id === targetId)) {
     currentListing = restored;
     return currentListing;
   }
@@ -206,7 +207,7 @@ async function initCurrentPage() {
     await applyFilters();
     const view = getSearchView();
     if (view === 'detail') {
-      const listing = await ensureCurrentListingLoaded();
+      const listing = await ensureCurrentListingLoaded('', true);
       if (listing) {
         await renderCurrentDetailPage();
         openSearchModal('detail', false);
@@ -214,14 +215,14 @@ async function initCurrentPage() {
     }
     if (view === 'booking') {
       if (!isLoggedIn()) { showToast('Please sign in to make a booking', 'warning'); navigateToPage('login'); return; }
-      const listing = await ensureCurrentListingLoaded();
+      const listing = await ensureCurrentListingLoaded('', true);
       if (listing) {
         hydrateBookingPage(listing);
         openSearchModal('booking', false);
       }
     }
     if (view === 'reviews') {
-      const listing = await ensureCurrentListingLoaded();
+      const listing = await ensureCurrentListingLoaded('', true);
       if (listing) {
         await loadReviewsPage();
         openSearchModal('reviews', false);
@@ -493,6 +494,7 @@ async function loginUser() {
       localStorage.setItem('phoneVerified', data.phoneVerified ? '1' : '0');
       localStorage.setItem('userPhone',     data.phone || '');
       loadSavedIdsFromStorage();
+      activeBookedListingIds = null;
       updateNav();
       showToast(`Welcome back, ${data.name}! 👋`, 'success');
       setTimeout(() => { showPage('home'); loadHomeListings(); }, 800);
@@ -503,6 +505,7 @@ async function loginUser() {
 function logoutUser() {
   ['token','userName','userRole','userId','phoneVerified','userPhone'].forEach(k => localStorage.removeItem(k));
   loadSavedIdsFromStorage();
+  activeBookedListingIds = null;
   allListings = [];
   updateNav();
   showToast('Signed out successfully', 'success');
@@ -555,6 +558,37 @@ function availabilityMeta(l) {
 
 function isActivelyBookedListing(listing) {
   return !!listing && !listing.available && !isFutureVacancy(listing);
+}
+
+async function getMyActiveBookedListingIds(force = false) {
+  if (!isLoggedIn() || getUserRole() !== 'student') return new Set();
+  if (!force && activeBookedListingIds instanceof Set) return activeBookedListingIds;
+  try {
+    const res = await fetch(`${API}/bookings/user/me`, {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    });
+    const bookings = await res.json();
+    if (!Array.isArray(bookings)) {
+      activeBookedListingIds = new Set();
+      return activeBookedListingIds;
+    }
+    activeBookedListingIds = new Set(
+      bookings
+        .filter(b => b && b.listing && isActivelyBookedListing(b.listing))
+        .map(b => typeof b.listing === 'object' ? b.listing._id : b.listing)
+        .filter(Boolean)
+    );
+    return activeBookedListingIds;
+  } catch {
+    activeBookedListingIds = new Set();
+    return activeBookedListingIds;
+  }
+}
+
+async function currentUserAlreadyBooked(listingId) {
+  if (!listingId) return false;
+  const ids = await getMyActiveBookedListingIds();
+  return ids.has(listingId);
 }
 
 function hydrateBookingPage(listing = currentListing) {
@@ -859,24 +893,6 @@ function buildGallery(media) {
   gallery.innerHTML = cells.join('');
 }
 
-
-function ensureGalleryLightboxShell() {
-  if (document.getElementById('gallery-lightbox')) return;
-  const shell = document.createElement('div');
-  shell.id = 'gallery-lightbox';
-  shell.className = 'gallery-lightbox';
-  shell.style.display = 'none';
-  shell.setAttribute('onclick', 'handleLightboxClick(event)');
-  shell.innerHTML = `
-    <button class="close-btn" onclick="closeLightbox()" aria-label="Close full screen media">✕</button>
-    <button class="nav-btn prev-btn" onclick="event.stopPropagation();lightboxNav(-1)" aria-label="Previous media">‹</button>
-    <div id="lightbox-content" onclick="event.stopPropagation()"></div>
-    <button class="nav-btn next-btn" onclick="event.stopPropagation();lightboxNav(1)" aria-label="Next media">›</button>
-    <div id="lightbox-counter" style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;background:rgba(0,0,0,.35);padding:6px 12px;border-radius:999px;backdrop-filter:blur(4px);">1 / 1</div>
-  `;
-  document.body.appendChild(shell);
-}
-
 // ── Lightbox ──────────────────────────────────────
 let _lbTouchStartX = 0;
 
@@ -940,8 +956,8 @@ async function renderCurrentDetailPage() {
   if (!listing) { showToast('Could not load listing details', 'error'); return; }
   persistCurrentListing(listing);
   const l = currentListing;
+  const alreadyBookedByUser = await currentUserAlreadyBooked(l._id);
 
-    ensureGalleryLightboxShell();
     // Gallery with real media
     buildGallery(l.media);
 
@@ -1030,9 +1046,15 @@ async function renderCurrentDetailPage() {
     if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'}${l.boardingFor ? ' · '+l.boardingFor : ''} · Bills may vary`;
     if (availBadge) {
       const meta = availabilityMeta(l);
-      availBadge.style.background = l.available ? '#D1FAE5' : '#FEF3C7';
-      availBadge.style.color      = l.available ? '#065F46' : '#92400E';
-      availBadge.innerHTML = l.available ? '<span class="dot"></span> Available Now' : meta.detailText;
+      if (alreadyBookedByUser) {
+        availBadge.style.background = '#DBEAFE';
+        availBadge.style.color      = '#1D4ED8';
+        availBadge.innerHTML = '✅ You already booked';
+      } else {
+        availBadge.style.background = l.available ? '#D1FAE5' : '#FEF3C7';
+        availBadge.style.color      = l.available ? '#065F46' : '#92400E';
+        availBadge.innerHTML = l.available ? '<span class="dot"></span> Available Now' : meta.detailText;
+      }
     }
 
     // Booking panel price breakdown — use owner-set values if available
@@ -1049,14 +1071,36 @@ async function renderCurrentDetailPage() {
     if (panelAdv)  panelAdv.textContent  = advanceAmt ? `LKR ${Number(advanceAmt).toLocaleString()}` : '—';
     if (panelPay)  panelPay.textContent  = `LKR ${Number(payToBook).toLocaleString()}`;
 
-    // Book Now button
+    // Booking buttons
     const bookBtn = document.getElementById('book-now-btn');
-    if (bookBtn) {
+    const reserveBtn = document.getElementById('reserve-future-btn');
+    if (alreadyBookedByUser) {
+      if (bookBtn) {
+        bookBtn.disabled = true;
+        bookBtn.textContent = '✅ You Already Booked';
+        bookBtn.style.opacity = '1';
+        bookBtn.style.cursor = 'default';
+      }
+      if (reserveBtn) {
+        reserveBtn.disabled = true;
+        reserveBtn.textContent = '✅ You Already Booked';
+        reserveBtn.style.opacity = '0.75';
+        reserveBtn.style.cursor = 'default';
+      }
+    } else {
       const canBook = l.available || isFutureVacancy(l);
-      bookBtn.disabled    = !canBook;
-      bookBtn.textContent = canBook ? (isFutureVacancy(l) ? '📅 Book Future Vacancy' : '🏠 Book Now') : '🚫 Not Available';
-      bookBtn.style.opacity = canBook ? '1' : '0.5';
-      bookBtn.style.cursor  = canBook ? 'pointer' : 'not-allowed';
+      if (bookBtn) {
+        bookBtn.disabled    = !canBook;
+        bookBtn.textContent = canBook ? (isFutureVacancy(l) ? '📅 Book Future Vacancy' : '🏠 Book Now') : '🚫 Not Available';
+        bookBtn.style.opacity = canBook ? '1' : '0.5';
+        bookBtn.style.cursor  = canBook ? 'pointer' : 'not-allowed';
+      }
+      if (reserveBtn) {
+        reserveBtn.disabled = !canBook;
+        reserveBtn.textContent = canBook ? '📅 Reserve for Future' : '🚫 Not Available';
+        reserveBtn.style.opacity = canBook ? '1' : '0.5';
+        reserveBtn.style.cursor = canBook ? 'pointer' : 'not-allowed';
+      }
     }
 
     // Owner details — keep inside the description section
@@ -1100,7 +1144,7 @@ async function openDetail(id) {
   if (id) {
     try { sessionStorage.setItem('currentListingId', id); } catch {}
   }
-  await ensureCurrentListingLoaded(id);
+  await ensureCurrentListingLoaded(id, true);
   if (getCurrentPageId() === 'results') {
     await renderCurrentDetailPage();
     openSearchModal('detail');
@@ -1318,10 +1362,11 @@ async function submitReviewsPageReview() {
 }
 
 // ── Booking ───────────────────────────────────────
-function goToBooking() {
+async function goToBooking() {
   if (!isLoggedIn()) { showToast('Please sign in to make a booking','warning'); showPage('login'); return; }
   const listing = currentListing || restoreCurrentListing();
   if (!listing) return;
+  if (await currentUserAlreadyBooked(listing._id)) { showToast('You already booked this listing','warning'); return; }
   if (!(listing.available || isFutureVacancy(listing))) { showToast('This listing is currently unavailable','error'); return; }
   currentListing = listing;
   persistCurrentListing(listing);
@@ -1350,6 +1395,9 @@ async function submitBooking() {
       showToast('🎉 Booking submitted! Listing marked as booked.','success');
       currentListing.available = false;
       currentListing.futureVacancyMonths = 0;
+      persistCurrentListing(currentListing);
+      if (!(activeBookedListingIds instanceof Set)) activeBookedListingIds = new Set();
+      activeBookedListingIds.add(currentListing._id);
       allListings = allListings.map(l => l._id===currentListing._id?{...l,available:false,futureVacancyMonths:0}:l);
       loadHomeListings();
       loadHomeStats();

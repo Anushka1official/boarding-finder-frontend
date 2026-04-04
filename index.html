@@ -483,6 +483,7 @@
             <option value="15000">Under LKR 15,000</option>
             <option value="25000">LKR 15,000 – 25,000</option>
             <option value="40000">LKR 25,000 – 40,000</option>
+            <option value="40001">Over LKR 40,000</option>
             <option value="">Any Price</option>
           </select>
         </div>
@@ -668,7 +669,7 @@
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
         <input id="search-city" type="text" placeholder="City or area..." style="flex:1;min-width:140px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
         <select id="search-price" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
-          <option value="">Any Price</option><option value="15000">Under LKR 15,000</option><option value="25000">LKR 15–25k</option><option value="40000">LKR 25–40k</option>
+          <option value="">Any Price</option><option value="15000">Under LKR 15,000</option><option value="25000">LKR 15–25k</option><option value="40000">LKR 25–40k</option><option value="40001">Over 40k</option>
         </select>
         <select id="search-room" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
           <option value="">Any Room</option><option value="Single Room">Single</option><option value="Shared Room">Shared</option>
@@ -928,7 +929,7 @@
               <span id="detail-rating"><span class="rating-stars">★★★★★</span> 4.8 (32 reviews)</span>
             </div>
           </div>
-          <button class="btn btn-ghost" id="detail-save-btn" onclick="toggleSave()" style="gap:6px">♡ Save</button>
+          <button class="btn btn-ghost" id="detail-save-btn" onclick="toggleSave(currentListing?._id, this)" style="gap:6px">♡ Save</button>
         </div>
         <p style="color:var(--gray-600);font-size:15px;line-height:1.7;margin-bottom:20px;">A comfortable and secure boarding facility designed specifically for university students. Located just minutes from the University of Moratuwa, offering clean rooms, reliable WiFi, and a supportive community environment. All rooms are furnished and bills included.</p>
 
@@ -2265,6 +2266,8 @@ function resultCardHTML(l) {
 
 // ── Save / favourite ─────────────────────────────
 function toggleSave(id, btn) {
+  id = id || currentListing?._id;
+  if (!id) return;
   if (!isLoggedIn()) {
     showToast('Please sign in to save boarding places', 'warning');
     showPage('login');
@@ -2341,6 +2344,7 @@ async function applyFilters() {
   if (dropVal === '15000') { dropMin = 0;     dropMax = 15000; }
   if (dropVal === '25000') { dropMin = 15001; dropMax = 25000; }
   if (dropVal === '40000') { dropMin = 25001; dropMax = 40000; }
+  if (dropVal === '40001') { dropMin = 40001; dropMax = Number.MAX_SAFE_INTEGER; }
 
   // Effective price window = intersection of slider and dropdown
   const priceMin = dropVal ? dropMin : 0;

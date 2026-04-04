@@ -859,6 +859,24 @@ function buildGallery(media) {
   gallery.innerHTML = cells.join('');
 }
 
+
+function ensureGalleryLightboxShell() {
+  if (document.getElementById('gallery-lightbox')) return;
+  const shell = document.createElement('div');
+  shell.id = 'gallery-lightbox';
+  shell.className = 'gallery-lightbox';
+  shell.style.display = 'none';
+  shell.setAttribute('onclick', 'handleLightboxClick(event)');
+  shell.innerHTML = `
+    <button class="close-btn" onclick="closeLightbox()" aria-label="Close full screen media">✕</button>
+    <button class="nav-btn prev-btn" onclick="event.stopPropagation();lightboxNav(-1)" aria-label="Previous media">‹</button>
+    <div id="lightbox-content" onclick="event.stopPropagation()"></div>
+    <button class="nav-btn next-btn" onclick="event.stopPropagation();lightboxNav(1)" aria-label="Next media">›</button>
+    <div id="lightbox-counter" style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;background:rgba(0,0,0,.35);padding:6px 12px;border-radius:999px;backdrop-filter:blur(4px);">1 / 1</div>
+  `;
+  document.body.appendChild(shell);
+}
+
 // ── Lightbox ──────────────────────────────────────
 let _lbTouchStartX = 0;
 
@@ -923,6 +941,7 @@ async function renderCurrentDetailPage() {
   persistCurrentListing(listing);
   const l = currentListing;
 
+    ensureGalleryLightboxShell();
     // Gallery with real media
     buildGallery(l.media);
 

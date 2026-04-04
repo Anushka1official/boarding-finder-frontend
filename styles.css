@@ -974,3 +974,49 @@ nav {
     right: 14px;
   }
 }
+
+
+/* ── REVIEWS + DETAIL GLASS TUNING ── */
+.page-overlay-shell#overlay-detail .detail-content,
+.page-overlay-shell#overlay-detail .booking-panel{
+  background: linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(255,255,255,.89) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.page-overlay-shell#overlay-detail .gallery{
+  background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.90) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.page-overlay-shell#overlay-reviews{
+  background: rgba(7, 30, 36, .16);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.page-overlay-shell#overlay-reviews .page-overlay-panel{
+  max-width: 1120px;
+}
+.page-overlay-shell#overlay-reviews .overall-rating,
+.page-overlay-shell#overlay-reviews .write-review,
+.page-overlay-shell#overlay-reviews .review-card-full{
+  background: linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(255,255,255,.90) 100%);
+  border: 1px solid rgba(214,214,214,.92);
+  box-shadow: 0 12px 30px rgba(0,54,64,.08);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.page-overlay-shell#overlay-reviews .write-review{
+  border-style: solid;
+  text-align: center;
+}
+.page-overlay-shell#overlay-reviews #reviews-write-comment{
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.03);
+}
+.page-overlay-shell#overlay-reviews #reviews-write-stars span{
+  transition: transform .14s ease, color .14s ease;
+}
+.page-overlay-shell#overlay-reviews #reviews-write-stars span:hover{
+  transform: translateY(-1px) scale(1.05);
+}

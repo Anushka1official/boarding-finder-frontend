@@ -8,6 +8,7 @@ const API = 'https://boarding-finder-backend-production.up.railway.app/api';
 let allListings    = [];
 let currentListing = null;
 let currentRating  = 0;
+let currentReviewsPageRating = 0;
 let reviewsOffset  = 0;
 let savedIds       = new Set();
 let signupRole     = 'student';
@@ -1150,6 +1151,12 @@ async function loadReviewsPage() {
   const subEl   = document.getElementById('reviews-sub');
   if (titleEl) titleEl.textContent = `Reviews — ${currentListing.title}`;
   if (subEl)   subEl.textContent   = `${currentListing.title} · ${currentListing.city}`;
+  currentReviewsPageRating = 0;
+  const writeMsg = document.getElementById('reviews-write-msg');
+  if (writeMsg) writeMsg.style.display = 'none';
+  const writeComment = document.getElementById('reviews-write-comment');
+  if (writeComment) writeComment.value = '';
+  if (document.getElementById('reviews-write-stars')) setReviewsPageRating(0);
   try {
     const res     = await fetch(`${API}/reviews/${currentListing._id}`);
     const reviews = await res.json();
@@ -1193,35 +1200,75 @@ function loadMoreReviews() {
 }
 
 // Write review from reviews page
-document.addEventListener('DOMContentLoaded', () => {
-  const writeBtn = document.querySelector('.write-review .btn-primary');
-  if (writeBtn) {
-    const starBox = document.querySelector('.write-review div[style*="28px"]');
-    let chosen = 0;
-    if (starBox) {
-      const spans = starBox.querySelectorAll('span');
-      spans.forEach((s,i) => {
-        s.style.cursor='pointer';
-        s.addEventListener('mouseover',()=>spans.forEach((x,j)=>x.textContent=j<=i?'★':'☆'));
-        s.addEventListener('mouseout', ()=>spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'));
-        s.addEventListener('click',    ()=>{ chosen=i+1; currentRating=chosen; spans.forEach((x,j)=>x.textContent=j<chosen?'★':'☆'); });
-      });
+function setReviewsPageRating(val) {
+  currentReviewsPageRating = val;
+  document.querySelectorAll('#reviews-write-stars span').forEach((s, idx) => {
+    s.textContent = idx < val ? '★' : '☆';
+    s.style.color = idx < val ? '#F59E0B' : '#9CA3AF';
+  });
+}
+
+async function submitReviewsPageReview() {
+  if (!isLoggedIn()) { showToast('Please sign in to write a review','warning'); showPage('login'); return; }
+  if (!currentListing) { showToast('Please select a listing first','error'); return; }
+  if (!currentReviewsPageRating) { showToast('Please select a star rating','error'); return; }
+
+  const textarea = document.getElementById('reviews-write-comment');
+  const msg = document.getElementById('reviews-write-msg');
+  const comment = textarea?.value?.trim();
+  if (!comment) {
+    if (msg) {
+      msg.style.display = 'block';
+      msg.style.background = 'rgba(239,68,68,.12)';
+      msg.style.color = '#b91c1c';
+      msg.textContent = 'Please write a short review.';
     }
-    writeBtn.addEventListener('click', async () => {
-      if (!isLoggedIn()) { showToast('Please sign in to write a review','warning'); showPage('login'); return; }
-      if (!currentListing) { showToast('Please select a listing first','error'); return; }
-      if (!currentRating)  { showToast('Please select a star rating','error'); return; }
-      const comment = prompt('Share your experience:');
-      if (!comment?.trim()) return;
-      try {
-        const res = await fetch(`${API}/reviews`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({listing:currentListing._id,rating:currentRating,comment:comment.trim()})});
-        const data = await res.json();
-        if (data.review) { showToast('Review submitted! Thank you 🙏','success'); loadReviewsPage(); }
-        else showToast(data.error||'Could not submit','error');
-      } catch { showToast('Connection error','error'); }
-    });
+    return;
   }
-});
+
+  try {
+    const res = await fetch(`${API}/reviews`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+getToken()
+      },
+      body: JSON.stringify({
+        listing: currentListing._id,
+        rating: currentReviewsPageRating,
+        comment
+      })
+    });
+    const data = await res.json();
+    if (data.review) {
+      if (textarea) textarea.value = '';
+      currentReviewsPageRating = 0;
+      setReviewsPageRating(0);
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(1,135,144,.12)';
+        msg.style.color = '#0f766e';
+        msg.textContent = 'Review submitted successfully.';
+      }
+      await loadReviewsPage();
+      await loadReviewsPreview();
+    } else {
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(239,68,68,.12)';
+        msg.style.color = '#b91c1c';
+        msg.textContent = data.error || 'Could not submit review.';
+      }
+    }
+  } catch {
+    if (msg) {
+      msg.style.display = 'block';
+      msg.style.background = 'rgba(239,68,68,.12)';
+      msg.style.color = '#b91c1c';
+      msg.textContent = 'Connection error.';
+    }
+  }
+}
 
 // ── Booking ───────────────────────────────────────
 function goToBooking() {

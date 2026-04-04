@@ -10,6 +10,25 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
 <link href="styles.css" rel="stylesheet"/>
+
+<style>
+.dashboard-modal-overlay{
+  display:none;position:fixed;inset:0;z-index:1080;background:rgba(0,0,0,.35);
+  align-items:center;justify-content:center;padding:20px;
+}
+.dashboard-modal-card{
+  width:min(900px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;
+  border:1px solid var(--gray-200);box-shadow:0 18px 50px rgba(0,0,0,.18);padding:24px;
+}
+.dashboard-modal-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;}
+.dashboard-modal-title{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--gray-900);}
+.dashboard-modal-sub{font-size:13px;color:var(--gray-500);margin-top:4px;}
+.dashboard-modal-close{width:42px;height:42px;border-radius:12px;border:1px solid var(--gray-200);background:#fff;cursor:pointer;font-size:22px;line-height:1;}
+@media (max-width: 768px){
+  .dashboard-modal-card{width:100%;padding:18px;border-radius:18px;}
+}
+</style>
+
 </head>
 <body class="bootstrap-lite bootstrap-lite"  data-page="dashboard">
 <nav>
@@ -268,6 +287,157 @@
 <strong style="color:white">Smart Boarding Finder</strong> · © 2026
   </footer>
 </div>
+
+<!-- Edit Listing Modal -->
+<div id="edit-listing-modal" class="dashboard-modal-overlay" onclick="if(event.target===this) closeEditModal()">
+  <div class="dashboard-modal-card">
+    <div class="dashboard-modal-header">
+      <div>
+        <div class="dashboard-modal-title">Edit Listing</div>
+        <div class="dashboard-modal-sub" id="edit-modal-title-display">Update your listing details</div>
+      </div>
+      <button class="dashboard-modal-close" onclick="closeEditModal()">×</button>
+    </div>
+
+    <div id="el-msg" style="display:none;padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;font-weight:600;"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="form-group">
+        <label>Property Name</label>
+        <input type="text" id="el-title">
+      </div>
+      <div class="form-group">
+        <label>City / Area</label>
+        <input type="text" id="el-city">
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+      <div class="form-group">
+        <label>Monthly Price (LKR)</label>
+        <input type="number" id="el-price">
+      </div>
+      <div class="form-group">
+        <label>Security Deposit</label>
+        <input type="number" id="el-deposit">
+      </div>
+      <div class="form-group">
+        <label>Advance Payment</label>
+        <input type="number" id="el-advance">
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+      <div class="form-group">
+        <label>Room Type</label>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <label class="check-item"><input type="checkbox" class="el-roomtype" value="Single Room" onclick="toggleExclusiveCheckbox(this,'.el-roomtype')"> 🛏️ Single Room</label>
+          <label class="check-item"><input type="checkbox" class="el-roomtype" value="Shared Room" onclick="toggleExclusiveCheckbox(this,'.el-roomtype')"> 🛌 Shared Room</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Boarding For</label>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <label class="check-item"><input type="checkbox" class="el-boardingfor" value="Ladies Only" onclick="toggleExclusiveCheckbox(this,'.el-boardingfor')"> 👩 Ladies Only</label>
+          <label class="check-item"><input type="checkbox" class="el-boardingfor" value="Gents Only" onclick="toggleExclusiveCheckbox(this,'.el-boardingfor')"> 👨 Gents Only</label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="form-group">
+        <label>Availability</label>
+        <select id="el-available" onchange="toggleFutureVacancyFields('el')">
+          <option value="true">Available Now</option>
+          <option value="future">Coming Soon</option>
+          <option value="false">Booked / Unavailable</option>
+        </select>
+      </div>
+      <div class="form-group" id="el-future-wrap" style="display:none;">
+        <label>Future Vacancy Months</label>
+        <select id="el-future-months">
+          <option value="1">1 month</option>
+          <option value="2">2 months</option>
+          <option value="3">3 months</option>
+          <option value="6">6 months</option>
+          <option value="12">12 months</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="el-description" style="min-height:100px;"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Facilities</label>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;">
+        <label class="check-item"><input class="el-amenity" type="checkbox" value="WiFi"> 📶 WiFi</label>
+        <label class="check-item"><input class="el-amenity" type="checkbox" value="Kitchen"> 🍳 Kitchen</label>
+        <label class="check-item"><input class="el-amenity" type="checkbox" value="Parking"> 🚗 Parking</label>
+        <label class="check-item"><input class="el-amenity" type="checkbox" value="Laundry"> 🧺 Laundry</label>
+        <label class="check-item"><input class="el-amenity" type="checkbox" value="AC"> ❄️ AC</label>
+        <label class="check-item"><input class="el-amenity" type="checkbox" value="Meals"> 🚿 Attached Bath</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>House Rules</label>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+        <label class="check-item"><input class="el-rule" type="checkbox" value="No smoking"> 🚭 No smoking</label>
+        <label class="check-item"><input class="el-rule" type="checkbox" value="No pets"> 🐾 No pets</label>
+        <label class="check-item"><input class="el-rule" type="checkbox" value="No alcohol"> 🍺 No alcohol</label>
+        <label class="check-item"><input class="el-rule" type="checkbox" value="Keep common areas clean"> 🧹 Keep common areas clean</label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+      <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditListing()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Media Modal -->
+<div id="media-modal" class="dashboard-modal-overlay" onclick="if(event.target===this) closeMediaModal()">
+  <div class="dashboard-modal-card">
+    <div class="dashboard-modal-header">
+      <div>
+        <div class="dashboard-modal-title">Manage Media</div>
+        <div class="dashboard-modal-sub" id="media-modal-listing-name">Listing media</div>
+      </div>
+      <button class="dashboard-modal-close" onclick="closeMediaModal()">×</button>
+    </div>
+
+    <div class="form-group">
+      <label>Upload Photos & Videos <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(up to 10 files)</span></label>
+      <div class="media-upload-area" id="modal-drop-zone" ondragleave="this.classList.remove('drag-over')" ondragover="event.preventDefault();this.classList.add('drag-over')" ondrop="handleDrop(event,'modal')">
+        <input type="file" id="modal-media-input" accept="image/*,video/*" multiple onchange="handleFileSelect(this,'modal')">
+        <div style="font-size:36px;margin-bottom:8px;">📷</div>
+        <p style="font-weight:600;color:var(--gray-700);margin-bottom:4px;">Drag & drop photos/videos here</p>
+        <p style="font-size:13px;color:var(--gray-400);">or click to browse · JPG, PNG, MP4, MOV · Max 20MB each</p>
+      </div>
+      <div class="upload-progress" id="modal-upload-progress">
+        <div class="upload-progress-bar" id="modal-progress-bar" style="width:0%"></div>
+      </div>
+      <div class="media-preview-grid" id="modal-preview-grid"></div>
+    </div>
+
+    <div id="modal-upload-msg" style="display:none;padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;font-weight:600;"></div>
+
+    <div class="form-group">
+      <label>Existing Media</label>
+      <div class="media-preview-grid" id="modal-existing-media"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+      <button class="btn btn-ghost" onclick="closeMediaModal()">Close</button>
+      <button class="btn btn-primary" onclick="uploadModalMedia()">⬆️ Upload Selected</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="app.js"></script>
 </body>

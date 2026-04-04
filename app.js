@@ -547,6 +547,21 @@ function isActivelyBookedListing(listing) {
   return !!listing && !listing.available && !isFutureVacancy(listing);
 }
 
+
+function genderBadgeClass(v) {
+  if (!v) return '';
+  const s = String(v).toLowerCase();
+  if (s.includes('gent')) return 'gender-gents';
+  if (s.includes('lad')) return 'gender-ladies';
+  return '';
+}
+function genderBadgeHTML(v, extraStyle='') {
+  if (!v) return '';
+  const styleAttr = extraStyle ? ` style="${extraStyle}"` : '';
+  return `<span class="badge gender-badge ${genderBadgeClass(v)}"${styleAttr}>${v}</span>`;
+}
+
+
 function hydrateBookingPage(listing = currentListing) {
   if (!listing) return;
   const meta = availabilityMeta(listing);
@@ -570,7 +585,7 @@ function hydrateBookingPage(listing = currentListing) {
   }
   if (titleEl) titleEl.textContent = listing.title || '—';
   if (subEl) subEl.textContent = `${listing.roomType || 'Room'} · ${listing.city || '—'}${listing.boardingFor ? ' · ' + listing.boardingFor : ''}`;
-  if (badgesEl) badgesEl.innerHTML = `<span class="badge ${meta.badgeClass}">${meta.badgeText}</span>`;
+  if (badgesEl) badgesEl.innerHTML = `<span class="badge ${meta.badgeClass}">${meta.badgeText}</span>${genderBadgeHTML(listing.boardingFor, 'margin-left:6px;')}`;
   if (priceEl) priceEl.textContent = `LKR ${Number(listing.price || 0).toLocaleString()}`;
 
   const sumTitle = document.getElementById('bk-sum-title');
@@ -634,7 +649,7 @@ function homeCardHTML(l) {
         <div class="card-price">LKR ${Number(l.price).toLocaleString()}<span>/mo</span></div>
         <div class="card-dist" ${l.available? 'style="background:#C0EDED;color:#065F46;"' : ''}>${meta.shortText}</div>
       </div>
-      <div class="card-tags">${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
+      <div class="card-tags">${genderBadgeHTML(l.boardingFor)}${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
     </div>
   </div>`;
 }
@@ -655,7 +670,7 @@ function resultCardHTML(l) {
             <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
               <span class="badge ${meta.badgeClass}">${meta.badgeText}</span>
               ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🛏 ${l.roomType}</span>`:''}
-              ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🚻 ${l.boardingFor}</span>`:''}
+              ${genderBadgeHTML(l.boardingFor)}
               ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
             </div>
             <div class="result-title">${l.title}</div>
@@ -939,7 +954,7 @@ async function renderCurrentDetailPage() {
       badgesDiv.innerHTML = `
         <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
         ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🛏 ${l.roomType}</span>`:''}
-        ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🚻 ${l.boardingFor}</span>`:''}
+        ${genderBadgeHTML(l.boardingFor, 'font-size:12px;padding:5px 12px')}
         ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">📷 ${l.media.length} photos</span>`:''}`;
     }
 
@@ -1657,7 +1672,7 @@ async function loadDashboard() {
                 <div style="font-weight:700;font-size:15px;">${l.title}</div>
                 <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''}</div>
                 <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
-                <div style="margin-top:6px;"><span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).badgeText}</span></div>
+                <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).badgeText}</span>${genderBadgeHTML(l.boardingFor)}</div>
               </div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">

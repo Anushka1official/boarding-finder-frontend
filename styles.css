@@ -183,6 +183,11 @@ body.bootstrap-lite .field select {
   .badge-soon { background:#CCF0EF; color:#92400E; }
   .badge-verified { background:#E0F5F5; color:#005461; }
   .badge-group { background:#A8DFDE; color:#005461; }
+
+  .gender-badge { border:1px solid transparent; font-weight:700; }
+  .gender-gents { background:rgba(59,130,246,.12); color:#2563EB; border-color:rgba(37,99,235,.24); }
+  .gender-ladies { background:rgba(236,72,153,.12); color:#DB2777; border-color:rgba(219,39,119,.24); }
+
   .fav-btn { position:absolute; top:10px; right:10px; width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-sm);border:none;font-size:16px;transition:all .2s; }
   .fav-btn:hover { transform:scale(1.15); }
   .fav-btn.active { color:#EF4444; }

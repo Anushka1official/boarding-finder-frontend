@@ -12,39 +12,6 @@ let currentReviewsPageRating = 0;
 let reviewsOffset  = 0;
 let savedIds       = new Set();
 let signupRole     = 'student';
-let activeBookedListingIds = null;
-
-function esc(v) {
-  return String(v == null ? '' : v)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-
-function normalizeBoardingFor(value) {
-  const v = String(value || '').trim().toLowerCase();
-  if (!v) return '';
-  if (v.includes('ladies')) return 'Ladies Only';
-  if (v.includes('gents')) return 'Gents Only';
-  return value;
-}
-
-function boardingForBadgeHTML(value, kind = 'badge') {
-  const label = normalizeBoardingFor(value);
-  if (!label) return '';
-  const isLadies = label === 'Ladies Only';
-  const genderClass = isLadies ? `${kind}-ladies` : `${kind}-gents`;
-  const icon = isLadies ? '♀' : '♂';
-  return `<span class="${kind} ${kind}-gender ${genderClass}">${icon} ${label}</span>`;
-}
-
-function appendGenderTagHTML(value, kind = 'tag') {
-  return boardingForBadgeHTML(value, kind);
-}
-
 
 function getSavedStorageKey() {
   const role = localStorage.getItem('userRole') || '';
@@ -195,10 +162,10 @@ function getCurrentListingId() {
   return restoreCurrentListing()?._id || '';
 }
 
-async function ensureCurrentListingLoaded(id = '', forceFresh = false) {
+async function ensureCurrentListingLoaded(id = '') {
   const targetId = id || getCurrentListingId();
   const restored = restoreCurrentListing();
-  if (!forceFresh && restored && (!targetId || restored._id === targetId)) {
+  if (restored && (!targetId || restored._id === targetId)) {
     currentListing = restored;
     return currentListing;
   }
@@ -229,7 +196,7 @@ async function initCurrentPage() {
     await applyFilters();
     const view = getSearchView();
     if (view === 'detail') {
-      const listing = await ensureCurrentListingLoaded('', true);
+      const listing = await ensureCurrentListingLoaded();
       if (listing) {
         await renderCurrentDetailPage();
         openSearchModal('detail', false);
@@ -237,14 +204,14 @@ async function initCurrentPage() {
     }
     if (view === 'booking') {
       if (!isLoggedIn()) { showToast('Please sign in to make a booking', 'warning'); navigateToPage('login'); return; }
-      const listing = await ensureCurrentListingLoaded('', true);
+      const listing = await ensureCurrentListingLoaded();
       if (listing) {
         hydrateBookingPage(listing);
         openSearchModal('booking', false);
       }
     }
     if (view === 'reviews') {
-      const listing = await ensureCurrentListingLoaded('', true);
+      const listing = await ensureCurrentListingLoaded();
       if (listing) {
         await loadReviewsPage();
         openSearchModal('reviews', false);
@@ -516,7 +483,6 @@ async function loginUser() {
       localStorage.setItem('phoneVerified', data.phoneVerified ? '1' : '0');
       localStorage.setItem('userPhone',     data.phone || '');
       loadSavedIdsFromStorage();
-      activeBookedListingIds = null;
       updateNav();
       showToast(`Welcome back, ${data.name}! 👋`, 'success');
       setTimeout(() => { showPage('home'); loadHomeListings(); }, 800);
@@ -527,7 +493,6 @@ async function loginUser() {
 function logoutUser() {
   ['token','userName','userRole','userId','phoneVerified','userPhone'].forEach(k => localStorage.removeItem(k));
   loadSavedIdsFromStorage();
-  activeBookedListingIds = null;
   allListings = [];
   updateNav();
   showToast('Signed out successfully', 'success');
@@ -582,37 +547,6 @@ function isActivelyBookedListing(listing) {
   return !!listing && !listing.available && !isFutureVacancy(listing);
 }
 
-async function getMyActiveBookedListingIds(force = false) {
-  if (!isLoggedIn() || getUserRole() !== 'student') return new Set();
-  if (!force && activeBookedListingIds instanceof Set) return activeBookedListingIds;
-  try {
-    const res = await fetch(`${API}/bookings/user/me`, {
-      headers: { 'Authorization': 'Bearer ' + getToken() }
-    });
-    const bookings = await res.json();
-    if (!Array.isArray(bookings)) {
-      activeBookedListingIds = new Set();
-      return activeBookedListingIds;
-    }
-    activeBookedListingIds = new Set(
-      bookings
-        .filter(b => b && b.listing && isActivelyBookedListing(b.listing))
-        .map(b => typeof b.listing === 'object' ? b.listing._id : b.listing)
-        .filter(Boolean)
-    );
-    return activeBookedListingIds;
-  } catch {
-    activeBookedListingIds = new Set();
-    return activeBookedListingIds;
-  }
-}
-
-async function currentUserAlreadyBooked(listingId) {
-  if (!listingId) return false;
-  const ids = await getMyActiveBookedListingIds();
-  return ids.has(listingId);
-}
-
 function hydrateBookingPage(listing = currentListing) {
   if (!listing) return;
   const meta = availabilityMeta(listing);
@@ -635,8 +569,8 @@ function hydrateBookingPage(listing = currentListing) {
     }
   }
   if (titleEl) titleEl.textContent = listing.title || '—';
-  if (subEl) subEl.textContent = `${listing.roomType || 'Room'} · ${listing.city || '—'}`;
-  if (badgesEl) badgesEl.innerHTML = `<span class="badge ${meta.badgeClass}">${meta.badgeText}</span>${appendGenderTagHTML(listing.boardingFor, 'badge')}`;
+  if (subEl) subEl.textContent = `${listing.roomType || 'Room'} · ${listing.city || '—'}${listing.boardingFor ? ' · ' + listing.boardingFor : ''}`;
+  if (badgesEl) badgesEl.innerHTML = `<span class="badge ${meta.badgeClass}">${meta.badgeText}</span>`;
   if (priceEl) priceEl.textContent = `LKR ${Number(listing.price || 0).toLocaleString()}`;
 
   const sumTitle = document.getElementById('bk-sum-title');
@@ -695,12 +629,12 @@ function homeCardHTML(l) {
     </div>
     <div class="card-body">
       <div class="card-title">${l.title}</div>
-      <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}</div>
+      <div class="card-location">📍 ${l.city}${l.roomType?' · 🛏 '+l.roomType:''}${l.boardingFor?' · '+l.boardingFor:''}</div>
       <div class="card-meta">
         <div class="card-price">LKR ${Number(l.price).toLocaleString()}<span>/mo</span></div>
         <div class="card-dist" ${l.available? 'style="background:#C0EDED;color:#065F46;"' : ''}>${meta.shortText}</div>
       </div>
-      <div class="card-tags">${appendGenderTagHTML(l.boardingFor, 'tag')}${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
+      <div class="card-tags">${(l.amenities||[]).slice(0,4).map(a=>`<span class="tag">${a}</span>`).join('')}</div>
     </div>
   </div>`;
 }
@@ -721,7 +655,7 @@ function resultCardHTML(l) {
             <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
               <span class="badge ${meta.badgeClass}">${meta.badgeText}</span>
               ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🛏 ${l.roomType}</span>`:''}
-              ${appendGenderTagHTML(l.boardingFor, 'badge')}
+              ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">🚻 ${l.boardingFor}</span>`:''}
               ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);">📷 ${l.media.length} photos</span>`:''}
             </div>
             <div class="result-title">${l.title}</div>
@@ -978,7 +912,6 @@ async function renderCurrentDetailPage() {
   if (!listing) { showToast('Could not load listing details', 'error'); return; }
   persistCurrentListing(listing);
   const l = currentListing;
-  const alreadyBookedByUser = await currentUserAlreadyBooked(l._id);
 
     // Gallery with real media
     buildGallery(l.media);
@@ -993,7 +926,7 @@ async function renderCurrentDetailPage() {
     const distEl   = document.getElementById('detail-dist');
     const ratingEl = document.getElementById('detail-rating');
     if (cityEl)   cityEl.innerHTML   = `📍 ${l.city}`;
-    if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'} · LKR ${Number(l.price).toLocaleString()}/mo`;
+    if (distEl)   distEl.innerHTML   = `🛏 ${l.roomType||'Room'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''} · LKR ${Number(l.price).toLocaleString()}/mo`;
     if (ratingEl) ratingEl.innerHTML = `<span class="rating-stars">★★★★☆</span> Loading...`;
 
     // Description
@@ -1006,7 +939,7 @@ async function renderCurrentDetailPage() {
       badgesDiv.innerHTML = `
         <span class="badge ${l.available?'badge-available':'badge-soon'}" style="font-size:12px;padding:5px 12px">${l.available?'✓ Available Now':'🕐 Coming Soon'}</span>
         ${l.roomType?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🛏 ${l.roomType}</span>`:''}
-        ${appendGenderTagHTML(l.boardingFor, 'badge')}
+        ${l.boardingFor?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">🚻 ${l.boardingFor}</span>`:''}
         ${l.media&&l.media.length?`<span class="badge" style="background:var(--gray-100);color:var(--gray-600);font-size:12px;padding:5px 12px">📷 ${l.media.length} photos</span>`:''}`;
     }
 
@@ -1065,18 +998,12 @@ async function renderCurrentDetailPage() {
     const priceSub   = document.querySelector('#page-detail .price-sub');
     const availBadge = document.querySelector('#page-detail .avail-badge');
     if (priceBig) priceBig.textContent = `LKR ${Number(l.price).toLocaleString()}`;
-    if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'} · Bills may vary`;
+    if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'}${l.boardingFor ? ' · '+l.boardingFor : ''} · Bills may vary`;
     if (availBadge) {
       const meta = availabilityMeta(l);
-      if (alreadyBookedByUser) {
-        availBadge.style.background = '#DBEAFE';
-        availBadge.style.color      = '#1D4ED8';
-        availBadge.innerHTML = '✅ You already booked';
-      } else {
-        availBadge.style.background = l.available ? '#D1FAE5' : '#FEF3C7';
-        availBadge.style.color      = l.available ? '#065F46' : '#92400E';
-        availBadge.innerHTML = l.available ? '<span class="dot"></span> Available Now' : meta.detailText;
-      }
+      availBadge.style.background = l.available ? '#D1FAE5' : '#FEF3C7';
+      availBadge.style.color      = l.available ? '#065F46' : '#92400E';
+      availBadge.innerHTML = l.available ? '<span class="dot"></span> Available Now' : meta.detailText;
     }
 
     // Booking panel price breakdown — use owner-set values if available
@@ -1093,60 +1020,28 @@ async function renderCurrentDetailPage() {
     if (panelAdv)  panelAdv.textContent  = advanceAmt ? `LKR ${Number(advanceAmt).toLocaleString()}` : '—';
     if (panelPay)  panelPay.textContent  = `LKR ${Number(payToBook).toLocaleString()}`;
 
-    // Booking buttons
+    // Book Now button
     const bookBtn = document.getElementById('book-now-btn');
-    const reserveBtn = document.getElementById('reserve-future-btn');
-    if (alreadyBookedByUser) {
-      if (bookBtn) {
-        bookBtn.disabled = true;
-        bookBtn.textContent = '✅ You Already Booked';
-        bookBtn.style.opacity = '1';
-        bookBtn.style.cursor = 'default';
-      }
-      if (reserveBtn) {
-        reserveBtn.disabled = true;
-        reserveBtn.textContent = '✅ You Already Booked';
-        reserveBtn.style.opacity = '0.75';
-        reserveBtn.style.cursor = 'default';
-      }
-    } else {
+    if (bookBtn) {
       const canBook = l.available || isFutureVacancy(l);
-      if (bookBtn) {
-        bookBtn.disabled    = !canBook;
-        bookBtn.textContent = canBook ? (isFutureVacancy(l) ? '📅 Book Future Vacancy' : '🏠 Book Now') : '🚫 Not Available';
-        bookBtn.style.opacity = canBook ? '1' : '0.5';
-        bookBtn.style.cursor  = canBook ? 'pointer' : 'not-allowed';
-      }
-      if (reserveBtn) {
-        reserveBtn.disabled = !canBook;
-        reserveBtn.textContent = canBook ? '📅 Reserve for Future' : '🚫 Not Available';
-        reserveBtn.style.opacity = canBook ? '1' : '0.5';
-        reserveBtn.style.cursor = canBook ? 'pointer' : 'not-allowed';
-      }
+      bookBtn.disabled    = !canBook;
+      bookBtn.textContent = canBook ? (isFutureVacancy(l) ? '📅 Book Future Vacancy' : '🏠 Book Now') : '🚫 Not Available';
+      bookBtn.style.opacity = canBook ? '1' : '0.5';
+      bookBtn.style.cursor  = canBook ? 'pointer' : 'not-allowed';
     }
 
     // Owner details — keep inside the description section
     const ownerInline = document.getElementById('detail-owner-inline');
     if (ownerInline) {
-      const ownerObj   = l.owner && typeof l.owner === 'object' ? l.owner : null;
-      const ownerName  = ownerObj?.name || l.ownerName || 'Property Owner';
-      const ownerRole  = ownerObj?.role === 'landlord' ? 'Owner' : (ownerObj?.role ? ownerObj.role : 'Owner');
-      const ownerPhone = ownerObj?.phone || l.ownerPhone || '';
-      const ownerEmail = ownerObj?.email || l.ownerEmail || '';
-
-      const extraLines = [
-        ownerPhone ? `<div class="detail-owner-meta"><span>📞</span><span>${esc(ownerPhone)}</span></div>` : '',
-        ownerEmail ? `<div class="detail-owner-meta"><span>✉️</span><span>${esc(ownerEmail)}</span></div>` : ''
-      ].filter(Boolean).join('');
-
+      const ownerName = l.ownerName || l.owner?.name || 'Property Owner';
+      const ownerSub  = l.ownerVerified ? '✅ Verified Owner' : 'Owner';
       ownerInline.innerHTML = `
         <div class="detail-owner-chip">
           <div class="detail-owner-avatar">🏠</div>
-          <div class="detail-owner-copy">
+          <div>
             <div class="detail-owner-title">Owner Details</div>
-            <div class="detail-owner-name">${esc(ownerName)}</div>
-            <div class="detail-owner-sub">${esc(ownerRole)}</div>
-            ${extraLines}
+            <div class="detail-owner-name">${ownerName}</div>
+            <div class="detail-owner-sub">${ownerSub}</div>
           </div>
         </div>`;
     }
@@ -1166,7 +1061,7 @@ async function openDetail(id) {
   if (id) {
     try { sessionStorage.setItem('currentListingId', id); } catch {}
   }
-  await ensureCurrentListingLoaded(id, true);
+  await ensureCurrentListingLoaded(id);
   if (getCurrentPageId() === 'results') {
     await renderCurrentDetailPage();
     openSearchModal('detail');
@@ -1384,11 +1279,10 @@ async function submitReviewsPageReview() {
 }
 
 // ── Booking ───────────────────────────────────────
-async function goToBooking() {
+function goToBooking() {
   if (!isLoggedIn()) { showToast('Please sign in to make a booking','warning'); showPage('login'); return; }
   const listing = currentListing || restoreCurrentListing();
   if (!listing) return;
-  if (await currentUserAlreadyBooked(listing._id)) { showToast('You already booked this listing','warning'); return; }
   if (!(listing.available || isFutureVacancy(listing))) { showToast('This listing is currently unavailable','error'); return; }
   currentListing = listing;
   persistCurrentListing(listing);
@@ -1417,9 +1311,6 @@ async function submitBooking() {
       showToast('🎉 Booking submitted! Listing marked as booked.','success');
       currentListing.available = false;
       currentListing.futureVacancyMonths = 0;
-      persistCurrentListing(currentListing);
-      if (!(activeBookedListingIds instanceof Set)) activeBookedListingIds = new Set();
-      activeBookedListingIds.add(currentListing._id);
       allListings = allListings.map(l => l._id===currentListing._id?{...l,available:false,futureVacancyMonths:0}:l);
       loadHomeListings();
       loadHomeStats();
@@ -1557,7 +1448,7 @@ function goToAddListing() {
   if (!isLoggedIn()) { showPage('login'); return; }
   if (getUserRole() !== 'landlord') { showToast('Only owners can add listings. Sign up as an Owner.','warning'); return; }
   if (getCurrentPageId() !== 'dashboard') {
-    navigateToPage('dashboard', { section: 'add' });
+    navigateToPage('add-listing', { section: 'add' });
     return;
   }
   focusDashboardAddSection();
@@ -1693,14 +1584,6 @@ async function uploadModalMedia() {
   }
 }
 
-
-function getListingOwnerId(listing) {
-  if (!listing || !listing.owner) return '';
-  if (typeof listing.owner === 'string') return listing.owner;
-  if (typeof listing.owner === 'object') return String(listing.owner._id || listing.owner.id || '');
-  return String(listing.owner || '');
-}
-
 // ── Dashboard ─────────────────────────────────────
 async function loadDashboard() {
   const name = localStorage.getItem('userName');
@@ -1744,7 +1627,7 @@ async function loadDashboard() {
   if (!allListings.length) await fetchListings();
   const myUserId = localStorage.getItem('userId');
   const myListings = role === 'landlord'
-    ? allListings.filter(l => getListingOwnerId(l) === myUserId)
+    ? allListings.filter(l => l.owner && l.owner.toString() === myUserId)
     : [];
   const slEl = document.getElementById('dash-stat-listings');
   if (slEl) slEl.textContent = role==='landlord'?myListings.length:'—';
@@ -1764,9 +1647,9 @@ async function loadDashboard() {
                     `<div style="width:60px;height:60px;border-radius:var(--radius-sm);background:${gradFor(l._id)};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${iconFor(l._id)}</div>`}
               <div style="flex:1;min-width:0;">
                 <div style="font-weight:700;font-size:15px;">${l.title}</div>
-                <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}</div>
+                <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">📍 ${l.city} · LKR ${Number(l.price).toLocaleString()}/mo · 🛏 ${l.roomType||'—'}${l.boardingFor ? ' · 🚻 '+l.boardingFor : ''}</div>
                 <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">📷 ${(l.media||[]).length} photo${(l.media||[]).length!==1?'s':''}</div>
-                <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).badgeText}</span>${appendGenderTagHTML(l.boardingFor, 'badge')}</div>
+                <div style="margin-top:6px;"><span class="badge ${availabilityMeta(l).badgeClass}">${availabilityMeta(l).badgeText}</span></div>
               </div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
@@ -1944,7 +1827,6 @@ function renderAllBookings(bookings, role) {
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
             <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🏠 ${b.listing?.title||'Listing'}</div>
             <div style="font-size:13px;color:var(--gray-500);">📍 ${b.listing?.city||'—'} · LKR ${b.listing?.price?.toLocaleString()||'—'}/mo · 🛏 ${b.roomType||b.listing?.roomType||'—'} · ${b.bookingType === 'future' ? '📅 Future Vacancy' : '✅ Available Vacancy'}</div>
-            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">${appendGenderTagHTML(b.listing?.boardingFor, 'badge')}</div>
           </div>
           <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
             <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>
@@ -1969,7 +1851,6 @@ function renderAllBookings(bookings, role) {
           </div>
           <div style="margin-top:14px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-100);">
             <div style="font-size:13px;color:var(--gray-600);">🛏 Room: <strong>${b.roomType||b.listing?.roomType||'—'}</strong> · 💰 LKR <strong>${b.listing?.price?.toLocaleString()||'—'}/mo</strong> · ${b.bookingType === 'future' ? '📅 Future Vacancy' : '✅ Available Vacancy'}</div>
-            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">${appendGenderTagHTML(b.listing?.boardingFor, 'badge')}</div>
           </div>
           <div style="display:flex;gap:20px;margin-top:12px;font-size:13px;color:var(--gray-500);flex-wrap:wrap;">
             <span>📅 Move-in: <strong style="color:var(--gray-800);">${date}</strong></span>
@@ -2176,7 +2057,7 @@ async function loadHomeStats() {
     const totalListings = allListings.filter(l => l.available || isFutureVacancy(l)).length;
 
     // Unique owners (unique owner IDs)
-    const ownerSet = new Set(allListings.map(l => getListingOwnerId(l)).filter(Boolean));
+    const ownerSet = new Set(allListings.map(l => l.owner?.toString()).filter(Boolean));
     const totalOwners = ownerSet.size;
 
     // Students housed = total bookings (approximate: use allListings count × 2 as proxy,

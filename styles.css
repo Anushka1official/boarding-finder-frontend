@@ -1,5 +1,4 @@
 
-/* Bootstrap light integration layer */
 :root {
   --bs-primary: #00B7B5;
   --bs-primary-rgb: 0, 183, 181;
@@ -77,6 +76,7 @@ body.bootstrap-lite .field select {
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); font-size: 15px; line-height: 1.6; }
   
   /* ── NAV ── */
+
   nav {
     position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
     background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
@@ -202,6 +202,7 @@ body.bootstrap-lite .field select {
   .tag { font-size:11px; padding:3px 8px; border-radius:6px; background:var(--gray-100); color:var(--gray-600); font-weight:500; }
 
   /* Vacancy-highlight banner */
+
   .vacancy-banner {
     background:linear-gradient(135deg, #005461, #018790);
     border-radius:var(--radius-xl); padding:40px 48px; margin:0 24px;
@@ -297,6 +298,8 @@ body.bootstrap-lite .field select {
   .review-text { font-size:14px;color:var(--gray-600);line-height:1.6; }
 
   /* ── BOOKING PAGE ── */
+
+
   .booking-page-wrap { max-width:900px;margin:0 auto;padding:32px 24px; }
   .booking-page-wrap h1 { font-family:'Fraunces',serif;font-size:28px;font-weight:600;margin-bottom:28px; }
   .booking-layout { display:grid;grid-template-columns:1fr 320px;gap:24px; }
@@ -319,6 +322,7 @@ body.bootstrap-lite .field select {
   .summary-total { display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--gray-900);border-top:1px solid var(--gray-200);padding-top:12px;margin-top:4px; }
 
   /* ── OWNER DASHBOARD ── */
+
   .dashboard-wrap { max-width:1100px;margin:0 auto;padding:28px 24px; }
   .dashboard-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px; }
   .dashboard-header h1 { font-family:'Fraunces',serif;font-size:26px;font-weight:600; }
@@ -337,8 +341,9 @@ body.bootstrap-lite .field select {
   .form-group input,.form-group select,.form-group textarea { width:100%;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;color:var(--gray-800);background:white;transition:border-color .2s; }
   .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline:none;border-color:var(--brand); }
   .form-group textarea { height:80px;resize:vertical; }
+   
+  /* ── MEDIA UPLOAD ── */   
 
-  /* ── MEDIA UPLOAD ── */
   .media-upload-area { border:2px dashed var(--gray-300);border-radius:var(--radius-md);padding:28px;text-align:center;cursor:pointer;transition:all .2s;position:relative; }
   .media-upload-area:hover,.media-upload-area.drag-over { border-color:var(--brand);background:var(--brand-light); }
   .media-upload-area input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
@@ -501,6 +506,8 @@ body.bootstrap-lite .field select {
   .forgot-link a { font-size:13px;color:var(--brand);cursor:pointer;font-weight:600; }
 
   /* ── PHONE VERIFY PAGE ── */
+
+
   .verify-step { display:none; }
   .verify-step.active { display:block; }
   .otp-inputs { display:flex; gap:10px; justify-content:center; margin:20px 0; }
@@ -524,6 +531,8 @@ body.bootstrap-lite .field select {
   }
 
 
+
+       
   /* ── SOFT GLASS + FADE IN ── */
   body {
     background:
@@ -556,7 +565,7 @@ body.bootstrap-lite .field select {
       filter: none;
       transition: none;
     }
-  }
+  }   
 
   nav,
   .mobile-nav-menu,
@@ -603,6 +612,7 @@ body.bootstrap-lite .field select {
     from { transform: translate3d(0,0,0) scale(1); }
     to   { transform: translate3d(8px,-10px,0) scale(1.04); }
   }
+
 
   .boarding-card,
   .result-card,
@@ -706,6 +716,8 @@ body.bootstrap-lite .field select {
 .page-overlay-close:hover { background:white; }
 body.modal-open { overflow:hidden; }
 
+
+    
 .page-overlay-shell #page-detail,
 .page-overlay-shell #page-booking,
 .page-overlay-shell #page-reviews {
@@ -734,7 +746,8 @@ nav {
 .listing-form,
 .bookings-panel,
 .auth-card,
-.booking-form-section,
+.booking-form-section,    
+
 .booking-summary {
   background: rgba(255,255,255,.94);
   border: 1px solid rgba(214,214,214,.9);
@@ -774,6 +787,7 @@ nav {
 .review-card-full {
   box-shadow: var(--shadow-sm);
 }
+
 
 .boarding-card:hover,
 .result-card:hover,

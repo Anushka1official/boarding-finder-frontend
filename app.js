@@ -1,10 +1,7 @@
-// ═══════════════════════════════════════════════════
-//  SMART BOARDING FINDER — Full Script with Media
-// ═══════════════════════════════════════════════════
+
 
 const API = 'https://boarding-finder-backend-production.up.railway.app/api';
 
-// ── State ─────────────────────────────────────────
 let allListings    = [];
 let currentListing = null;
 let currentRating  = 0;
@@ -31,13 +28,13 @@ function persistSavedIds() {
 }
 
 // Media state
-let alSelectedFiles    = [];   // files chosen in Add Listing form
-let modalSelectedFiles = [];   // files chosen in Manage Media modal
-let modalListingId     = null; // which listing the modal is for
-let lightboxMedia      = [];   // [{url, isVideo}]
+let alSelectedFiles    = [];   
+let modalSelectedFiles = [];   
+let modalListingId     = null; 
+let lightboxMedia      = [];   
 let lightboxIndex      = 0;
 
-// ── Toast ─────────────────────────────────────────
+// ── Toast 
 function showToast(msg, type = '') {
   let t = document.getElementById('_toast');
   if (!t) {
@@ -46,6 +43,7 @@ function showToast(msg, type = '') {
     t.style.cssText = 'position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:500;z-index:9999;transform:translateY(100px);transition:transform .3s;pointer-events:none;max-width:320px;';
     document.body.appendChild(t);
   }
+
   t.textContent = msg;
   t.style.background = type==='success'?'#018790':type==='error'?'#EF4444':type==='warning'?'#F59E0B':'#1F2937';
   t.style.color = type==='warning'?'#1F2937':'white';
@@ -59,9 +57,11 @@ function showMsg(el, text, type) {
   el.style.background = type==='success'?'#D1FAE5':type==='error'?'#FEE2E2':'#E0F5F5';
   el.style.color = type==='success'?'#065F46':type==='error'?'#DC2626':'#005461';
   el.textContent = text;
+
 }
 
-// ── Page navigation ───────────────────────────────
+// ── Page navigation 
+
 const PAGE_FILE_MAP = {
   home: 'index.html',
   results: 'search.html',
@@ -107,6 +107,8 @@ function setActiveNav(pageId) {
     auth: null,
     login: null,
     signup: null
+    
+
   };
   const navKey = navMap[pageId];
   if (!navKey) return;
@@ -297,7 +299,7 @@ function switchSignupRole(role) {
   document.getElementById('signup-owner-fields').style.display   = role==='owner'?'block':'none';
 }
 
-// ── Nav ───────────────────────────────────────────
+// ── Nav 
 
 function toggleMobileMenu() {
   document.getElementById('mobile-nav-menu')?.classList.toggle('open');
@@ -439,7 +441,7 @@ function updateNav() {
 }
 
 
-// ── Auth helpers ──────────────────────────────────
+// ── Auth helpers 
 const getToken    = () => localStorage.getItem('token');
 const getUserRole = () => localStorage.getItem('userRole');
 const isLoggedIn  = () => !!getToken();
@@ -500,7 +502,7 @@ function logoutUser() {
   loadHomeListings();
 }
 
-// ── Listings ──────────────────────────────────────
+// ── Listings
 async function fetchListings() {
   try {
     const headers = getToken() ? { 'Authorization':'Bearer '+getToken() } : {};
@@ -515,11 +517,11 @@ const ICONS = ['🏘️','🏠','🏡','🏢','🏗️'];
 function gradFor(id) { const n=parseInt(id.slice(-4),16)%GRADS.length; return GRADS[isNaN(n)?0:n]; }
 function iconFor(id) { const n=parseInt(id.slice(-4),16)%ICONS.length; return ICONS[isNaN(n)?0:n]; }
 
-// Get first image URL or null
+// Get first image URL
 function firstImage(l) {
   if (l.media && l.media.length) {
     const img = l.media.find(m => m.type === 'image');
-    // Cloudinary URLs are full https:// URLs — no need to prepend API base
+    
     if (img) return img.url.startsWith('http') ? img.url : `${API.replace('/api','')}${img.url}`;
   }
   return null;
@@ -691,7 +693,7 @@ function resultCardHTML(l) {
   </div>`;
 }
 
-// ── Save / favourite ─────────────────────────────
+// ── Save / favourite 
 function toggleSave(id, btn) {
   id = id || currentListing?._id;
   if (!id) return;
@@ -713,7 +715,7 @@ function toggleSave(id, btn) {
   if (savedPage && savedPage.classList.contains('active')) loadSavedPage();
 }
 
-// ── Home search ───────────────────────────────────
+// ── Home search 
 function doHomeSearch() {
   const price  = document.getElementById('home-price')?.value || '';
   const room   = document.getElementById('home-room')?.value || '';
@@ -787,7 +789,7 @@ async function applyFilters() {
   let filtered = allListings.filter(l => {
     if (isBookedListing(l)) return false;
     if (city && !l.city.toLowerCase().includes(city) && !l.title.toLowerCase().includes(city)) return false;
-    // Compare ONLY monthly rent (l.price) — deposit and advance are never considered
+   
     if (l.price < priceMin || l.price > priceMax) return false;
     if (roomSel && l.roomType !== roomSel) return false;
     if (genderSel && l.boardingFor !== genderSel) return false;
@@ -812,7 +814,7 @@ async function applyFilters() {
     : '<div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--gray-400);">😕 No listings match your filters. <a onclick="resetFilters()" style="color:var(--brand);cursor:pointer;font-weight:600;">Reset filters</a></div>';
 }
 
-// ── Gallery helpers ───────────────────────────────
+// ── Gallery helpers 
 function buildGallery(media) {
   const gallery = document.getElementById('detail-gallery');
   if (!gallery) return;
@@ -831,7 +833,7 @@ function buildGallery(media) {
   }
 
   const baseUrl = API.replace('/api', '');
-  // Cloudinary URLs are full https:// — use directly; local /uploads URLs need base prepended
+  
   function resolveUrl(url) { return url.startsWith('http') ? url : baseUrl + url; }
 
   media.forEach(m => {
@@ -864,7 +866,7 @@ function buildGallery(media) {
   gallery.innerHTML = cells.join('');
 }
 
-// ── Lightbox ──────────────────────────────────────
+// ── Lightbox 
 let _lbTouchStartX = 0;
 
 function openLightbox(index) {
@@ -874,7 +876,7 @@ function openLightbox(index) {
   const lb = document.getElementById('gallery-lightbox');
   lb.style.display = 'flex';
   document.body.style.overflow = 'hidden';
-  // Touch swipe support
+ 
   lb.addEventListener('touchstart', _lbTouchStart, { passive: true });
   lb.addEventListener('touchend',   _lbTouchEnd,   { passive: true });
 }
@@ -921,7 +923,7 @@ document.addEventListener('keydown', e => {
   if (e.key==='ArrowLeft')   lightboxNav(-1);
 });
 
-// ── Detail page ───────────────────────────────────
+// ── Detail page
 async function renderCurrentDetailPage() {
   const listing = await ensureCurrentListingLoaded();
   if (!listing) { showToast('Could not load listing details', 'error'); return; }
@@ -976,6 +978,7 @@ async function renderCurrentDetailPage() {
         if (h) h.style.display = '';
         facGrid.style.display = '';
       } else {
+
         // Hide heading and grid when no amenities
         const h = document.querySelector('#page-detail .fac-heading');
         if (h) h.style.display = 'none';
@@ -984,7 +987,8 @@ async function renderCurrentDetailPage() {
       }
     }
 
-    // House Rules — show only if owner set them
+
+    // House Rules — show only if owner set them   
     const rulesSection = document.getElementById('detail-rules-section');
     const rulesGrid    = document.getElementById('detail-rules-grid');
     if (rulesSection && rulesGrid) {
@@ -996,7 +1000,7 @@ async function renderCurrentDetailPage() {
       }
     }
 
-    // Room type card
+    // Room type card   
     const roomGrid = document.querySelector('#page-detail .room-types-grid');
     if (roomGrid) {
       roomGrid.innerHTML = `
@@ -1008,12 +1012,13 @@ async function renderCurrentDetailPage() {
         </div>`;
     }
 
-    // Booking panel
+    // Booking panel  
     const priceBig   = document.querySelector('#page-detail .price-big');
     const priceSub   = document.querySelector('#page-detail .price-sub');
     const availBadge = document.querySelector('#page-detail .avail-badge');
     if (priceBig) priceBig.textContent = `LKR ${Number(l.price).toLocaleString()}`;
     if (priceSub) priceSub.textContent = `per month · ${l.roomType||'Room'}${l.boardingFor ? ' · '+l.boardingFor : ''} · Bills may vary`;
+
     if (availBadge) {
       const meta = availabilityMeta(l);
       availBadge.style.background = l.available ? '#D1FAE5' : '#FEF3C7';
@@ -1022,8 +1027,8 @@ async function renderCurrentDetailPage() {
     }
 
     // Booking panel price breakdown — use owner-set values if available
-    const depositAmt = l.deposit  || l.price;   // fallback: 1 month rent
-    const advanceAmt = l.advance  || 5000;       // fallback: 5000
+    const depositAmt = l.deposit  || l.price;   
+    const advanceAmt = l.advance  || 5000;       
     const payToBook  = advanceAmt;
 
     const panelRent    = document.getElementById('panel-monthly-rent');
@@ -1085,7 +1090,7 @@ async function openDetail(id) {
   navigateToPage('detail', { listingId: id || currentListing?._id || getCurrentListingId() });
 }
 
-// ── Reviews ───────────────────────────────────────
+// ── Reviews
 function reviewCardHTML(r) {
   const name  = r.student?.name||'Anonymous';
   const init  = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
@@ -1138,6 +1143,8 @@ async function loadReviewsPreview() {
   }
 }
 
+
+
 function setRating(val) {
   currentRating = val;
   document.querySelectorAll('#detail-stars span').forEach(s => {
@@ -1166,6 +1173,8 @@ async function submitDetailReview() {
     } else { showMsg(msg,'❌ '+(data.error||'Could not submit'),'error'); }
   } catch { showMsg(document.getElementById('detail-review-msg'),'❌ Connection error','error'); }
 }
+
+
 
 async function loadReviewsPage() {
   if (!currentListing) return;
@@ -1209,6 +1218,8 @@ async function loadReviewsPage() {
   } catch {}
 }
 
+
+
 function loadMoreReviews() {
   if (!currentListing) return;
   fetch(`${API}/reviews/${currentListing._id}`).then(r=>r.json()).then(reviews => {
@@ -1220,6 +1231,7 @@ function loadMoreReviews() {
     if (reviewsOffset>=reviews.length) showToast('All reviews loaded!','success');
   }).catch(()=>{});
 }
+
 
 // Write review from reviews page
 function setReviewsPageRating(val) {
@@ -1293,7 +1305,8 @@ async function submitReviewsPageReview() {
   }
 }
 
-// ── Booking ───────────────────────────────────────
+// ── Booking 
+
 function goToBooking() {
   if (!isLoggedIn()) { showToast('Please sign in to make a booking','warning'); showPage('login'); return; }
   const listing = currentListing || restoreCurrentListing();
@@ -1334,11 +1347,9 @@ async function submitBooking() {
   } catch { showToast('Connection error — is the server running?','error'); }
 }
 
-// ══════════════════════════════════════════════════
-//  MEDIA UPLOAD FUNCTIONS
-// ══════════════════════════════════════════════════
 
-// ── File selection & preview ──────────────────────
+// ── File selection & preview 
+
 function handleFileSelect(input, context) {
   const files = [...input.files];
   if (!files.length) return;
@@ -1393,7 +1404,8 @@ function removeFile(index, context) {
   }
 }
 
-// ── Upload files to backend ───────────────────────
+// ── Upload files to backend 
+
 async function uploadFilesForListing(listingId, files, progressId, barId) {
   if (!files.length) return true;
   const progressEl = document.getElementById(progressId);
@@ -1429,7 +1441,7 @@ async function uploadFilesForListing(listingId, files, progressId, barId) {
   }
 }
 
-// ── Delete a media item ───────────────────────────
+// ── Delete a media item 
 async function deleteMedia(listingId, mediaIndex) {
   if (!confirm('Delete this photo/video?')) return;
   try {
@@ -1451,6 +1463,7 @@ async function deleteMedia(listingId, mediaIndex) {
   } catch { showToast('Connection error','error'); }
 }
 
+
 function toggleExclusiveCheckbox(clicked, selector) {
   if (!clicked.checked) return;
   document.querySelectorAll(selector).forEach(cb => {
@@ -1458,7 +1471,8 @@ function toggleExclusiveCheckbox(clicked, selector) {
   });
 }
 
-// ── Add Listing with media ────────────────────────
+// ── Add Listing with media 
+
 function goToAddListing() {
   if (!isLoggedIn()) { showPage('login'); return; }
   if (getUserRole() !== 'landlord') { showToast('Only owners can add listings. Sign up as an Owner.','warning'); return; }
@@ -1523,7 +1537,8 @@ async function submitListing() {
   } catch { showMsg(msg,'❌ Connection error.','error'); }
 }
 
-// ── Manage Media Modal (after listing) ───────────
+// ── Manage Media Modal (after listing) 
+
 function openManageMedia(listingId, listingTitle) {
   modalListingId = listingId;
   modalSelectedFiles = [];
@@ -1536,6 +1551,7 @@ function openManageMedia(listingId, listingTitle) {
   if (msgEl) msgEl.style.display = 'none';
 
   // Load existing media
+
   const listing = allListings.find(l => l._id === listingId);
   if (listing) renderExistingMedia(listing);
 
@@ -1558,6 +1574,7 @@ function renderExistingMedia(listing) {
     container.innerHTML = '<p style="color:var(--gray-400);font-size:13px;grid-column:1/-1;">No media uploaded yet.</p>';
     return;
   }
+
   const baseUrl = API.replace('/api','');
   const resolveMediaUrl = (url) => url.startsWith('http') ? url : baseUrl + url;
   container.innerHTML = media.map((m, i) => {
@@ -1574,6 +1591,7 @@ function renderExistingMedia(listing) {
   }).join('');
 }
 
+
 async function uploadModalMedia() {
   if (!modalListingId) return;
   if (!modalSelectedFiles.length) { showToast('Please select files to upload first','error'); return; }
@@ -1587,10 +1605,13 @@ async function uploadModalMedia() {
     const input = document.getElementById('modal-media-input');
     if (input) input.value = '';
     // Refresh existing media display
+
+
     await fetchListings();
     const updated = allListings.find(l => l._id === modalListingId);
     if (updated) renderExistingMedia(updated);
-    // If detail page is open for this listing, refresh gallery
+
+    // If detail page is open for this listing
     if (currentListing && currentListing._id === modalListingId) {
       currentListing = updated;
       buildGallery(updated?.media);
@@ -1607,7 +1628,7 @@ function getListingOwnerId(listing) {
   return String(listing.owner || '');
 }
 
-// ── Dashboard ─────────────────────────────────────
+// ── Dashboard 
 async function loadDashboard() {
   const name = localStorage.getItem('userName');
   const role = localStorage.getItem('userRole');
@@ -1616,7 +1637,8 @@ async function loadDashboard() {
   const roleEl = document.getElementById('dash-stat-role');
   if (roleEl) roleEl.textContent = role==='landlord'?'Owner':'Student';
 
-  // ── Update dashboard title and header badge based on role ──
+  // ── Update dashboard title and header badge based on role 
+
   const dashTitle = document.querySelector('#page-dashboard .dashboard-header h1');
   const dashBadge = document.querySelector('#page-dashboard .dashboard-header .badge-verified');
   const addBtn    = document.querySelector('#page-dashboard .dashboard-header .btn-primary');
@@ -1633,7 +1655,9 @@ async function loadDashboard() {
   // Hide "Add New Listing" button for students
   if (addBtn) addBtn.style.display = role==='landlord' ? '' : 'none';
 
-  // ── Header actions ──
+
+  // ── Header actions 
+
   const headerActions = document.getElementById('dash-header-actions');
   if (headerActions && role === 'landlord') {
     headerActions.innerHTML = `<button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>`;
@@ -1642,6 +1666,7 @@ async function loadDashboard() {
   }
 
   // Update stat labels based on role
+
   const bookingsLabelEl = document.getElementById('dash-stat-bookings-label');
   if (bookingsLabelEl) bookingsLabelEl.textContent = 'Total Bookings';
 
@@ -1693,6 +1718,7 @@ async function loadDashboard() {
 
   try {
     // Students fetch their own bookings; landlords fetch bookings ON their listings
+
     const bookingUrl = role === 'landlord'
       ? `${API}/bookings/landlord`
       : `${API}/bookings/user/me`;
@@ -1733,6 +1759,7 @@ async function loadDashboard() {
             </div>`;
         };
 
+
         if (role === 'landlord') {
           const futureBookings = activeBookings.filter(b => b.bookingType === 'future').slice(0,3);
           const regularBookings = activeBookings.filter(b => b.bookingType !== 'future').slice(0,3);
@@ -1749,6 +1776,7 @@ async function loadDashboard() {
         }
       }
     }
+
 
     // Sidebar listings panel — owner only
     const lPanelWrap    = document.getElementById('dash-listings-panel');
@@ -1775,7 +1803,7 @@ async function loadDashboard() {
   } catch(e) { console.log('Dashboard error:',e); }
 }
 
-// ── All Bookings Page ─────────────────────────────
+// ── All Bookings Page 
 let _allBookingsCache = [];
 
 async function openAllBookings() {
@@ -1813,6 +1841,7 @@ async function openAllBookings() {
 
 // filterAllBookings removed — no status filtering needed
 
+
 function renderAllBookings(bookings, role) {
   const listEl = document.getElementById('allbookings-list');
   if (!listEl) return;
@@ -1831,6 +1860,7 @@ function renderAllBookings(bookings, role) {
     const created  = b.createdAt  ? new Date(b.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
 
     // Owner card: show student info + listing
+        
     if (role === 'landlord') {
       const studentName  = b.student?.name  || 'Student';
       const studentEmail = b.student?.email || '';
@@ -1859,6 +1889,8 @@ function renderAllBookings(bookings, role) {
         </div>`;
     } else {
       // Student card: show listing info
+
+
       const init = (b.listing?.title||'L').slice(0,2).toUpperCase();
       return `
         <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;">
@@ -1887,7 +1919,8 @@ function renderAllBookings(bookings, role) {
   }).join('');
 }
 
-// ── Edit Listing Modal ────────────────────────────
+// ── Edit Listing Modal 
+
 let editListingId = null;
 
 function openEditListing(id) {
@@ -2006,7 +2039,8 @@ async function saveEditListing() {
   }
 }
 
-// ── Delete listing ────────────────────────────────
+// ── Delete listing 
+
 async function deleteListing(id, title) {
   if (!confirm(`Are you sure you want to permanently delete "${title}"?\n\nThis cannot be undone.`)) return;
   try {
@@ -2026,7 +2060,8 @@ async function deleteListing(id, title) {
   } catch { showToast('Connection error', 'error'); }
 }
 
-// ── Toggle availability ───────────────────────────
+// ── Toggle availability
+
 async function toggleAvailability(id, currentlyAvailable, currentFutureMonths) {
   try {
     const makingAvailable = !currentlyAvailable && !Number(currentFutureMonths || 0);
@@ -2071,7 +2106,8 @@ async function markListingComingSoon(id, title, currentFutureMonths = 0) {
   }
 }
 
-// ── Home Stats (dynamic) ──────────────────────────
+// ── Home Stats (dynamic)
+
 async function loadHomeStats() {
   try {
     if (!allListings.length) await fetchListings();
@@ -2084,8 +2120,8 @@ async function loadHomeStats() {
     const totalOwners = ownerSet.size;
 
     // Students housed = total bookings (approximate: use allListings count × 2 as proxy,
-    // but try to fetch real bookings count from backend)
-    let studentsHoused = totalListings * 2; // fallback estimate
+    
+    let studentsHoused = totalListings * 2;    
     try {
       const bRes = await fetch(`${API}/bookings`);
       if (bRes.ok) {
@@ -2095,6 +2131,7 @@ async function loadHomeStats() {
     } catch {}
 
     // Average rating across all reviews
+
     let avgRating = null;
     try {
       // Fetch reviews for all listings and compute global average
@@ -2109,6 +2146,7 @@ async function loadHomeStats() {
     } catch {}
 
     // Update DOM
+
     const elListings = document.getElementById('home-stat-listings');
     const elStudents = document.getElementById('home-stat-students');
     const elOwners   = document.getElementById('home-stat-owners');
@@ -2120,7 +2158,8 @@ async function loadHomeStats() {
   } catch {}
 }
 
-// ── Saved / Favourites Page ───────────────────────
+//  Saved / Favourites Page
+
 async function loadSavedPage() {
   const grid     = document.getElementById('saved-grid');
   const subtitle = document.getElementById('saved-subtitle');
@@ -2160,12 +2199,12 @@ async function loadSavedPage() {
 
 
 
-// ── Init ──────────────────────────────────────────
+// ── Init 
 document.addEventListener('DOMContentLoaded', () => {
   initCurrentPage();
 });
 
-// ── Soft motion + glass reveal ─────────────────────
+// ── Soft motion + glass reveal
 (function () {
   const MOTION_SELECTOR = [
     'nav',
@@ -2212,6 +2251,7 @@ document.addEventListener('DOMContentLoaded', () => {
       node.classList.add('motion-fade');
       unique.push(node);
     });
+      
 
     unique.forEach((node, index) => {
       node.style.setProperty('--motion-delay', `${Math.min(index % 8, 7) * 55}ms`);

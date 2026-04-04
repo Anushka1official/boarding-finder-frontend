@@ -847,3 +847,130 @@ nav {
     scroll-behavior: auto !important;
   }
 }
+
+
+
+/* ── DETAIL PAGE POLISH FIX ── */
+.page-overlay-shell#overlay-detail{
+  background: rgba(7, 30, 36, .18);
+  backdrop-filter: blur(1.2px);
+  -webkit-backdrop-filter: blur(1.2px);
+  padding: 18px 14px 30px;
+}
+.page-overlay-shell#overlay-detail .page-overlay-panel{
+  max-width: 1320px;
+  margin: 12px auto 24px;
+}
+.page-overlay-shell#overlay-detail .page-overlay-close{
+  position: fixed;
+  top: 18px;
+  right: 20px;
+  margin-left: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  border: 1px solid rgba(214,214,214,.95);
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 10px 30px rgba(0,54,64,.12);
+}
+.page-overlay-shell#overlay-detail .detail-wrap{
+  max-width: 1260px;
+  padding: 20px 18px 28px;
+}
+.page-overlay-shell#overlay-detail .breadcrumb{
+  margin-bottom: 14px;
+  padding-left: 4px;
+}
+.page-overlay-shell#overlay-detail .gallery{
+  margin-bottom: 20px;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.65);
+  box-shadow: 0 16px 40px rgba(0,54,64,.14);
+  background: #ffffff;
+}
+.page-overlay-shell#overlay-detail .gallery-cell{
+  border-radius: 0;
+}
+.page-overlay-shell#overlay-detail .detail-layout{
+  align-items: start;
+  gap: 20px;
+}
+.page-overlay-shell#overlay-detail .detail-content{
+  background: rgba(255,255,255,.985);
+  border: 1px solid rgba(214,214,214,.95);
+  border-radius: 28px;
+  box-shadow: 0 14px 34px rgba(0,54,64,.10);
+  padding: 24px 26px 26px;
+}
+.page-overlay-shell#overlay-detail .detail-content .divider{
+  margin: 22px 0;
+}
+.page-overlay-shell#overlay-detail .booking-panel{
+  background: rgba(255,255,255,.99);
+  border: 1px solid rgba(214,214,214,.95);
+  border-radius: 28px;
+  box-shadow: 0 16px 36px rgba(0,54,64,.12);
+  padding: 26px 28px;
+}
+.page-overlay-shell#overlay-detail .room-type-card{
+  background: #ffffff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 22px;
+  box-shadow: 0 6px 16px rgba(0,54,64,.05);
+}
+.page-overlay-shell#overlay-detail .room-type-card.selected{
+  background: linear-gradient(180deg, #f7ffff 0%, #ecfbfb 100%);
+  border-color: rgba(0,183,181,.7);
+  box-shadow: 0 10px 22px rgba(0,183,181,.12);
+}
+.page-overlay-shell#overlay-detail .facility-chip{
+  background: #fbfdfd;
+  border-color: rgba(214,214,214,.95);
+}
+.page-overlay-shell#overlay-detail .review-card,
+.page-overlay-shell#overlay-detail .review-card-full{
+  background: #fbfdfd;
+  border: 1px solid rgba(214,214,214,.88);
+  border-radius: 18px;
+}
+.page-overlay-shell#overlay-detail #detail-save-btn{
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(214,214,214,.95);
+  box-shadow: 0 6px 18px rgba(0,54,64,.06);
+}
+.page-overlay-shell#overlay-detail #detail-title{
+  line-height: 1.08;
+}
+.page-overlay-shell#overlay-detail .detail-meta{
+  row-gap: 10px;
+}
+.page-overlay-shell#overlay-detail .detail-content p{
+  font-size: 15px;
+  line-height: 1.82;
+  color: var(--gray-700);
+}
+.page-overlay-shell#overlay-detail .avail-badge{
+  border-radius: 16px;
+}
+.page-overlay-shell#overlay-detail .btn{
+  border-radius: 16px;
+}
+@media (max-width: 991px){
+  .page-overlay-shell#overlay-detail .detail-wrap{
+    padding: 14px 10px 24px;
+  }
+  .page-overlay-shell#overlay-detail .detail-content,
+  .page-overlay-shell#overlay-detail .booking-panel{
+    border-radius: 22px;
+    padding: 20px 18px;
+  }
+  .page-overlay-shell#overlay-detail .page-overlay-close{
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    top: 14px;
+    right: 14px;
+  }
+}

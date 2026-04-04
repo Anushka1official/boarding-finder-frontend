@@ -13,6 +13,16 @@ let reviewsOffset  = 0;
 let savedIds       = new Set();
 let signupRole     = 'student';
 
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+
 function getSavedStorageKey() {
   const role = localStorage.getItem('userRole') || '';
   const userId = localStorage.getItem('userId') || '';
@@ -1033,15 +1043,25 @@ async function renderCurrentDetailPage() {
     // Owner details — keep inside the description section
     const ownerInline = document.getElementById('detail-owner-inline');
     if (ownerInline) {
-      const ownerName = l.ownerName || l.owner?.name || 'Property Owner';
-      const ownerSub  = l.ownerVerified ? '✅ Verified Owner' : 'Owner';
+      const ownerObj   = l.owner && typeof l.owner === 'object' ? l.owner : null;
+      const ownerName  = ownerObj?.name || l.ownerName || 'Property Owner';
+      const ownerRole  = ownerObj?.role === 'landlord' ? 'Owner' : (ownerObj?.role ? ownerObj.role : 'Owner');
+      const ownerPhone = ownerObj?.phone || l.ownerPhone || '';
+      const ownerEmail = ownerObj?.email || l.ownerEmail || '';
+
+      const extraLines = [
+        ownerPhone ? `<div class="detail-owner-meta"><span>📞</span><span>${esc(ownerPhone)}</span></div>` : '',
+        ownerEmail ? `<div class="detail-owner-meta"><span>✉️</span><span>${esc(ownerEmail)}</span></div>` : ''
+      ].filter(Boolean).join('');
+
       ownerInline.innerHTML = `
         <div class="detail-owner-chip">
           <div class="detail-owner-avatar">🏠</div>
-          <div>
+          <div class="detail-owner-copy">
             <div class="detail-owner-title">Owner Details</div>
-            <div class="detail-owner-name">${ownerName}</div>
-            <div class="detail-owner-sub">${ownerSub}</div>
+            <div class="detail-owner-name">${esc(ownerName)}</div>
+            <div class="detail-owner-sub">${esc(ownerRole)}</div>
+            ${extraLines}
           </div>
         </div>`;
     }

@@ -483,223 +483,147 @@
   }
 
 
-  /* ── Soft modern UI override ── */
-  :root{
-    --glass-bg: rgba(255,255,255,0.72);
-    --glass-strong: rgba(255,255,255,0.84);
-    --glass-border: rgba(255,255,255,0.55);
-    --soft-shadow: 0 14px 34px rgba(0, 84, 97, 0.08), 0 4px 14px rgba(0, 0, 0, 0.04);
-    --lift-shadow: 0 20px 42px rgba(0, 84, 97, 0.12), 0 8px 22px rgba(0, 0, 0, 0.05);
-  }
-
-  body{
+  /* ── SOFT GLASS + FADE IN ── */
+  body {
     background:
-      radial-gradient(circle at top left, rgba(0,183,181,0.10), transparent 26%),
-      radial-gradient(circle at top right, rgba(1,135,144,0.08), transparent 24%),
-      linear-gradient(180deg, #F7FBFB 0%, #F4F4F4 38%, #EEF7F7 100%);
+      radial-gradient(circle at top right, rgba(0,183,181,.06), transparent 28%),
+      radial-gradient(circle at bottom left, rgba(1,135,144,.05), transparent 24%),
+      var(--gray-50);
   }
 
-  nav{
-    background: rgba(255,255,255,0.78);
+  .motion-fade {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(.985);
+    filter: blur(8px);
+    transition:
+      opacity .78s cubic-bezier(.22,1,.36,1),
+      transform .82s cubic-bezier(.22,1,.36,1),
+      filter .82s cubic-bezier(.22,1,.36,1);
+    transition-delay: var(--motion-delay, 0ms);
+    will-change: opacity, transform, filter;
+  }
+  .motion-fade.in-view {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .motion-fade, .motion-fade.in-view {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+  }
+
+  nav,
+  .mobile-nav-menu,
+  .search-card,
+  .boarding-card,
+  .result-card,
+  .dash-stat,
+  .listing-form,
+  .bookings-panel,
+  .auth-card,
+  .review-card-full,
+  .payment-option,
+  .gallery-thumb,
+  .room-type-card,
+  .owner-extras,
+  .media-upload-area,
+  .booking-form-section,
+  .summary-box,
+  .summary-card,
+  .booking-summary,
+  .detail-sidebar-card,
+  .detail-main-card,
+  .all-bookings-card,
+  .saved-empty,
+  .write-review,
+  .quick-feat {
+    background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,255,255,.72));
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255,255,255,0.75);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-  }
-
-  .hero{
-    background:
-      radial-gradient(circle at 20% 20%, rgba(0,183,181,0.16), transparent 24%),
-      radial-gradient(circle at 85% 10%, rgba(1,135,144,0.10), transparent 20%),
-      linear-gradient(135deg, #F0FBFB 0%, #E7F7F7 45%, #F6FBFB 100%);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow:
+      0 10px 30px rgba(0, 54, 64, .08),
+      inset 0 1px 0 rgba(255,255,255,.45);
   }
 
   .hero::before,
-  .hero::after{
-    content:"";
-    position:absolute;
-    border-radius:50%;
-    pointer-events:none;
-    filter: blur(18px);
-    opacity:.45;
+  .hero::after {
+    animation: heroFloat 14s ease-in-out infinite alternate;
   }
-  .hero::before{
-    width:240px;height:240px;right:-80px;top:40px;
-    background: radial-gradient(circle, rgba(0,183,181,0.18), transparent 70%);
+  .hero::after {
+    animation-duration: 18s;
   }
-  .hero::after{
-    width:180px;height:180px;left:-40px;bottom:20px;
-    background: radial-gradient(circle, rgba(1,135,144,0.12), transparent 70%);
+  @keyframes heroFloat {
+    from { transform: translate3d(0,0,0) scale(1); }
+    to   { transform: translate3d(8px,-10px,0) scale(1.04); }
   }
 
-  .search-card,
-  .filters-panel,
   .boarding-card,
   .result-card,
-  .booking-panel,
-  .bookings-panel,
   .dash-stat,
-  .listing-form,
+  .room-type-card,
   .auth-card,
-  .review-card,
-  .review-card-full,
-  .modal,
+  .payment-option,
+  .gallery-thumb,
   .booking-form-section,
-  .booking-summary{
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.72) !important;
-    box-shadow: var(--soft-shadow);
-  }
-
-  .dashboard-wrap .listing-form,
-  .dashboard-wrap .bookings-panel,
-  .detail-layout > aside .booking-panel,
-  .search-results-layout .filters-panel{
-    background: var(--glass-strong);
-  }
-
-  .search-card,
-  .filters-panel,
-  .boarding-card,
-  .result-card,
-  .booking-panel,
-  .dash-stat,
-  .auth-card,
-  .modal,
-  .listing-form,
-  .bookings-panel,
-  .review-card,
-  .review-card-full,
-  .booking-form-section,
-  .booking-summary,
-  .btn,
-  .fav-btn,
-  .nav-btn{
+  .review-card-full {
     transition:
-      transform .18s ease,
-      box-shadow .18s ease,
-      border-color .18s ease,
-      background-color .18s ease,
-      color .18s ease;
+      transform .28s ease,
+      box-shadow .28s ease,
+      border-color .28s ease,
+      background .28s ease;
   }
 
   .boarding-card:hover,
   .result-card:hover,
   .dash-stat:hover,
-  .review-card:hover,
-  .review-card-full:hover,
-  .auth-card:hover{
-    transform: translateY(-2px);
-    box-shadow: var(--lift-shadow);
+  .room-type-card:hover,
+  .payment-option:hover,
+  .gallery-thumb:hover,
+  .review-card-full:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 16px 36px rgba(0, 54, 64, .12),
+      inset 0 1px 0 rgba(255,255,255,.55);
+    border-color: rgba(0,183,181,.28);
   }
 
-  .search-card:hover,
-  .filters-panel:hover,
-  .booking-panel:hover,
-  .listing-form:hover,
-  .bookings-panel:hover{
-    box-shadow: 0 18px 40px rgba(0,84,97,0.09), 0 6px 20px rgba(0,0,0,0.04);
-  }
-
-  .btn-primary,
-  .btn-success,
-  .nav-btn,
-  .btn-lg.btn-primary{
-    box-shadow: 0 8px 20px rgba(0, 183, 181, 0.18);
-  }
-
-  .btn-primary:hover,
-  .btn-success:hover,
-  .nav-btn:hover{
-    transform: translateY(-1px);
-    box-shadow: 0 12px 24px rgba(0, 183, 181, 0.22);
-  }
-
-  .btn-ghost,
-  .btn-outline{
-    background: rgba(255,255,255,0.62);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-
-  .mobile-nav-menu{
-    background: rgba(255,255,255,0.82);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.78);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
-  }
-
-  .section-title,
-  .detail-title,
-  .dashboard-header h1{
-    letter-spacing: -0.02em;
-  }
-
-  .badge,
-  .avail-badge,
-  .booking-status{
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
-  }
-
-  .card-img,
-  .result-img-placeholder,
-  .gallery-cell{
+  .search-card {
     position: relative;
     overflow: hidden;
   }
-
-  .card-img::after,
-  .result-img-placeholder::after,
-  .gallery-cell::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.03));
-    pointer-events:none;
+  .search-card::after,
+  .auth-card::after,
+  .listing-form::after,
+  .bookings-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(255,255,255,.28), transparent 35%, transparent 70%, rgba(0,183,181,.04));
+    pointer-events: none;
   }
 
-  .search-card,
-  .filters-panel,
-  .boarding-card,
-  .result-card,
-  .booking-panel,
-  .dash-stat,
-  .listing-form,
-  .bookings-panel,
-  .auth-card,
-  .modal{
-    border-radius: 20px;
+  .hero h1,
+  .hero p,
+  .hero-badge,
+  .section-title,
+  .section-header,
+  .dashboard-header h1,
+  .auth-header h2 {
+    text-wrap: balance;
   }
 
-  @media (max-width: 900px){
-    .hero{
-      padding-top: 88px;
-    }
-    .search-card,
-    .filters-panel,
-    .boarding-card,
-    .result-card,
-    .booking-panel,
-    .dash-stat,
-    .listing-form,
-    .bookings-panel,
-    .auth-card,
-    .modal{
-      border-radius: 18px;
-    }
+  .page.active {
+    animation: pageFade .45s ease;
   }
-
-  @media (prefers-reduced-motion: reduce){
-    html { scroll-behavior: auto; }
-    *,
-    *::before,
-    *::after{
-      animation: none !important;
-      transition: none !important;
-    }
+  @keyframes pageFade {
+    from { opacity: 0.01; }
+    to { opacity: 1; }
   }
 
 </style>
@@ -3973,6 +3897,141 @@ loadSavedIdsFromStorage();
 updateNav();
 loadHomeListings();
 loadHomeStats();
+
+// ── Soft motion + glass reveal ─────────────────────
+(function () {
+  const MOTION_SELECTOR = [
+    'nav',
+    '.hero > *',
+    '.search-card',
+    '.quick-feat',
+    '.section-header',
+    '.stat-item',
+    '.boarding-card',
+    '.result-card',
+    '.dash-stat',
+    '.listing-form',
+    '.bookings-panel',
+    '.review-card-full',
+    '.auth-card',
+    '.booking-form-section',
+    '.payment-option',
+    '.room-type-card',
+    '.gallery-thumb',
+    '.media-upload-area',
+    '.owner-extras',
+    '.dashboard-header',
+    '.dashboard-grid > *',
+    '.dash-main > *',
+    '.cards-grid > *',
+    '.results-layout > *',
+    '.detail-layout > *',
+    '.booking-layout > *',
+    '.auth-container > *',
+    'footer'
+  ].join(',');
+
+  let motionObserver;
+
+  function prepareMotionNodes(root = document) {
+    const nodes = root.matches && root.matches(MOTION_SELECTOR)
+      ? [root, ...root.querySelectorAll(MOTION_SELECTOR)]
+      : Array.from(root.querySelectorAll ? root.querySelectorAll(MOTION_SELECTOR) : []);
+
+    const unique = [];
+    nodes.forEach((node) => {
+      if (!node || node.dataset.motionReady === '1') return;
+      node.dataset.motionReady = '1';
+      node.classList.add('motion-fade');
+      unique.push(node);
+    });
+
+    unique.forEach((node, index) => {
+      node.style.setProperty('--motion-delay', `${Math.min(index % 8, 7) * 55}ms`);
+      if (motionObserver) motionObserver.observe(node);
+    });
+  }
+
+  function initMotionObserver() {
+    if (motionObserver) return;
+    motionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          motionObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -8% 0px'
+    });
+  }
+
+  function refreshMotion() {
+    initMotionObserver();
+    prepareMotionNodes(document);
+  }
+
+  function observeDynamicContent() {
+    const mo = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return;
+          prepareMotionNodes(node);
+        });
+      });
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initMotionObserver();
+    refreshMotion();
+    observeDynamicContent();
+    setTimeout(refreshMotion, 120);
+    setTimeout(refreshMotion, 500);
+  });
+
+  const waitForShowPage = setInterval(() => {
+    if (typeof window.showPage === 'function') {
+      clearInterval(waitForShowPage);
+      const originalShowPage = window.showPage;
+      window.showPage = function (...args) {
+        const result = originalShowPage.apply(this, args);
+        setTimeout(refreshMotion, 80);
+        setTimeout(refreshMotion, 240);
+        return result;
+      };
+    }
+  }, 100);
+
+  const waitForFilters = setInterval(() => {
+    if (typeof window.applyFilters === 'function') {
+      clearInterval(waitForFilters);
+      const originalApplyFilters = window.applyFilters;
+      window.applyFilters = function (...args) {
+        const result = originalApplyFilters.apply(this, args);
+        setTimeout(refreshMotion, 80);
+        setTimeout(refreshMotion, 220);
+        return result;
+      };
+    }
+  }, 100);
+
+  const waitForHomeLoad = setInterval(() => {
+    if (typeof window.loadHomeListings === 'function') {
+      clearInterval(waitForHomeLoad);
+      const originalLoadHomeListings = window.loadHomeListings;
+      window.loadHomeListings = async function (...args) {
+        const result = await originalLoadHomeListings.apply(this, args);
+        setTimeout(refreshMotion, 50);
+        setTimeout(refreshMotion, 180);
+        return result;
+      };
+    }
+  }, 100);
+})();
+
 </script>
 </body>
 </html>

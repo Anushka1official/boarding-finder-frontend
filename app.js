@@ -1468,7 +1468,7 @@ function goToAddListing() {
   if (!isLoggedIn()) { showPage('login'); return; }
   if (getUserRole() !== 'landlord') { showToast('Only owners can add listings. Sign up as an Owner.','warning'); return; }
   if (getCurrentPageId() !== 'dashboard') {
-    navigateToPage('add-listing', { section: 'add' });
+    navigateToPage('dashboard', { section: 'add' });
     return;
   }
   focusDashboardAddSection();
@@ -1604,6 +1604,14 @@ async function uploadModalMedia() {
   }
 }
 
+
+function getListingOwnerId(listing) {
+  if (!listing || !listing.owner) return '';
+  if (typeof listing.owner === 'string') return listing.owner;
+  if (typeof listing.owner === 'object') return String(listing.owner._id || listing.owner.id || '');
+  return String(listing.owner || '');
+}
+
 // ── Dashboard ─────────────────────────────────────
 async function loadDashboard() {
   const name = localStorage.getItem('userName');
@@ -1647,7 +1655,7 @@ async function loadDashboard() {
   if (!allListings.length) await fetchListings();
   const myUserId = localStorage.getItem('userId');
   const myListings = role === 'landlord'
-    ? allListings.filter(l => l.owner && l.owner.toString() === myUserId)
+    ? allListings.filter(l => getListingOwnerId(l) === myUserId)
     : [];
   const slEl = document.getElementById('dash-stat-listings');
   if (slEl) slEl.textContent = role==='landlord'?myListings.length:'—';
@@ -2077,7 +2085,7 @@ async function loadHomeStats() {
     const totalListings = allListings.filter(l => l.available || isFutureVacancy(l)).length;
 
     // Unique owners (unique owner IDs)
-    const ownerSet = new Set(allListings.map(l => l.owner?.toString()).filter(Boolean));
+    const ownerSet = new Set(allListings.map(l => getListingOwnerId(l)).filter(Boolean));
     const totalOwners = ownerSet.size;
 
     // Students housed = total bookings (approximate: use allListings count × 2 as proxy,

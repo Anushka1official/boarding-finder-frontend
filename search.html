@@ -7,10 +7,10 @@
 <title>Smart Boarding Finder — Search</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&amp;display=swap" rel="stylesheet"/>
-<link href="styles.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/><link href="styles.css" rel="stylesheet"/>
 </head>
-<body data-page="results">
-<nav>
+<body class="bg-body-tertiary bootstrap-app" data-page="results">
+<nav class="navbar navbar-expand-lg bg-white bg-opacity-75 shadow-sm">
 <div class="nav-brand" onclick="showPage('home'); closeMobileMenu();">
 <div class="logo">
 <svg viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
@@ -23,9 +23,9 @@
 <a id="nav-dashboard" onclick="showPage('dashboard'); closeMobileMenu();">Owner Portal</a>
 </div>
 <div class="nav-end">
-<button class="btn btn-ghost" onclick="showPage('dashboard')">List Property</button>
-<button class="btn btn-ghost" onclick="showPage('login')">Sign In</button>
-<button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>
+<button class="btn btn-ghost fw-semibold btn-outline-secondary" onclick="showPage('dashboard')">List Property</button>
+<button class="btn btn-ghost fw-semibold btn-outline-secondary" onclick="showPage('login')">Sign In</button>
+<button class="btn btn-primary fw-semibold" onclick="showPage('signup')">Sign Up</button>
 </div>
 <button aria-label="Open menu" class="mobile-nav-toggle" onclick="toggleMobileMenu()">☰</button>
 </nav>
@@ -42,91 +42,91 @@
 <div style="background:white;border-bottom:1px solid var(--gray-200);padding:16px 24px;">
 <div style="max-width:1200px;margin:0 auto;">
 <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-<input id="search-city" placeholder="City or area..." style="flex:1;min-width:140px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;" type="text"/>
-<select id="search-price" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<input class="form-control" id="search-city" placeholder="City or area..." style="flex:1;min-width:140px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;" type="text"/>
+<select class="form-select" id="search-price" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
 <option value="">Any Price</option><option value="15000">Under LKR 15,000</option><option value="25000">LKR 15–25k</option><option value="40000">LKR 25–40k</option><option value="40001">Over 40k</option>
 </select>
-<select id="search-room" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<select class="form-select" id="search-room" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
 <option value="">Any Room</option><option value="Single Room">Single</option><option value="Shared Room">Shared</option>
 </select>
-<select id="search-gender" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<select class="form-select" id="search-gender" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
 <option value="">Anyone</option><option value="Ladies Only">Ladies Only</option><option value="Gents Only">Gents Only</option>
 </select>
-<select id="search-future" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
+<select class="form-select" id="search-future" style="border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-family:inherit;">
 <option value="">Any Future Vacancy</option><option value="1">1 Month</option><option value="2">2 Months</option><option value="3">3 Months</option><option value="6">6 Months</option><option value="12">12 Months</option>
 </select>
-<button class="btn btn-primary" onclick="applyFilters()">🔍 Search</button>
+<button class="btn btn-primary fw-semibold" onclick="applyFilters()">🔍 Search</button>
 </div>
 </div>
 </div>
-<div class="results-layout">
+<div class="results-layout container py-4">
 <!-- Filters -->
-<aside class="filters-panel">
+<aside class="filters-panel card border-0 shadow-sm">
 <h3>🎛 Filters</h3>
 <div class="filter-group">
 <h4>Room Type</h4>
 <div class="radio-list">
-<label class="radio-item"><input checked="" name="room" onchange="applyFilters()" type="radio" value=""/> Any Type</label>
-<label class="radio-item"><input name="room" onchange="applyFilters()" type="radio" value="Single Room"/> Single Room</label>
-<label class="radio-item"><input name="room" onchange="applyFilters()" type="radio" value="Shared Room"/> Shared Room</label>
+<label class="radio-item form-label"><input checked="" class="form-check-input" name="room" onchange="applyFilters()" type="radio" value=""/> Any Type</label>
+<label class="radio-item form-label"><input class="form-check-input" name="room" onchange="applyFilters()" type="radio" value="Single Room"/> Single Room</label>
+<label class="radio-item form-label"><input class="form-check-input" name="room" onchange="applyFilters()" type="radio" value="Shared Room"/> Shared Room</label>
 </div>
 </div>
 <div class="filter-group">
 <h4>For</h4>
 <div class="radio-list">
-<label class="radio-item"><input checked="" name="gender" onchange="applyFilters()" type="radio" value=""/> Any</label>
-<label class="radio-item"><input name="gender" onchange="applyFilters()" type="radio" value="Ladies Only"/> Ladies Only</label>
-<label class="radio-item"><input name="gender" onchange="applyFilters()" type="radio" value="Gents Only"/> Gents Only</label>
+<label class="radio-item form-label"><input checked="" class="form-check-input" name="gender" onchange="applyFilters()" type="radio" value=""/> Any</label>
+<label class="radio-item form-label"><input class="form-check-input" name="gender" onchange="applyFilters()" type="radio" value="Ladies Only"/> Ladies Only</label>
+<label class="radio-item form-label"><input class="form-check-input" name="gender" onchange="applyFilters()" type="radio" value="Gents Only"/> Gents Only</label>
 </div>
 </div>
 <div class="filter-group">
 <h4>Future Vacancy</h4>
 <div class="radio-list">
-<label class="radio-item"><input checked="" name="future" onchange="applyFilters()" type="radio" value=""/> Any</label>
-<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="1"/> Within 1 Month</label>
-<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="2"/> Within 2 Months</label>
-<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="3"/> Within 3 Months</label>
-<label class="radio-item"><input name="future" onchange="applyFilters()" type="radio" value="6"/> Within 6 Months</label>
+<label class="radio-item form-label"><input checked="" class="form-check-input" name="future" onchange="applyFilters()" type="radio" value=""/> Any</label>
+<label class="radio-item form-label"><input class="form-check-input" name="future" onchange="applyFilters()" type="radio" value="1"/> Within 1 Month</label>
+<label class="radio-item form-label"><input class="form-check-input" name="future" onchange="applyFilters()" type="radio" value="2"/> Within 2 Months</label>
+<label class="radio-item form-label"><input class="form-check-input" name="future" onchange="applyFilters()" type="radio" value="3"/> Within 3 Months</label>
+<label class="radio-item form-label"><input class="form-check-input" name="future" onchange="applyFilters()" type="radio" value="6"/> Within 6 Months</label>
 </div>
 </div>
 <div class="filter-group">
 <h4>Facilities</h4>
 <div class="check-list" id="facilities-filter">
-<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="WiFi"/> 📶 WiFi</label>
-<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Kitchen"/> 🍳 Cooking Allowed</label>
-<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Parking"/> 🚗 Parking</label>
-<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Laundry"/> 🧺 Laundry</label>
-<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="AC"/> ❄️ Air Conditioning</label>
-<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Security"/> 🛡 24h Security</label>
-<label class="check-item"><input onchange="applyFilters()" type="checkbox" value="Meals"/> 🚿 Attached Bath</label>
+<label class="check-item form-label"><input class="form-check-input" onchange="applyFilters()" type="checkbox" value="WiFi"/> 📶 WiFi</label>
+<label class="check-item form-label"><input class="form-check-input" onchange="applyFilters()" type="checkbox" value="Kitchen"/> 🍳 Cooking Allowed</label>
+<label class="check-item form-label"><input class="form-check-input" onchange="applyFilters()" type="checkbox" value="Parking"/> 🚗 Parking</label>
+<label class="check-item form-label"><input class="form-check-input" onchange="applyFilters()" type="checkbox" value="Laundry"/> 🧺 Laundry</label>
+<label class="check-item form-label"><input class="form-check-input" onchange="applyFilters()" type="checkbox" value="AC"/> ❄️ Air Conditioning</label>
+<label class="check-item form-label"><input class="form-check-input" onchange="applyFilters()" type="checkbox" value="Security"/> 🛡 24h Security</label>
+<label class="check-item form-label"><input class="form-check-input" onchange="applyFilters()" type="checkbox" value="Meals"/> 🚿 Attached Bath</label>
 </div>
 </div>
 <div class="filter-group">
 <h4>Availability Slots</h4>
 <div class="radio-list">
-<label class="radio-item"><input checked="" name="avail" onchange="applyFilters()" type="radio" value=""/> Any</label>
-<label class="radio-item"><input name="avail" onchange="applyFilters()" type="radio" value="now"/> Available Now</label>
-<label class="radio-item"><input name="avail" onchange="applyFilters()" type="radio" value="future"/> Future (next 3 months)</label>
-<label class="radio-item"><input name="avail" onchange="applyFilters()" type="radio" value="groups"/> 3+ Slots (Groups)</label>
+<label class="radio-item form-label"><input checked="" class="form-check-input" name="avail" onchange="applyFilters()" type="radio" value=""/> Any</label>
+<label class="radio-item form-label"><input class="form-check-input" name="avail" onchange="applyFilters()" type="radio" value="now"/> Available Now</label>
+<label class="radio-item form-label"><input class="form-check-input" name="avail" onchange="applyFilters()" type="radio" value="future"/> Future (next 3 months)</label>
+<label class="radio-item form-label"><input class="form-check-input" name="avail" onchange="applyFilters()" type="radio" value="groups"/> 3+ Slots (Groups)</label>
 </div>
 </div>
 <div class="filter-group">
 </div>
-<button class="btn btn-outline" onclick="resetFilters()" style="width:100%;margin-top:8px;justify-content:center;">Reset Filters</button>
+<button class="btn btn-outline fw-semibold btn-outline-primary" onclick="resetFilters()" style="width:100%;margin-top:8px;justify-content:center;">Reset Filters</button>
 </aside>
 <!-- Results -->
 <main class="results-main">
 <div class="results-toolbar">
 <div class="results-count" id="results-count"><strong>Loading...</strong></div>
-<select class="sort-select" id="sort-select" onchange="applyFilters()">
+<select class="sort-select form-select" id="sort-select" onchange="applyFilters()">
 <option value="newest">Sort: Newest</option>
 <option value="price-asc">Price: Low to High</option>
 <option value="price-desc">Price: High to Low</option>
 </select>
 </div>
-<div class="results-list" id="results-list">
+<div class="results-list d-grid gap-3" id="results-list">
 <!-- dynamically populated -->
-<div class="result-card" onclick="showPage('detail')">
+<div class="result-card card border-0 shadow-sm" onclick="showPage('detail')">
 <div class="result-img" style="background:linear-gradient(135deg,#80DBD9,#5CCFCD);">
 <div class="result-img-placeholder">🏘️</div>
 </div>
@@ -150,14 +150,14 @@
 <div class="result-footer">
 <div style="font-size:13px;color:var(--gray-400);">⭐ 4.8 · 32 reviews · 3 slots left</div>
 <div style="display:flex;gap:8px;">
-<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
-<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm fw-semibold" onclick="event.stopPropagation();showPage('detail')">View Details</button>
 </div>
 </div>
 </div>
 </div>
 <!-- Result 2 -->
-<div class="result-card" onclick="showPage('detail')">
+<div class="result-card card border-0 shadow-sm" onclick="showPage('detail')">
 <div class="result-img" style="background:linear-gradient(135deg,#A8E6E5,#5CCFCD);">
 <div class="result-img-placeholder">🏠</div>
 </div>
@@ -180,14 +180,14 @@
 <div class="result-footer">
 <div style="font-size:13px;color:var(--gray-400);">⭐ 4.5 · 18 reviews · 5 slots upcoming</div>
 <div style="display:flex;gap:8px;">
-<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
-<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm fw-semibold" onclick="event.stopPropagation();showPage('detail')">View Details</button>
 </div>
 </div>
 </div>
 </div>
 <!-- Result 3 -->
-<div class="result-card" onclick="showPage('detail')">
+<div class="result-card card border-0 shadow-sm" onclick="showPage('detail')">
 <div class="result-img" style="background:linear-gradient(135deg,#80CECE,#018790);">
 <div class="result-img-placeholder">🏡</div>
 </div>
@@ -210,14 +210,14 @@
 <div class="result-footer">
 <div style="font-size:13px;color:var(--gray-400);">⭐ 4.9 · 47 reviews · 1 slot left</div>
 <div style="display:flex;gap:8px;">
-<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
-<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm fw-semibold" onclick="event.stopPropagation();showPage('detail')">View Details</button>
 </div>
 </div>
 </div>
 </div>
 <!-- Result 4 -->
-<div class="result-card" onclick="showPage('detail')">
+<div class="result-card card border-0 shadow-sm" onclick="showPage('detail')">
 <div class="result-img" style="background:linear-gradient(135deg,#4ABFBE,#005461);">
 <div class="result-img-placeholder">🏢</div>
 </div>
@@ -241,8 +241,8 @@
 <div class="result-footer">
 <div style="font-size:13px;color:var(--gray-400);">⭐ 4.3 · 12 reviews · 8 slots upcoming</div>
 <div style="display:flex;gap:8px;">
-<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">♡ Save</button>
-<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showPage('detail')">View Details</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary" onclick="event.stopPropagation()">♡ Save</button>
+<button class="btn btn-primary btn-sm fw-semibold" onclick="event.stopPropagation();showPage('detail')">View Details</button>
 </div>
 </div>
 </div>
@@ -250,11 +250,11 @@
 </div>
 <!-- Pagination -->
 <div style="display:flex;justify-content:center;gap:8px;margin-top:28px;">
-<button class="btn btn-ghost btn-sm">← Prev</button>
-<button class="btn btn-primary btn-sm">1</button>
-<button class="btn btn-ghost btn-sm">2</button>
-<button class="btn btn-ghost btn-sm">3</button>
-<button class="btn btn-ghost btn-sm">Next →</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary">← Prev</button>
+<button class="btn btn-primary btn-sm fw-semibold">1</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary">2</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary">3</button>
+<button class="btn btn-ghost btn-sm fw-semibold btn-outline-secondary">Next →</button>
 </div>
 </main>
 </div>
@@ -263,8 +263,8 @@
   </footer>
 </div>
 <div class="page-overlay-shell" id="overlay-detail" onclick="if(event.target===this) closeSearchModal()"><div class="page-overlay-panel"><button class="page-overlay-close" onclick="closeSearchModal()">✕</button><div class="page active" id="page-detail">
-<div class="detail-wrap">
-<div class="breadcrumb">
+<div class="detail-wrap container py-4">
+<div class="breadcrumb small">
 <a onclick="showPage('home')">Home</a><span class="sep">›</span>
 <a onclick="showPage('results')">Search Results</a><span class="sep">›</span>
 <span>Sunset View Boarding House</span>
@@ -293,7 +293,7 @@
 <span id="detail-rating"><span class="rating-stars">★★★★★</span> 4.8 (32 reviews)</span>
 </div>
 </div>
-<button class="btn btn-ghost" id="detail-save-btn" onclick="toggleSave(currentListing?._id, this)" style="gap:6px">♡ Save</button>
+<button class="btn btn-ghost fw-semibold btn-outline-secondary" id="detail-save-btn" onclick="toggleSave(currentListing?._id, this)" style="gap:6px">♡ Save</button>
 </div>
 <p style="color:var(--gray-600);font-size:15px;line-height:1.7;margin-bottom:20px;">A comfortable and secure boarding facility designed specifically for university students. Located just minutes from the University of Moratuwa, offering clean rooms, reliable WiFi, and a supportive community environment. All rooms are furnished and bills included.</p>
 <div class="divider"></div>
@@ -345,9 +345,9 @@
 <span data-val="4" onclick="setRating(4)" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
 <span data-val="5" onclick="setRating(5)" style="font-size:28px;cursor:pointer;color:#D1D5DB;">★</span>
 </div>
-<textarea id="detail-review-comment" placeholder="Share your experience..." style="width:100%;padding:10px 14px;border:1.5px solid var(--brand-mid);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;resize:vertical;min-height:80px;background:white;box-sizing:border-box;"></textarea>
+<textarea class="form-control" id="detail-review-comment" placeholder="Share your experience..." style="width:100%;padding:10px 14px;border:1.5px solid var(--brand-mid);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;resize:vertical;min-height:80px;background:white;box-sizing:border-box;"></textarea>
 <div id="detail-review-msg" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;"></div>
-<button class="btn btn-primary" onclick="submitDetailReview()" style="margin-top:10px;">Submit Review</button>
+<button class="btn btn-primary fw-semibold" onclick="submitDetailReview()" style="margin-top:10px;">Submit Review</button>
 </div>
 </div>
 </div>
@@ -372,8 +372,8 @@
 </div>
 </div>
 <div class="panel-btns">
-<button class="btn btn-primary btn-lg" id="book-now-btn" onclick="goToBooking()" style="justify-content:center">🏠 Book Now</button>
-<button class="btn btn-outline btn-lg" onclick="goToBooking()" style="justify-content:center">📅 Reserve for Future</button>
+<button class="btn btn-primary btn-lg fw-semibold" id="book-now-btn" onclick="goToBooking()" style="justify-content:center">🏠 Book Now</button>
+<button class="btn btn-outline btn-lg fw-semibold btn-outline-primary" onclick="goToBooking()" style="justify-content:center">📅 Reserve for Future</button>
 </div>
 <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--gray-400);">🔒 Secure payment · Free cancellation within 24h</div>
 <div style="border-top:1px solid var(--gray-100);margin-top:16px;padding-top:14px;">
@@ -393,8 +393,8 @@
 <strong style="color:white">Smart Boarding Finder</strong> · © 2026
   </footer>
 </div></div></div><div class="page-overlay-shell" id="overlay-booking" onclick="if(event.target===this) closeSearchModal()"><div class="page-overlay-panel"><button class="page-overlay-close" onclick="closeSearchModal()">✕</button><div class="page active" id="page-booking">
-<div class="booking-page-wrap">
-<div class="breadcrumb">
+<div class="booking-page-wrap container py-4">
+<div class="breadcrumb small">
 <a onclick="showPage('home')">Home</a><span class="sep">›</span>
 <a onclick="showPage('detail')">Sunset View Boarding</a><span class="sep">›</span>
 <span>Booking</span>
@@ -416,28 +416,28 @@
 </div>
 </div>
 <!-- Personal details -->
-<div class="booking-form-section">
+<div class="booking-form-section card border-0 shadow-sm">
 <h3>👤 Personal Details</h3>
 <div class="form-row">
-<div class="field"><label>First Name</label><input id="bk-fname" placeholder="Kasun" type="text"/></div>
-<div class="field"><label>Last Name</label><input id="bk-lname" placeholder="Perera" type="text"/></div>
+<div class="field"><label class="form-label">First Name</label><input class="form-control" id="bk-fname" placeholder="Kasun" type="text"/></div>
+<div class="field"><label class="form-label">Last Name</label><input class="form-control" id="bk-lname" placeholder="Perera" type="text"/></div>
 </div>
 <div class="form-row">
-<div class="field"><label>Email</label><input id="bk-email" placeholder="kasun@students.ac.lk" type="email"/></div>
-<div class="field"><label>Phone</label><input id="bk-phone" placeholder="+94 77 123 4567" type="tel"/></div>
+<div class="field"><label class="form-label">Email</label><input class="form-control" id="bk-email" placeholder="kasun@students.ac.lk" type="email"/></div>
+<div class="field"><label class="form-label">Phone</label><input class="form-control" id="bk-phone" placeholder="+94 77 123 4567" type="tel"/></div>
 </div>
 <div class="form-row">
-<div class="field"><label>University</label><input id="bk-uni" placeholder="University of Moratuwa" type="text"/></div>
-<div class="field"><label>Student ID</label><input id="bk-sid" placeholder="CS/2022/001" type="text"/></div>
+<div class="field"><label class="form-label">University</label><input class="form-control" id="bk-uni" placeholder="University of Moratuwa" type="text"/></div>
+<div class="field"><label class="form-label">Student ID</label><input class="form-control" id="bk-sid" placeholder="CS/2022/001" type="text"/></div>
 </div>
 </div>
 <!-- Move-in details -->
-<div class="booking-form-section">
+<div class="booking-form-section card border-0 shadow-sm">
 <h3>📅 Move-in Details</h3>
 <div class="form-row">
-<div class="field"><label>Move-in Date</label><input id="bk-date" type="date"/></div>
-<div class="field"><label>Duration</label>
-<select id="bk-duration">
+<div class="field"><label class="form-label">Move-in Date</label><input class="form-control" id="bk-date" type="date"/></div>
+<div class="field"><label class="form-label">Duration</label>
+<select class="form-select" id="bk-duration">
 <option>3 months</option><option>6 months</option><option selected="">12 months</option>
 </select>
 </div>
@@ -447,35 +447,35 @@
           </div>
 </div>
 <!-- Payment -->
-<div class="booking-form-section">
+<div class="booking-form-section card border-0 shadow-sm">
 <h3>💳 Payment Method</h3>
 <div class="payment-methods">
-<label class="payment-option selected" onclick="selectPayment(this)">
-<input checked="" name="payment" type="radio"/>
+<label class="payment-option selected form-label" onclick="selectPayment(this)">
+<input checked="" class="form-check-input" name="payment" type="radio"/>
 <span class="payment-icon">💳</span>
 <div><div class="method-label">Credit / Debit Card</div><div class="method-sub">Visa, Mastercard, Amex</div></div>
 </label>
-<label class="payment-option" onclick="selectPayment(this)">
-<input name="payment" type="radio"/>
+<label class="payment-option form-label" onclick="selectPayment(this)">
+<input class="form-check-input" name="payment" type="radio"/>
 <span class="payment-icon">🏦</span>
 <div><div class="method-label">Online Bank Transfer</div><div class="method-sub">BOC, HNB, Commercial Bank</div></div>
 </label>
-<label class="payment-option" onclick="selectPayment(this)">
-<input name="payment" type="radio"/>
+<label class="payment-option form-label" onclick="selectPayment(this)">
+<input class="form-check-input" name="payment" type="radio"/>
 <span class="payment-icon">📱</span>
 <div><div class="method-label">eZ Cash / mCash</div><div class="method-sub">Dialog, Mobitel</div></div>
 </label>
 </div>
 <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
-<div class="field"><label>Card Number</label><input placeholder="1234 5678 9012 3456" type="text"/></div>
-<div class="field"><label>Expiry</label><input placeholder="MM/YY" type="text"/></div>
+<div class="field"><label class="form-label">Card Number</label><input class="form-control" placeholder="1234 5678 9012 3456" type="text"/></div>
+<div class="field"><label class="form-label">Expiry</label><input class="form-control" placeholder="MM/YY" type="text"/></div>
 </div>
-<div class="field" style="margin-top:12px;max-width:120px;"><label>CVV</label><input placeholder="123" type="text"/></div>
+<div class="field" style="margin-top:12px;max-width:120px;"><label class="form-label">CVV</label><input class="form-control" placeholder="123" type="text"/></div>
 </div>
 </div>
 <!-- Order summary -->
 <div>
-<div class="booking-summary">
+<div class="booking-summary card border-0 shadow-sm">
 <h3>📋 Order Summary</h3>
 <div style="background:var(--gray-50);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;">
 <div id="bk-sum-title" style="font-weight:600;font-size:14px;">—</div>
@@ -485,7 +485,7 @@
 <div class="summary-item"><span>Security deposit</span><span id="bk-sum-deposit">LKR —</span></div>
 <div class="summary-item"><span>First month rent</span><span id="bk-sum-rent">LKR —</span></div>
 <div class="summary-total"><span>Total Due Now</span><span id="bk-sum-total" style="color:var(--brand);">LKR —</span></div>
-<button class="btn btn-success btn-lg" onclick="submitBooking()" style="width:100%;justify-content:center;margin-top:20px;font-size:15px;">
+<button class="btn btn-success btn-lg fw-semibold" onclick="submitBooking()" style="width:100%;justify-content:center;margin-top:20px;font-size:15px;">
             🔒 Pay Advance &amp; Reserve
           </button>
 <div style="text-align:center;font-size:12px;color:var(--gray-400);margin-top:10px;">
@@ -507,8 +507,8 @@
 <strong style="color:white">Smart Boarding Finder</strong> · © 2026
   </footer>
 </div></div></div><div class="page-overlay-shell" id="overlay-reviews" onclick="if(event.target===this) closeSearchModal()"><div class="page-overlay-panel"><button class="page-overlay-close" onclick="closeSearchModal()">✕</button><div class="page active" id="page-reviews">
-<div class="reviews-wrap">
-<div class="breadcrumb">
+<div class="reviews-wrap container py-4">
+<div class="breadcrumb small">
 <a onclick="showPage('home')">Home</a><span class="sep">›</span>
 <a onclick="showPage('detail')">Sunset View Boarding</a><span class="sep">›</span>
 <span>Reviews</span>
@@ -557,18 +557,18 @@
 </div>
 </div>
 <!-- Write review CTA -->
-<div class="write-review">
+<div class="write-review card border-0 shadow-sm">
 <div style="font-size:28px;margin-bottom:8px;">✍️</div>
 <p>Share your experience</p>
 <div style="font-size:13px;color:var(--brand);margin-top:4px;font-weight:400;">Help fellow students make informed decisions</div>
 <div style="display:flex;justify-content:center;gap:6px;margin:12px 0;font-size:28px;cursor:pointer;">
 <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
 </div>
-<button class="btn btn-primary" style="margin-top:4px;">Write a Review</button>
+<button class="btn btn-primary fw-semibold" style="margin-top:4px;">Write a Review</button>
 </div>
 <!-- Reviews list -->
 <div class="reviews-list" id="reviews-dynamic-list">
-<div class="review-card-full">
+<div class="review-card-full card border-0 shadow-sm">
 <div class="review-header">
 <div class="reviewer-avatar">AP</div>
 <div class="reviewer-info"><div class="name">Ayesha Perera</div><div class="date">Faculty of IT · March 2026</div></div>
@@ -579,7 +579,7 @@
 <span>👍 Helpful (8)</span><span>·</span><span>Single Room</span><span>·</span><span>6 months stay</span>
 </div>
 </div>
-<div class="review-card-full">
+<div class="review-card-full card border-0 shadow-sm">
 <div class="review-header">
 <div class="reviewer-avatar" style="background:#C0EDED;color:#065F46;">KD</div>
 <div class="reviewer-info"><div class="name">Kasun De Silva</div><div class="date">Faculty of Engineering · February 2026</div></div>
@@ -590,7 +590,7 @@
 <span>👍 Helpful (5)</span><span>·</span><span>Shared Room</span><span>·</span><span>12 months stay</span>
 </div>
 </div>
-<div class="review-card-full">
+<div class="review-card-full card border-0 shadow-sm">
 <div class="review-header">
 <div class="reviewer-avatar" style="background:#A8DFDE;color:#005461;">NF</div>
 <div class="reviewer-info"><div class="name">Nimesha Fernando</div><div class="date">Faculty of Architecture · January 2026</div></div>
@@ -601,7 +601,7 @@
 <span>👍 Helpful (12)</span><span>·</span><span>Single Room</span><span>·</span><span>Reserved in advance</span>
 </div>
 </div>
-<div class="review-card-full">
+<div class="review-card-full card border-0 shadow-sm">
 <div class="review-header">
 <div class="reviewer-avatar" style="background:#CCF0EF;color:#92400E;">RM</div>
 <div class="reviewer-info"><div class="name">Ravindu Mendis</div><div class="date">Faculty of Business · December 2025</div></div>
@@ -614,12 +614,12 @@
 </div>
 </div>
 <div style="text-align:center;margin-top:24px;">
-<button class="btn btn-outline" onclick="loadMoreReviews()">Load More Reviews</button>
+<button class="btn btn-outline fw-semibold btn-outline-primary" onclick="loadMoreReviews()">Load More Reviews</button>
 </div>
 </div>
 <footer style="margin-top:40px;background:#002D38;color:var(--gray-400);text-align:center;padding:24px;font-size:13px;">
 <strong style="color:white">Smart Boarding Finder</strong> · © 2026
   </footer>
-</div></div></div><script src="app.js"></script>
+</div></div></div><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="app.js"></script>
 </body>
 </html>

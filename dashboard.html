@@ -7,10 +7,10 @@
 <title>Smart Boarding Finder — Dashboard</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&amp;display=swap" rel="stylesheet"/>
-<link href="styles.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/><link href="styles.css" rel="stylesheet"/>
 </head>
-<body data-page="dashboard">
-<nav>
+<body class="bg-body-tertiary bootstrap-app" data-page="dashboard">
+<nav class="navbar navbar-expand-lg bg-white bg-opacity-75 shadow-sm">
 <div class="nav-brand" onclick="showPage('home'); closeMobileMenu();">
 <div class="logo">
 <svg viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
@@ -23,9 +23,9 @@
 <a id="nav-dashboard" onclick="showPage('dashboard'); closeMobileMenu();">Owner Portal</a>
 </div>
 <div class="nav-end">
-<button class="btn btn-ghost" onclick="showPage('dashboard')">List Property</button>
-<button class="btn btn-ghost" onclick="showPage('login')">Sign In</button>
-<button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>
+<button class="btn btn-ghost fw-semibold btn-outline-secondary" onclick="showPage('dashboard')">List Property</button>
+<button class="btn btn-ghost fw-semibold btn-outline-secondary" onclick="showPage('login')">Sign In</button>
+<button class="btn btn-primary fw-semibold" onclick="showPage('signup')">Sign Up</button>
 </div>
 <button aria-label="Open menu" class="mobile-nav-toggle" onclick="toggleMobileMenu()">☰</button>
 </nav>
@@ -39,24 +39,24 @@
 <div class="mobile-nav-actions" id="mobile-nav-actions" style="margin-top:10px;"></div>
 </div>
 <div class="page active" id="page-dashboard">
-<div class="dashboard-wrap">
+<div class="dashboard-wrap container py-4">
 <div class="dashboard-header">
 <div>
 <div id="dash-welcome" style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">Welcome back 👋</div>
 <h1>Owner Dashboard</h1>
 </div>
 <div id="dash-header-actions" style="display:flex;gap:10px;flex-wrap:wrap;">
-<button class="btn btn-primary" onclick="goToAddListing()">+ Add New Listing</button>
+<button class="btn btn-primary fw-semibold" onclick="goToAddListing()">+ Add New Listing</button>
 </div>
 </div>
 <!-- Stats -->
 <div class="dashboard-grid" style="grid-template-columns:repeat(2,1fr);">
-<div class="dash-stat">
+<div class="dash-stat card border-0 shadow-sm">
 <div class="stat-icon">📅</div>
 <div class="stat-val" id="dash-stat-bookings">—</div>
 <div class="stat-desc" id="dash-stat-bookings-label">Total Bookings</div>
 </div>
-<div class="dash-stat">
+<div class="dash-stat card border-0 shadow-sm">
 <div class="stat-icon">👤</div>
 <div class="stat-val" id="dash-stat-role" style="font-size:18px;">—</div>
 <div class="stat-desc">Account Type</div>
@@ -64,58 +64,58 @@
 </div>
 <div class="dash-main">
 <!-- Listing Form -->
-<div class="listing-form">
+<div class="listing-form card border-0 shadow-sm">
 <h3>✏️ Edit Listing — Sunset View Boarding</h3>
 <div class="form-group">
-<label>Property Name</label>
-<input type="text" value="Sunset View Boarding House"/>
+<label class="form-label">Property Name</label>
+<input class="form-control" type="text" value="Sunset View Boarding House"/>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
 <div class="form-group">
-<label>Address</label>
-<input type="text" value="No. 45, Molpe Road, Katubedda"/>
+<label class="form-label">Address</label>
+<input class="form-control" type="text" value="No. 45, Molpe Road, Katubedda"/>
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
 <div class="form-group">
-<label>Monthly Price (LKR)</label>
-<input type="number" value="18000"/>
+<label class="form-label">Monthly Price (LKR)</label>
+<input class="form-control" type="number" value="18000"/>
 </div>
 <div class="form-group">
-<label>Current Vacancies</label>
-<input type="number" value="2"/>
+<label class="form-label">Current Vacancies</label>
+<input class="form-control" type="number" value="2"/>
 </div>
 <div class="form-group">
-<label>Room Type</label>
-<select><option>Single</option><option>Shared</option><option>Both</option></select>
+<label class="form-label">Room Type</label>
+<select class="form-select"><option>Single</option><option>Shared</option><option>Both</option></select>
 </div>
 </div>
 <div class="form-group">
-<label>Upcoming Vacancies</label>
+<label class="form-label">Upcoming Vacancies</label>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-<input placeholder="Number of slots" type="number" value="3"/>
-<input type="date" value="2026-07-01"/>
+<input class="form-control" placeholder="Number of slots" type="number" value="3"/>
+<input class="form-control" type="date" value="2026-07-01"/>
 </div>
 </div>
 <div class="form-group">
-<label>Description</label>
-<textarea>A comfortable and secure boarding facility designed for university students, just 0.8km from UoC. All rooms furnished, WiFi and bills included.</textarea>
+<label class="form-label">Description</label>
+<textarea class="form-control">A comfortable and secure boarding facility designed for university students, just 0.8km from UoC. All rooms furnished, WiFi and bills included.</textarea>
 </div>
 <div class="form-group">
-<label>Facilities</label>
+<label class="form-label">Facilities</label>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:13px;">
-<label class="check-item"><input checked="" type="checkbox"/> 📶 WiFi</label>
-<label class="check-item"><input checked="" type="checkbox"/> 🍳 Kitchen</label>
-<label class="check-item"><input checked="" type="checkbox"/> 🚗 Parking</label>
-<label class="check-item"><input checked="" type="checkbox"/> 🧺 Laundry</label>
-<label class="check-item"><input checked="" type="checkbox"/> 🛡 Security</label>
-<label class="check-item"><input type="checkbox"/> ❄️ AC</label>
-<label class="check-item"><input type="checkbox"/> 🍽 Meals</label>
-<label class="check-item"><input type="checkbox"/> 📺 TV Room</label>
+<label class="check-item form-label"><input checked="" class="form-check-input" type="checkbox"/> 📶 WiFi</label>
+<label class="check-item form-label"><input checked="" class="form-check-input" type="checkbox"/> 🍳 Kitchen</label>
+<label class="check-item form-label"><input checked="" class="form-check-input" type="checkbox"/> 🚗 Parking</label>
+<label class="check-item form-label"><input checked="" class="form-check-input" type="checkbox"/> 🧺 Laundry</label>
+<label class="check-item form-label"><input checked="" class="form-check-input" type="checkbox"/> 🛡 Security</label>
+<label class="check-item form-label"><input class="form-check-input" type="checkbox"/> ❄️ AC</label>
+<label class="check-item form-label"><input class="form-check-input" type="checkbox"/> 🍽 Meals</label>
+<label class="check-item form-label"><input class="form-check-input" type="checkbox"/> 📺 TV Room</label>
 </div>
 </div>
 <div class="form-group">
-<label>Upload Photos</label>
+<label class="form-label">Upload Photos</label>
 <div class="upload-zone">
 <div class="upload-icon">📷</div>
 <p>Drag &amp; drop photos here, or <strong>click to browse</strong></p>
@@ -142,14 +142,14 @@
 </div>
 </div>
 <div style="display:flex;gap:10px;margin-top:4px;">
-<button class="btn btn-primary" style="flex:1;justify-content:center;">💾 Save Changes</button>
-<button class="btn btn-ghost">Preview</button>
+<button class="btn btn-primary fw-semibold" style="flex:1;justify-content:center;">💾 Save Changes</button>
+<button class="btn btn-ghost fw-semibold btn-outline-secondary">Preview</button>
 </div>
 </div>
 <!-- Right sidebar -->
 <div class="dash-side">
 <!-- Recent Bookings -->
-<div class="bookings-panel" id="dash-bookings-panel">
+<div class="bookings-panel card border-0 shadow-sm" id="dash-bookings-panel">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
 <h3>Bookings</h3>
 <a onclick="openAllBookings()" style="font-size:13px;color:var(--brand);cursor:pointer;font-weight:600;">View all</a>
@@ -157,7 +157,7 @@
 <p style="color:var(--gray-400);font-size:13px;padding:8px 0;">Loading...</p>
 </div>
 <!-- My Listings sidebar (owner only) -->
-<div class="bookings-panel" id="dash-listings-panel" style="display:none;">
+<div class="bookings-panel card border-0 shadow-sm" id="dash-listings-panel" style="display:none;">
 <h3 style="margin-bottom:16px;">My Listings</h3>
 <div id="dash-listings-sidebar-content">
 <p style="color:var(--gray-400);font-size:13px;">Loading...</p>
@@ -166,42 +166,41 @@
 </div>
 </div>
 <section id="dashboard-add-section" style="margin-top:28px;display:none;"><div style="padding:0;max-width:none;margin:0;">
-
 <h1 style="font-family:'Fraunces',serif;font-size:28px;font-weight:600;margin-bottom:24px;">Add New Listing</h1>
 <div id="al-auth-warning" style="display:none;background:#CCF0EF;border:1px solid var(--warning);border-radius:var(--radius-md);padding:16px;margin-bottom:20px;font-size:14px;color:#92400E;">
       ⚠️ You must be signed in as an <strong>owner</strong> to add listings. <a onclick="showPage('login')" style="color:var(--brand);cursor:pointer;font-weight:600;">Sign in →</a>
 </div>
 <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius-xl);padding:28px;box-shadow:var(--shadow-md);">
-<div class="form-group"><label>Property Name</label><input id="al-title" placeholder="e.g. Sunset View Boarding House" type="text"/></div>
+<div class="form-group"><label class="form-label">Property Name</label><input class="form-control" id="al-title" placeholder="e.g. Sunset View Boarding House" type="text"/></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-<div class="form-group"><label>City / Area</label><input id="al-city" placeholder="e.g. Katubedda, Moratuwa" type="text"/></div>
+<div class="form-group"><label class="form-label">City / Area</label><input class="form-control" id="al-city" placeholder="e.g. Katubedda, Moratuwa" type="text"/></div>
 <div class="form-group">
-<label>Room Type</label>
+<label class="form-label">Room Type</label>
 <div id="al-roomtype-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-<label class="check-item"><input class="al-roomtype" onchange="toggleExclusiveCheckbox(this,'.al-roomtype')" type="checkbox" value="Single Room"/> 🛏 Single Room</label>
-<label class="check-item"><input class="al-roomtype" onchange="toggleExclusiveCheckbox(this,'.al-roomtype')" type="checkbox" value="Shared Room"/> 👥 Shared Room</label>
+<label class="check-item form-label"><input class="al-roomtype form-check-input" onchange="toggleExclusiveCheckbox(this,'.al-roomtype')" type="checkbox" value="Single Room"/> 🛏 Single Room</label>
+<label class="check-item form-label"><input class="al-roomtype form-check-input" onchange="toggleExclusiveCheckbox(this,'.al-roomtype')" type="checkbox" value="Shared Room"/> 👥 Shared Room</label>
 </div>
 </div>
 </div>
 <div class="form-group">
-<label>Boarding For</label>
+<label class="form-label">Boarding For</label>
 <div id="al-gender-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-<label class="check-item"><input class="al-boardingfor" onchange="toggleExclusiveCheckbox(this,'.al-boardingfor')" type="checkbox" value="Ladies Only"/> 👩 Ladies Only</label>
-<label class="check-item"><input class="al-boardingfor" onchange="toggleExclusiveCheckbox(this,'.al-boardingfor')" type="checkbox" value="Gents Only"/> 👨 Gents Only</label>
+<label class="check-item form-label"><input class="al-boardingfor form-check-input" onchange="toggleExclusiveCheckbox(this,'.al-boardingfor')" type="checkbox" value="Ladies Only"/> 👩 Ladies Only</label>
+<label class="check-item form-label"><input class="al-boardingfor form-check-input" onchange="toggleExclusiveCheckbox(this,'.al-boardingfor')" type="checkbox" value="Gents Only"/> 👨 Gents Only</label>
 </div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-<div class="form-group"><label>Monthly Price (LKR)</label><input id="al-price" placeholder="18000" type="number"/></div>
-<div class="form-group"><label>Availability</label>
-<select id="al-available" onchange="toggleFutureVacancyFields('al')">
+<div class="form-group"><label class="form-label">Monthly Price (LKR)</label><input class="form-control" id="al-price" placeholder="18000" type="number"/></div>
+<div class="form-group"><label class="form-label">Availability</label>
+<select class="form-select" id="al-available" onchange="toggleFutureVacancyFields('al')">
 <option value="true">✅ Available Now</option>
 <option value="future">📅 Future Vacancy</option>
 </select>
 </div>
 </div>
 <div class="form-group" id="al-future-wrap" style="display:none;">
-<label>Future Vacancy In</label>
-<select id="al-future-months">
+<label class="form-label">Future Vacancy In</label>
+<select class="form-select" id="al-future-months">
 <option value="1">1 Month</option>
 <option value="2">2 Months</option>
 <option value="3">3 Months</option>
@@ -212,40 +211,40 @@
 </select>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-<div class="form-group"><label>Security Deposit (LKR)</label><input id="al-deposit" placeholder="e.g. 18000" type="number"/></div>
-<div class="form-group"><label>Advance Payment (LKR)</label><input id="al-advance" placeholder="e.g. 5000" type="number"/></div>
+<div class="form-group"><label class="form-label">Security Deposit (LKR)</label><input class="form-control" id="al-deposit" placeholder="e.g. 18000" type="number"/></div>
+<div class="form-group"><label class="form-label">Advance Payment (LKR)</label><input class="form-control" id="al-advance" placeholder="e.g. 5000" type="number"/></div>
 </div>
 <div class="form-group">
-<label>Facilities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
+<label class="form-label">Facilities <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
 <div id="al-amenities-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-<label class="check-item"><input class="al-amenity" type="checkbox" value="WiFi"/> 📶 WiFi</label>
-<label class="check-item"><input class="al-amenity" type="checkbox" value="Kitchen"/> 🍳 Cooking Allowed</label>
-<label class="check-item"><input class="al-amenity" type="checkbox" value="Parking"/> 🚗 Parking</label>
-<label class="check-item"><input class="al-amenity" type="checkbox" value="Laundry"/> 🧺 Laundry</label>
-<label class="check-item"><input class="al-amenity" type="checkbox" value="AC"/> ❄️ Air Conditioning</label>
-<label class="check-item"><input class="al-amenity" type="checkbox" value="Security"/> 🛡 24h Security</label>
-<label class="check-item"><input class="al-amenity" type="checkbox" value="Meals"/> 🚿 Attached Bath</label>
+<label class="check-item form-label"><input class="al-amenity form-check-input" type="checkbox" value="WiFi"/> 📶 WiFi</label>
+<label class="check-item form-label"><input class="al-amenity form-check-input" type="checkbox" value="Kitchen"/> 🍳 Cooking Allowed</label>
+<label class="check-item form-label"><input class="al-amenity form-check-input" type="checkbox" value="Parking"/> 🚗 Parking</label>
+<label class="check-item form-label"><input class="al-amenity form-check-input" type="checkbox" value="Laundry"/> 🧺 Laundry</label>
+<label class="check-item form-label"><input class="al-amenity form-check-input" type="checkbox" value="AC"/> ❄️ Air Conditioning</label>
+<label class="check-item form-label"><input class="al-amenity form-check-input" type="checkbox" value="Security"/> 🛡 24h Security</label>
+<label class="check-item form-label"><input class="al-amenity form-check-input" type="checkbox" value="Meals"/> 🚿 Attached Bath</label>
 </div>
 </div>
-<div class="form-group"><label>Description</label><textarea id="al-description" placeholder="Describe your property for students..."></textarea></div>
+<div class="form-group"><label class="form-label">Description</label><textarea class="form-control" id="al-description" placeholder="Describe your property for students..."></textarea></div>
 <div class="form-group">
-<label>📋 House Rules <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
+<label class="form-label">📋 House Rules <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(select all that apply)</span></label>
 <div id="al-rules-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-<label class="check-item"><input class="al-rule" type="checkbox" value="No smoking inside"/> 🚭 No smoking inside</label>
-<label class="check-item"><input class="al-rule" type="checkbox" value="Guests until 9 PM"/> 🕘 Guests until 9 PM</label>
-<label class="check-item"><input class="al-rule" type="checkbox" value="Quiet hours 10 PM–6 AM"/> 🔇 Quiet hours 10 PM–6 AM</label>
-<label class="check-item"><input class="al-rule" type="checkbox" value="No parties"/> 🎉 No parties</label>
-<label class="check-item"><input class="al-rule" type="checkbox" value="Cooking allowed"/> 🍳 Cooking allowed</label>
-<label class="check-item"><input class="al-rule" type="checkbox" value="Pets not allowed"/> 🐾 Pets not allowed</label>
-<label class="check-item"><input class="al-rule" type="checkbox" value="No alcohol"/> 🍺 No alcohol</label>
-<label class="check-item"><input class="al-rule" type="checkbox" value="Keep common areas clean"/> 🧹 Keep common areas clean</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="No smoking inside"/> 🚭 No smoking inside</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="Guests until 9 PM"/> 🕘 Guests until 9 PM</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="Quiet hours 10 PM–6 AM"/> 🔇 Quiet hours 10 PM–6 AM</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="No parties"/> 🎉 No parties</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="Cooking allowed"/> 🍳 Cooking allowed</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="Pets not allowed"/> 🐾 Pets not allowed</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="No alcohol"/> 🍺 No alcohol</label>
+<label class="check-item form-label"><input class="al-rule form-check-input" type="checkbox" value="Keep common areas clean"/> 🧹 Keep common areas clean</label>
 </div>
 </div>
 <!-- Media Upload Section -->
 <div class="form-group">
-<label>📸 Photos &amp; Videos <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(optional — up to 10 files)</span></label>
+<label class="form-label">📸 Photos &amp; Videos <span style="text-transform:none;font-weight:400;color:var(--gray-400);">(optional — up to 10 files)</span></label>
 <div class="media-upload-area" id="al-drop-zone" ondragleave="this.classList.remove('drag-over')" ondragover="event.preventDefault();this.classList.add('drag-over')" ondrop="handleDrop(event,'al')">
-<input accept="image/*,video/*" id="al-media-input" multiple="" onchange="handleFileSelect(this,'al')" type="file"/>
+<input accept="image/*,video/*" class="form-control" id="al-media-input" multiple="" onchange="handleFileSelect(this,'al')" type="file"/>
 <div style="font-size:36px;margin-bottom:8px;">📷</div>
 <p style="font-weight:600;color:var(--gray-700);margin-bottom:4px;">Drag &amp; drop photos/videos here</p>
 <p style="font-size:13px;color:var(--gray-400);">or click to browse · JPG, PNG, MP4, MOV · Max 20MB each</p>
@@ -257,8 +256,8 @@
 </div>
 <div id="al-msg" style="display:none;padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;font-weight:600;"></div>
 <div style="display:flex;gap:10px;">
-<button class="btn btn-primary btn-lg" onclick="submitListing()" style="flex:1;justify-content:center;">🏠 Submit Listing</button>
-<button class="btn btn-ghost btn-lg" onclick="showPage('dashboard')">Cancel</button>
+<button class="btn btn-primary btn-lg fw-semibold" onclick="submitListing()" style="flex:1;justify-content:center;">🏠 Submit Listing</button>
+<button class="btn btn-ghost btn-lg fw-semibold btn-outline-secondary" onclick="showPage('dashboard')">Cancel</button>
 </div>
 </div>
 </div></section></div>
@@ -266,6 +265,6 @@
 <strong style="color:white">Smart Boarding Finder</strong> · © 2026
   </footer>
 </div>
-<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="app.js"></script>
 </body>
 </html>
